@@ -1,6 +1,6 @@
 class ApiClient {
   constructor() {
-    this.base_url = '/api';
+    this.base_url = '';
   }
   
   async request(options) {
@@ -14,7 +14,7 @@ class ApiClient {
       response = await fetch(this.base_url + options.url + query, {
         method: options.method,
         headers: {
-          'Content-Type': 'applicatoin/json',
+          'Content-Type': 'application/json',
           ...options.headers,
         },
         body: options.body ? JSON.stringify(options.body) : null,

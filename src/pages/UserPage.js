@@ -13,7 +13,7 @@ function UserPage() {
 
   useEffect(() => {
     (async () => {
-      const response = await api.get('/users/' + user_id);
+      const response = await api.get('api/users/' + user_id);
       setUser(response.ok ? response.body : null);
     })();
   }, [api, user_id]);

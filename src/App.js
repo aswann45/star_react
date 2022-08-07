@@ -6,6 +6,10 @@ import UsersPage from './pages/UsersPage';
 import UserPage from './pages/UserPage';
 import RootPage from './pages/RootPage';
 import LoginPage from './pages/LoginPage';
+import DetailPage from './pages/DetailPage';
+import ProjectDetailForm from './components/ProjectDetailForm';
+import RequestDetailForm from './components/RequestDetailForm';
+import RecipientDetailForm from './components/RecipientDetailForm';
 
 function App() {
   return (
@@ -14,11 +18,21 @@ function App() {
         <ApiProvider>
         <Header />
           <Routes>
-            <Route path="/" element={<RootPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/users/:user_id" element={<UserPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/" element={<RootPage />}>
+              <Route path="users" element={<UsersPage />}>
+                <Route path=":user_id" element={<UserPage />} />
+              </Route>
+              <Route path="member_requests/*" element={<DetailPage />}>
+                <Route path=":request_id/project_details" 
+                  element={<ProjectDetailForm />} />
+                <Route path=":request_id/recipient"
+                  element={<RecipientDetailForm />} />
+                <Route end path=":request_id"
+                  element={<RequestDetailForm />} />
+              </Route>
+              <Route path="login" element={<LoginPage />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Route>
           </Routes>
         </ApiProvider>
       </BrowserRouter>

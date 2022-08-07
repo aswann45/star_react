@@ -6,7 +6,7 @@ function User({ user }) {
     <Stack direction="horizontal" gap={3} className="User">
       <div>
         <p>
-          <Link to={'/users/' + user.ID}>
+          <Link to={`/users/${user.ID}`}>
             {user.FirstName} {user.LastName}
           </Link>
           &nbsp;&mdash;&nbsp;

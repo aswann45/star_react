@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import { useApi } from '../contexts/ApiProvider';
 import User from './User';
+import { Outlet } from 'react-router-dom';
 
 function Users() {
   const [users, setUsers] = useState();
@@ -9,7 +10,7 @@ function Users() {
 
   useEffect(() => {
     (async () => {
-      const response = await api.get('/users');
+      const response = await api.get('api/users');
       if (response.ok) {
         setUsers(response.body.data);
       }
@@ -34,6 +35,7 @@ function Users() {
               :
                 users.map(user => <User key={user.ID} user={user} />)
               }
+              <Outlet />
             </>
           }
         </>

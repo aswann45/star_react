@@ -58,3 +58,13 @@
   color: #14c;
 }
 
+.InputField {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.RequestType {
+  align-items: start;
+  padding-top: 5px;
+  border-bottom: 1px solid #eee;
+}

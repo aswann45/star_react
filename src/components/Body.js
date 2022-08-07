@@ -6,10 +6,10 @@ function Body ({ sidebar, children }) {
   return (
     <Container>
       <Stack direction="horizontal" className="Body">
-        {sidebar && <Sidebar />}
         <Container className="Content">
           {children}
         </Container>
+        {sidebar && <Sidebar sidebar={sidebar} />}
       </Stack>
     </Container>
   );
