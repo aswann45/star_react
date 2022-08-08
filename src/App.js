@@ -10,6 +10,7 @@ import DetailPage from './pages/DetailPage';
 import ProjectDetailForm from './components/ProjectDetailForm';
 import RequestDetailForm from './components/RequestDetailForm';
 import RecipientDetailForm from './components/RecipientDetailForm';
+import RequestList from './components/RequestList';
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
                 <Route path=":user_id" element={<UserPage />} />
               </Route>
               <Route path="member_requests/*" element={<DetailPage />}>
+                <Route path=":request_id/members_requests" 
+                  element={<RequestList />}/>
                 <Route path=":request_id/project_details" 
                   element={<ProjectDetailForm />} />
                 <Route path=":request_id/recipient"

@@ -6,12 +6,13 @@ import RankingsBadges from '../components/RankingsBadges';
 import RequestType from '../components/RequestType';
 import useInputChange from '../useInputChange';
 import { useApi } from '../contexts/ApiProvider';
-import { useParams, Routes, Route } from 'react-router-dom';
+import { useParams, Routes, Route, Outlet } from 'react-router-dom';
 import RequestDetailForm from '../components/RequestDetailForm';
 import ProjectDetailForm from '../components/ProjectDetailForm';
 import RecipientDetailForm from '../components/RecipientDetailForm';
 import Loader from '../components/Loader';
 import RequestAccount from '../components/RequestAccount';
+import RequestList from '../components/RequestList';
 
 function DetailPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -73,6 +74,9 @@ function DetailPage() {
             <RequestAccount object={object}/>
            </Stack>
           <Routes>
+            <Route path=":request_id/members_requests"
+              element={<RequestList />} 
+            />
             <Route path=":request_id/project_details"
               element={<ProjectDetailForm
                 handleSubmit={handleSubmit}
