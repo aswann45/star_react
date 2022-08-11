@@ -23,7 +23,6 @@ function RequestList({ showMember }) {
       setRequests(response.ok ? response.body.data : null);
       setPageMeta(response.ok ? response.body['_meta'] : null);
       setPageLinks(response.ok ? response.body['_links'] : null);
-      //console.log(pageMeta);
     })();
   }, [api, url, search]);
 
@@ -36,6 +35,9 @@ function RequestList({ showMember }) {
           }
           {
           requests.map(request => <RequestListItem key={request.ID} request={request} showMember={showMember}/>)
+          }
+          {(pageMeta && pageLinks) &&
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
           }
           </>
        : 

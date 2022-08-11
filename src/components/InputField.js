@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 
 function InputField(
-  { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, as_type }
+  { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows }
 ) {
   return (
     <Form.Group controlId={name} className="InputField">
@@ -14,6 +14,8 @@ function InputField(
         defaultValue={defaultValue}
         onChange={changeHandler}
         onBlur={blurHandler}
+        onKeyUp={keyUpHandler}
+        rows={rows}
       />
       <Form.Text className="text-danger">{error}</Form.Text>
       {helperText && <Form.Text>{helperText}</Form.Text>}

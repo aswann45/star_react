@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import Form from 'react-bootstrap/Form';
-import Spinner from 'react-bootstrap/Spinner';
 import InputField from '../components/InputField';
 import { useLocation } from 'react-router-dom';
 import Loader from '../components/Loader';
@@ -11,6 +10,15 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
   const [detail, setDetail] = useState();
   const api = useApi();
   const url = location.pathname;
+
+  const formatter = new Intl.NumberFormat('en-US');
+  const amountRequested = useRef();
+
+  const handleCurrencyFormat = (event) => {
+    const parsed_value = parseInt(event.target.value.replace(/,/g, ''));
+    const formatted_value = formatter.format(parsed_value);
+    event.target.value = formatted_value;
+  };
 
   useEffect(() => {
     (async () => {
@@ -26,56 +34,73 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
           <InputField
             name="ProjectAmountRequested"
             label="$ Requested"
-            defaultValue={detail.ProjectAmountRequested}
+            defaultValue={formatter.format(detail.ProjectAmountRequested)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
+            fieldRef={amountRequested}
             helperText="Amount requested by the personal office. Appears in tables and reports."
             blurHandler={handleBlur} 
             error={formErrors.ProjectAmountRequested} />
           <InputField
             name="ChamberAmount"
             label="$ Funded (House/Senate)"
-            defaultValue={detail.ChamberAmount}
+            defaultValue={formatter.format(detail.ChamberAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Amount funded in House or Senate bill. Appears in tables and reports."
             blurHandler={handleBlur} 
             error={formErrors.ChamberAmount} />
           <InputField
             name="ChamberAmountInternal"
             label="Draft $ Funded (House/Senate)"
-            defaultValue={detail.ChamberInternalAmount}
+            defaultValue={formatter.format(detail.ChamberInternalAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Nominal/draft amount to fund the CPF. Will NOT appear in tables or reports."
             error={formErrors.ChamberInternalAmount}
             blurHandler={handleBlur} />
           <InputField
             name="FinalAmount"
             label="$ Funded (Conference)"
-            defaultValue={detail.FinalAmount}
+            defaultValue={formatter.format(detail.FinalAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Amount funded in the Conference bill. Appears in tables and reports."
             blurHandler={handleBlur} 
             error={formErrors.ChamberAmount} />
           <InputField
             name="ConferenceAmountInternal"
             label="Draft $ Funded (Conference)"
-            defaultValue={detail.ConferenceInternalAmount}
+            defaultValue={formatter.format(detail.ConferenceInternalAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Conference nominal/draft amount. Will NOT appear in tables or reports."
             error={formErrors.ConferenceInternalAmount}
             blurHandler={handleBlur} />
           <InputField
             name="PresidentBudgetAmount"
             label="$ President's Budget Requested Amount"
-            defaultValue={detail.PresidentBudgetAmount}
+            defaultValue={formatter.format(detail.PresidentBudgetAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Funding requested in the President's Budget for the project."
             error={formErrors.PresidentBudgetAmount}
             blurHandler={handleBlur} />
+           <InputField
+            name="TotalProjectCost"
+            label="$ Total Project Cost"
+            defaultValue={formatter.format(detail.TotalProjectCost)}
+            changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
+            helperText="Total cost to complete the project."
+            blurHandler={handleBlur} 
+            error={formErrors.TotalProjectCost} />         
           <InputField
             name="PriorFYEnactedAmount"
             label="$ Funded (Prior FY Enacted)"
-            defaultValue={detail.PriorFYEnactedAmount}
+            defaultValue={formatter.format(detail.PriorFYEnactedAmount)}
             changeHandler={handleInputChange}
+            keyUpHandler={handleCurrencyFormat}
             helperText="Funding provided for the project in the prior fiscal year's enacted bill (if applicable)."
             blurHandler={handleBlur} 
             error={formErrors.PriorFYEnactedAmount} />
@@ -88,14 +113,6 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
             helperText="Personal office rationale for providing the project with taxpayer funds."
             blurHandler={handleBlur}
             error={formErrors.Explanation}  />
-          <InputField
-            name="ProjectLegalName"
-            label="Project Legal Name"
-            defaultValue={detail.ProjectLegalName}
-            changeHandler={handleInputChange}
-            helperText="Legal name/title of the project."
-            blurHandler={handleBlur} 
-            error={formErrors.ProjectLegalName} />
           <InputField
             name="ProjectLegalName"
             label="Project Legal Name"

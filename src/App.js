@@ -11,6 +11,7 @@ import ProjectDetailForm from './components/ProjectDetailForm';
 import RequestDetailForm from './components/RequestDetailForm';
 import RecipientDetailForm from './components/RecipientDetailForm';
 import RequestList from './components/RequestList';
+import NotesDetail from './components/NotesDetail';
 
 function App() {
   return (
@@ -30,7 +31,9 @@ function App() {
                   element={<ProjectDetailForm />} />
                 <Route path=":request_id/recipient"
                   element={<RecipientDetailForm />} />
-                <Route end path=":request_id"
+                <Route path=":request_id/notes"
+                  element={<NotesDetail />} />
+                <Route path=":request_id"
                   element={<RequestDetailForm />} />
               </Route>
               <Route path="login" element={<LoginPage />} />

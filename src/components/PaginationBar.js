@@ -1,27 +1,18 @@
 import Stack from 'react-bootstrap/Stack';
 import Pagination from 'react-bootstrap/Pagination';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import Form from 'react-bootstrap/Form';
-import InputSelect from './InputSelect';
+import { useNavigate } from 'react-router-dom';
+import InputGroup from 'react-bootstrap/InputGroup';
+import PageLimitSelect from './PageLimitSelect';
+import PageSelector from './PageSelector';
+import Loader from './Loader';
 
 function PaginationBar({ url, pageMeta, pageLinks }) {
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const currentPage = pageMeta.page;
   const lastPage = pageMeta.total_pages;
   const minPage = currentPage - 2 > 2 ? currentPage - 2 : 2;
   const maxPage = currentPage + 2 < lastPage ? currentPage + 2 : lastPage - 1;
-  const firstPage = 1;
-
-  function handleLimitChange(event) {
-    let limit = event.target.value;
-    if (limit) {
-      setSearchParams({ limit });
-    } else {
-      setSearchParams({});
-    }
-  };
 
   let betweenPages = [];
   for (let pageNum = minPage; pageNum <= maxPage; pageNum++) {
@@ -39,63 +30,25 @@ function PaginationBar({ url, pageMeta, pageLinks }) {
   };
 
   return (
-    <>
-      <div>
-        <Stack gap={3} direction="horizontal">
-          <InputSelect
-            name="PageLimit"
-            label="Results per Page"
-            defaultValue={searchParams.limit}
-            changeHandler={handleLimitChange}
-          >
-            <option hidden>{pageMeta.limit}</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </InputSelect>
-        <Pagination size="sm">
-          <>
-            {
-              pageLinks.prev !== null  &&
-                <Pagination.Prev onClick={() => navigate(pageLinks.prev)} />
-            }
-          </>
-          <Pagination.Item 
-            key={firstPage} 
-            onClick={
-              () => navigate(`${url}?page=${firstPage}&limit=${pageMeta.limit}`)}
-            active={firstPage === currentPage}>
-            {firstPage}
-          </Pagination.Item>
-          {
-            minPage > firstPage + 1 &&
-              <Pagination.Ellipsis />
-          }
-          <>
+      <>
+      {pageLinks ?
+        <Stack direction="horizontal" gap={2} className="PaginationBar">
+          <PageLimitSelect />
+          <PageSelector
+            url={url}
+            currentPage={currentPage}
+            lastPage={lastPage}
+            minPage={minPage}
+            maxPage={maxPage}
+            pageLinks={pageLinks}
+            limit={pageMeta.limit}>
             {betweenPages}
-          </>
-          {
-            maxPage < lastPage - 1 &&
-              <Pagination.Ellipsis />
-          }
-          <Pagination.Item 
-            key={lastPage} 
-            onClick={
-              () => navigate(`${url}?page=${lastPage}&limit=${pageMeta.limit}`)}
-            active={lastPage === currentPage}>
-            {lastPage}
-          </Pagination.Item>
-          <>
-            {
-              pageLinks.next !== null && 
-                <Pagination.Next onClick={() => navigate(pageLinks.next)} />
-            }
-          </>
-        </Pagination>
+          </PageSelector>
         </Stack>
-      </div>
-    </>
+        :
+        <Loader object={pageLinks} />
+        }
+      </>
   );
 }
 

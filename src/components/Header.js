@@ -5,7 +5,9 @@ function Header() {
   return (
     <Navbar bg="light" sticky="top" className="Header">
       <Container>
-        <Navbar.Brand>star db</Navbar.Brand>
+        <Navbar.Brand>
+          <h1><b>star</b> db</h1>
+        </Navbar.Brand>
       </Container>
     </Navbar>
   );

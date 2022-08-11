@@ -1,18 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Stack from 'react-bootstrap/Stack';
 import Body from '../components/Body';
-import Container from 'react-bootstrap/Container';
 import RankingsBadges from '../components/RankingsBadges';
 import RequestType from '../components/RequestType';
 import useInputChange from '../useInputChange';
 import { useApi } from '../contexts/ApiProvider';
-import { useParams, Routes, Route, Outlet } from 'react-router-dom';
+import { useParams, Routes, Route, useLocation } from 'react-router-dom';
 import RequestDetailForm from '../components/RequestDetailForm';
 import ProjectDetailForm from '../components/ProjectDetailForm';
 import RecipientDetailForm from '../components/RecipientDetailForm';
 import Loader from '../components/Loader';
 import RequestAccount from '../components/RequestAccount';
 import RequestList from '../components/RequestList';
+import NotesDetail from '../components/NotesDetail';
 
 function DetailPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -20,10 +20,12 @@ function DetailPage() {
 
   const url = '/member_requests/' + request_id
 
+  const location = useLocation();
+
+
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   
-  const [object, setObj] = useState()
-
+  const [object, setObj] = useState();
   const [links, setLinks] = useState()
 
   const api = useApi();
@@ -35,7 +37,7 @@ function DetailPage() {
       ;
     } else {
       setChanged({});
-      const data = await api.put(url, null, {
+      const data = await api.put(put_url, null, {
         body: {
           [key]: value  
         }
@@ -59,20 +61,47 @@ function DetailPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
+  const path = location.pathname;
+  let ending = path.slice(path.lastIndexOf('/'));
+  let put_url;
+  if (object) {
+    let project_id = object.ProjectID;
+    let recipient_id = object.RecipientID;
+    switch(ending) {
+      case '/project_details':
+        put_url = `/project_details/${project_id}`
+        break;
+      case '/recipient':
+        put_url = `/recipients/${recipient_id}`
+        break;
+      default:
+        put_url = url;
+    }
+  };
+
 
 
   return (
     <>
       {(object && object.length !== 0) ?
         <Body sidebar={links}>
-          <h1>{object.RequestTitle}</h1>
-          <Stack direction="horizontal" gap={3} className="DetailHeading">
-            <Container>
+          <Stack direction="vertical" className="DetailHeading">
+            <h1>
+              #{object.SubmissionID}
+              &nbsp;&mdash;&nbsp;
+              {object.RequestTitle}
+            </h1>
+            <h2>{object.Member}&nbsp;({object.Party})</h2>
+          <Stack direction="horizontal" gap={3}>
+            <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
               <RequestType request={object} />
-              <RankingsBadges request={object} />
-            </Container>
-            <RequestAccount object={object}/>
+              <RankingsBadges 
+                url={url} 
+              />
+            </Stack>
+            <RequestAccount object_id={object.ID}/>
            </Stack>
+          </Stack>
           <Routes>
             <Route path=":request_id/members_requests"
               element={<RequestList />} 
@@ -91,6 +120,10 @@ function DetailPage() {
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
                 formErrors={formErrors} 
+              />} 
+            />
+            <Route path=":request_id/notes"
+              element={<NotesDetail
               />} 
             />
             <Route path=":request_id"

@@ -1,14 +1,22 @@
 .App {
   padding: 0;
+  font-family: "Futura", sans-serif;
 }
 
 .Header {
   border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.Header h1 {
+  font-size: 36px;
 }
 
 .Sidebar {
-  width: 120px;
+  width: 160px;
   margin: 5px;
+  margin-right: 0px;
   position: sticky;
   top: 62px;
   align-self: flex-start;
@@ -59,12 +67,122 @@
 }
 
 .InputField {
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.InputSelect {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 .RequestType {
   align-items: start;
   padding-top: 5px;
+}
+
+.RankingBadges {
+  padding-right: 5px;
+}
+
+.RankingBadge {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.RankingBadge .dropdown-menu {
+  height: 350px;
+  overflow-y: scroll;
+}
+
+.PageSelector {
+  margin-bottom: 0px;
+}
+
+.PaginationBar {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  align-items: start;
+}
+
+.PaginationBar .sticky {
+  position: fixed;
+  top: 0;
+}
+
+.RequestAccount {
+  margin-top: 5px;
+  margin-bottom: 2px;
+}
+
+.RequestAccount .InputSelect:hover {
+  background-color: #eee;
+}
+
+.DetailHeading {
+  margin-top: 2px;
+  margin-bottom: 2px;
   border-bottom: 1px solid #eee;
+  padding-bottom: 2px;
+}
+
+.DetailHeadingLeft {
+  margin-right: 5px;
+  border-right: 1px solid #eee;
+}
+
+.DetailHeading h1 {
+  font-size: 24px;
+}
+
+.DetailHeading h2 {
+  font-size: 20px;
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #eee;
+}
+
+.RequestListItem {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 2px solid #eee;
+}
+
+.RequestListItem p {
+  margin-bottom: 10px;
+}
+
+.NoteItemForm {
+  margin-top: 0px;
+  padding-top: 5px;
+}
+
+.NoteItemForm p {
+  margin-bottom: 2px;
+}
+
+.NoteItemForm .InputField {
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+
+.NoteItemForm .card-body {
+  padding-top: 2px;
+  padding-bottom: 6px;
+}
+
+.NoteItemForm .card-footer {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.NoteItemForm .card-title {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 5px;
+}
+
+.NoteItemForm .card-title h5 {
+  margin-bottom: 3px;
+  margin-left: 5px;
 }

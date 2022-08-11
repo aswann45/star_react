@@ -31,6 +31,12 @@ function LinkList({ links_dict }) {
       {Object.entries(links_dict).map(([name, link]) => {
         if (link === "") {
           return null
+        } else if (name === "Request"){
+          return (
+            <Nav.Item key={name}>
+              <Nav.Link end as={NavLink} to={link}>{name}</Nav.Link>
+            </Nav.Item>
+          ); 
         } else {
           return (
             <Nav.Item key={name}>

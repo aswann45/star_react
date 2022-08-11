@@ -1,6 +1,5 @@
 import Stack from 'react-bootstrap/Stack';
 import { Link } from 'react-router-dom';
-import PaginationBar from './PaginationBar';
 
 function RequestListItem({ request, showMember }) {
   return (
@@ -21,13 +20,11 @@ function RequestListItem({ request, showMember }) {
               </>
           }
         </h5>
-        <hr />
         <p>
           {request.Agency !== '' && request.Agency}&nbsp;&mdash;&nbsp;
           {request.Account !== '' && request.Account}&nbsp;&mdash;&nbsp;
           {request.Program !== '' && request.Program}
         </p>
-        <hr />
         <p>
           <b>{request.RequestType}:</b>&nbsp;
           {request.RequestDescription}

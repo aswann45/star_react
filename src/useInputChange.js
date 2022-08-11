@@ -13,8 +13,6 @@ const useInputChange = () => {
       ...changed,
       [event.currentTarget.id]: true
     });
-    console.log({changed});
-    console.log({input});
   }
   
   return [input, handleInputChange, changed, setChanged]
