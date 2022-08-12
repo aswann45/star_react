@@ -1,5 +1,10 @@
 import Form from 'react-bootstrap/Form';
 
+function handleKeyDown(event) {
+  event.target.style.height = 'inherit';
+  event.target.style.height = `${event.target.scrollHeight}px`;
+}
+
 function InputField(
   { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows }
 ) {
@@ -9,13 +14,14 @@ function InputField(
       <Form.Control
         type={type || 'text'}
         as={as_type}
+        onKeyDown={as_type === 'textarea' ? handleKeyDown : undefined}
+        onLoad={(event) => event.target.style.height = `${event.target.scrollHeight}px`}
         placeholder={placeholder}
         ref={fieldRef}
         defaultValue={defaultValue}
         onChange={changeHandler}
         onBlur={blurHandler}
         onKeyUp={keyUpHandler}
-        rows={rows}
       />
       <Form.Text className="text-danger">{error}</Form.Text>
       {helperText && <Form.Text>{helperText}</Form.Text>}

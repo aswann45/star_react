@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import useInputChange from '../useInputChange';
+//import useInputChange from '../useInputChange';
 import NoteItemForm from './NoteItemForm';
-import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import NewNoteItem from './NewNoteItem';
+import { useLocation, useParams } from 'react-router-dom';
 import Loader from './Loader';
 import PaginationBar from './PaginationBar';
 import Button from 'react-bootstrap/Button';
 
-  let counter = 1;
+let counter = 1;
 
 function NotesDetail() {
   const [notes, setNotes] = useState();
@@ -18,24 +19,27 @@ function NotesDetail() {
   const location = useLocation();
   const url = location.pathname;
   const search = location.search;
+  const params = useParams(':request_id');
+  const request_id = params.request_id;
 
-
-  const NewNote = ({ key_id }) => {
-    return <NoteItemForm new_note handleCancelNote={handleCancelNote} newNotes={newNotes} key_id={key_id} />;
-  };
-
-  function onAddButtonClick (newNotes) {
-    counter = counter + 1;
-    setNewNotes(newNotes => [...newNotes, <NewNote key={newNotes.length} key_id={counter} />]);
-  };
-
-  function handleCancelNote(id, newNotes) {
-    //setNewNotes(newNotes.filter(item => item[key_id] === key_id));
-    newNotes.forEach(item => console.log(item.props.key_id === id))
+  function onAddButtonClick () {
+    const newNote = {
+      list_id: counter
+    };
+    console.log(newNote);
+    counter++;
+    setNewNotes(newNotes => [...newNotes, newNote]);
     console.log(newNotes);
   };
+
+  function handleRemove(id) {
+    //setNewNotes(newNotes.filter(item => item[key_id] === key_id));
+    console.log(id);
+    console.log(newNotes);
+    const newArray = newNotes.filter((newNote) => newNote.list_id !== id);
+    setNewNotes(newArray);
+  };
   
-  // add options for pagination here
   useEffect(() => {
     (async () => {
       const response = await api.get(url, search);
@@ -43,14 +47,18 @@ function NotesDetail() {
       setPageMeta(response.ok ? response.body['_meta'] : null);
       setPageLinks(response.ok ? response.body['_links'] : null);
     })();
-  }, [api, url, search]);
+  }, [api, url, search, newNotes]);
 
   return (
     <div>
-      <p>{counter}</p>
       <Button onClick={() => onAddButtonClick(newNotes)}>Add New Note</Button>
       <>
-        {newNotes}
+        {newNotes.map(new_note => <NewNoteItem 
+          key={new_note.list_id} 
+          list_id={new_note.list_id}
+          request_id={request_id}
+          api={api} 
+          handleRemove={handleRemove} />)}
       </>
     <>
       {(notes && notes.length !== 0) ?
@@ -69,7 +77,7 @@ function NotesDetail() {
           }
           </>
        : 
-          <Loader object={notes} />
+          <Loader obj={notes} />
       }
     </>
     </div>

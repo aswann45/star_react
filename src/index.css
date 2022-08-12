@@ -71,6 +71,9 @@
   margin-bottom: 10px;
 }
 
+.InputField textarea {
+}
+
 .InputSelect {
   padding-top: 3px;
   padding-bottom: 3px;

@@ -15,7 +15,7 @@ function Loader({ obj } ){
         </Container>
         :
         <>
-          <p>Could not retrieve data.</p>
+          <p>There is no data to display.</p>
           <>
             {obj !== null &&
             <p>{obj.errors}</p>
