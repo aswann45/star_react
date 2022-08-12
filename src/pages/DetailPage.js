@@ -20,13 +20,15 @@ function DetailPage() {
 
   const url = '/member_requests/' + request_id
 
+  console.log(`URL from DetailPage ${url}`)
   const location = useLocation();
 
 
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   
   const [object, setObj] = useState();
-  const [links, setLinks] = useState()
+  const [links, setLinks] = useState({});
+  const [linksDict, setLinksDict] = useState({});
 
   const api = useApi();
 
@@ -58,6 +60,23 @@ function DetailPage() {
     })();
   }, [api, url]);
 
+  useEffect(() => {
+    setLinksDict({
+      ...(links.self && {'Request': links.self}),
+      ...(links.to_parent_request && {'Parent Request': links.to_parent_request}),
+      ...(links.child_requests && {'Child Requests': links.child_requests}),
+      ...(links.project_details && {'Project Details': links.project_details}),
+      ...(links.recipient && {'Recipient': links.recipient}),
+      ...(links.notes && {'Notes': links.notes}),
+      ...(links.language && {'Language': links.language}),
+      ...(links.member && {'Member Details': links.member}),
+      ...(links.members_requests && {'Member Requests': links.members_requests}),
+      ...(links.files && {'Files': links.files}),
+      ...(links.districts && {'Districts': links.districts}),
+      ...(links.contact && {'Contact': links.contact}),
+    });
+  }, [links])
+
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -84,7 +103,7 @@ function DetailPage() {
   return (
     <>
       {(object && object.length !== 0) ?
-        <Body sidebar={links}>
+        <Body sidebar={linksDict}>
           <Stack direction="vertical" className="DetailHeading">
             <h1>
               #{object.SubmissionID}
@@ -105,6 +124,9 @@ function DetailPage() {
           <Routes>
             <Route path=":request_id/members_requests"
               element={<RequestList />} 
+            />
+            <Route path=":request_id/children"
+              element={<RequestList showMember />} 
             />
             <Route path=":request_id/project_details"
               element={<ProjectDetailForm

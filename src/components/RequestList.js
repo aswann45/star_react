@@ -13,10 +13,8 @@ function RequestList({ showMember }) {
   const location = useLocation();
   const url = location.pathname;
   const search = location.search;
-  //const [searchParams, setSearchParams] = useSearchParams();
-  //const url = '/member_requests/' + request_id + '/members_requests'
-  //const url = useLocation()
-  // add options for pagination here
+
+  console.log(`URL from RequestList ${url}`)
   useEffect(() => {
     (async () => {
       const response = await api.get(url, search);
@@ -41,7 +39,7 @@ function RequestList({ showMember }) {
           }
           </>
        : 
-          <Loader object={requests} />
+          <Loader obj={requests} />
       }
     </>
   );

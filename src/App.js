@@ -27,13 +27,15 @@ function App() {
               <Route path="member_requests/*" element={<DetailPage />}>
                 <Route path=":request_id/members_requests" 
                   element={<RequestList />}/>
+                <Route path=":request_id/children"
+                  element={<RequestList showMember />}/>
                 <Route path=":request_id/project_details" 
                   element={<ProjectDetailForm />} />
                 <Route path=":request_id/recipient"
                   element={<RecipientDetailForm />} />
                 <Route path=":request_id/notes"
                   element={<NotesDetail />} />
-                <Route path=":request_id"
+                <Route end path=":request_id"
                   element={<RequestDetailForm />} />
               </Route>
               <Route path="login" element={<LoginPage />} />
