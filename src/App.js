@@ -12,6 +12,7 @@ import RequestDetailForm from './components/RequestDetailForm';
 import RecipientDetailForm from './components/RecipientDetailForm';
 import RequestList from './components/RequestList';
 import NotesDetail from './components/NotesDetail';
+import LanguageDetail from './components/LanguageDetail';
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
                   element={<RecipientDetailForm />} />
                 <Route path=":request_id/notes"
                   element={<NotesDetail />} />
+                <Route path=":request_id/language"
+                  element={<LanguageDetail />} />
                 <Route end path=":request_id"
                   element={<RequestDetailForm />} />
               </Route>

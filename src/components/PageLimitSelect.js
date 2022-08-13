@@ -23,7 +23,7 @@ function PageLimitSelect(){
     <>
     <DropdownButton 
       id="page-limit-select" 
-      title="Items per Page"
+      title={`# Items per Page`}
       className="PageLimitSelect"
       size="sm"
       variant="secondary"

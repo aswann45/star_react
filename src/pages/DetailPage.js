@@ -13,6 +13,7 @@ import Loader from '../components/Loader';
 import RequestAccount from '../components/RequestAccount';
 import RequestList from '../components/RequestList';
 import NotesDetail from '../components/NotesDetail';
+import LanguageDetail from '../components/LanguageDetail';
 
 function DetailPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -20,7 +21,6 @@ function DetailPage() {
 
   const url = '/member_requests/' + request_id
 
-  console.log(`URL from DetailPage ${url}`)
   const location = useLocation();
 
 
@@ -146,6 +146,10 @@ function DetailPage() {
             />
             <Route path=":request_id/notes"
               element={<NotesDetail
+              />} 
+            />
+            <Route path=":request_id/language"
+              element={<LanguageDetail
               />} 
             />
             <Route path=":request_id"

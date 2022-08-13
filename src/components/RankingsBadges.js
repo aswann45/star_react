@@ -48,8 +48,6 @@ function RankingBadge({
         put_url = '/member_requests/' + request.ID
   };
 
-  console.log(field, priority)
-
   const api = useApi();
   useEffect(() => {
     if (priority && priority !== request[field]) {

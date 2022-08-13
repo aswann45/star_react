@@ -14,7 +14,6 @@ function RequestList({ showMember }) {
   const url = location.pathname;
   const search = location.search;
 
-  console.log(`URL from RequestList ${url}`)
   useEffect(() => {
     (async () => {
       const response = await api.get(url, search);
