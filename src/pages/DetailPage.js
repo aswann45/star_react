@@ -14,6 +14,8 @@ import RequestAccount from '../components/RequestAccount';
 import RequestList from '../components/RequestList';
 import NotesDetail from '../components/NotesDetail';
 import LanguageDetail from '../components/LanguageDetail';
+import RequestContactDetail from '../components/RequestContactDetail';
+import FilesDetail from '../components/FilesDetail';
 
 function DetailPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -111,7 +113,7 @@ function DetailPage() {
               {object.RequestTitle}
             </h1>
             <h2>{object.Member}&nbsp;({object.Party})</h2>
-          <Stack direction="horizontal" gap={3}>
+          <Stack direction="horizontal" gap={2}>
             <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
               <RequestType request={object} />
               <RankingsBadges 
@@ -123,17 +125,18 @@ function DetailPage() {
           </Stack>
           <Routes>
             <Route path=":request_id/members_requests"
-              element={<RequestList />} 
+              element={<RequestList title="Member's Other Requests" />} 
             />
             <Route path=":request_id/children"
-              element={<RequestList showMember />} 
+              element={<RequestList showMember title="Linked Child Requests" />} 
             />
             <Route path=":request_id/project_details"
               element={<ProjectDetailForm
                 handleSubmit={handleSubmit}
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
-                formErrors={formErrors} 
+                formErrors={formErrors}
+                title="CPF Project Details"
               />} 
             />
             <Route path=":request_id/recipient"
@@ -141,15 +144,28 @@ function DetailPage() {
                 handleSubmit={handleSubmit}
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
-                formErrors={formErrors} 
+                formErrors={formErrors}
+                title="CPF Recipient Details"
               />} 
             />
             <Route path=":request_id/notes"
               element={<NotesDetail
+                title="Notes"
+              />} 
+            />
+            <Route path=":request_id/contact"
+              element={<RequestContactDetail
+                title="Request Contact"
               />} 
             />
             <Route path=":request_id/language"
               element={<LanguageDetail
+                title="Bill & Report Language"
+              />} 
+            />
+            <Route path=":request_id/files"
+              element={<FilesDetail
+                title="Files"
               />} 
             />
             <Route path=":request_id"
@@ -158,6 +174,7 @@ function DetailPage() {
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
                 formErrors={formErrors}
+                title="Request Details"
               />} 
             />
           </Routes>

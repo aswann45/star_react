@@ -130,8 +130,9 @@
 }
 
 .DetailHeadingLeft {
-  margin-right: 5px;
+  margin-right: 6px;
   border-right: 1px solid #eee;
+  padding-right: 6px;
 }
 
 .DetailHeading h1 {
@@ -223,4 +224,59 @@
 .LanguageItemForm .card-title h5 {
   margin-bottom: 3px;
   margin-left: 5px;
+}
+
+.DetailSubHeader h1 {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.ContactCard .card-title {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  margin-bottom: 0px;
+}
+
+.ContactCard .card-title h5 {
+  margin-bottom: 3px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.ContactCard .card-body {
+  padding: 4px;
+  padding-top: 0px;
+}
+
+.RequestContactSelect {
+  padding-left: 40px;
+}
+
+.NewFileForm {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 22px;
+}
+
+.FileCard .card-title {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.FileCard h5 {
+  margin: 0px;
+}
+
+.FileCard {
+  margin-bottom: 8px;
+}
+
+.FileCard .card-body {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.FileCard .card-footer p {
+  margin: 0px;
 }

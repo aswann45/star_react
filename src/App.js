@@ -13,6 +13,8 @@ import RecipientDetailForm from './components/RecipientDetailForm';
 import RequestList from './components/RequestList';
 import NotesDetail from './components/NotesDetail';
 import LanguageDetail from './components/LanguageDetail';
+import RequestContactDetail from './components/RequestContactDetail';
+import FilesDetail from './components/FilesDetail';
 
 function App() {
   return (
@@ -36,8 +38,12 @@ function App() {
                   element={<RecipientDetailForm />} />
                 <Route path=":request_id/notes"
                   element={<NotesDetail />} />
+                <Route path=":request_id/contact"
+                  element={<RequestContactDetail />} />
                 <Route path=":request_id/language"
                   element={<LanguageDetail />} />
+                <Route path=":request_id/files"
+                  element={<FilesDetail />} />
                 <Route end path=":request_id"
                   element={<RequestDetailForm />} />
               </Route>

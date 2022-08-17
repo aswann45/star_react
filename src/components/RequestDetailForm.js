@@ -4,8 +4,9 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import InputField from '../components/InputField';
 import { useLocation } from 'react-router-dom';
+import DetailSubHeader from './DetailSubHeader';
 
-function RequestDetailForm({ handleSubmit, handleBlur, handleInputChange, formErrors }) {
+function RequestDetailForm({ handleSubmit, handleBlur, handleInputChange, formErrors, title }) {
 
   const location = useLocation();
   const [object, setObject] = useState();
@@ -33,6 +34,7 @@ function RequestDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
                 <p>There are no request details to display.</p>
                 :
                 <>
+                  <DetailSubHeader title={title} />
                   <Form onSubmit={handleSubmit}>
                     <InputField
                       name="RequestTitle"

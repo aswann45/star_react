@@ -7,10 +7,11 @@ import Loader from './Loader';
 import PaginationBar from './PaginationBar';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
+import DetailSubHeader from './DetailSubHeader';
 
 let counter = 1;
 
-function LanguageDetail() {
+function LanguageDetail({ title }) {
   const [languages, setLanguages] = useState();
   const [newLanguages, setNewLanguages] = useState([]);
   const [pageMeta, setPageMeta] = useState();
@@ -46,7 +47,15 @@ function LanguageDetail() {
 
   return (
     <div>
-      <Button size={'sm'} onClick={() => onAddButtonClick(newLanguages)}>Add New Language</Button>
+      <Stack direction="horizontal">
+        <DetailSubHeader title={title} />
+        <Button size={'sm'} 
+          onClick={() => onAddButtonClick(newLanguages)}
+          className="ms-auto">
+          Add New Language
+        </Button>
+      </Stack>
+
       <>
         {newLanguages.map(new_language => <NewLanguageItem 
           key={new_language.list_id} 

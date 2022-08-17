@@ -17,7 +17,9 @@ function InputSelect(
                 {children}
               </Form.Select>
               <Form.Text className="text-danger">{error}</Form.Text>
+              {helperText &&
               <Form.Text>{helperText}</Form.Text>
+              }
             </Stack>
           </Form.Group>
     </>

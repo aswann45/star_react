@@ -7,10 +7,12 @@ import { useLocation, useParams } from 'react-router-dom';
 import Loader from './Loader';
 import PaginationBar from './PaginationBar';
 import Button from 'react-bootstrap/Button';
+import DetailSubHeader from './DetailSubHeader';
+import Stack from 'react-bootstrap/Stack';
 
 let counter = 1;
 
-function NotesDetail() {
+function NotesDetail({ title }) {
   const [notes, setNotes] = useState();
   const [newNotes, setNewNotes] = useState([]);
   const [pageMeta, setPageMeta] = useState();
@@ -51,7 +53,14 @@ function NotesDetail() {
 
   return (
     <div>
-      <Button onClick={() => onAddButtonClick(newNotes)}>Add New Note</Button>
+      <Stack direction="horizontal">
+        <DetailSubHeader title={title} />
+        <Button size={"sm"}
+          onClick={() => onAddButtonClick(newNotes)} 
+          className="ms-auto">
+          Add New Note
+        </Button>
+      </Stack>
       <>
         {newNotes.map(new_note => <NewNoteItem 
           key={new_note.list_id} 
