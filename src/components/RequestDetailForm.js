@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
@@ -13,12 +13,19 @@ function RequestDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
   const api = useApi();
   const url = location.pathname;
 
-  useEffect(() => {
-    (async () => {
-      const response = await api.get(url);
-      setObject(response.ok ? response.body : null);
-    })();
+  const fetchData = useCallback(async () => {
+    const response = await api.get(url);
+    setObject(response.ok ? response.body : null);
   }, [api, url]);
+
+  useEffect(() => {
+    //(async () => {
+     // const response = await api.get(url);
+    // setObject(response.ok ? response.body : null);
+   // })();
+ // }, [api, url]);
+    fetchData();
+  }, [fetchData])
 
   return (
     <>

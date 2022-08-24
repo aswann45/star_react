@@ -38,7 +38,6 @@ function InputField(
           as={as_type}
           onKeyDown={as_type === 'textarea' ? handleKeyDown : undefined}
           onSelect={as_type === 'textarea' ? handleKeyDown : undefined}
-          onLoad={(event) => event.target.style.height = `${event.target.scrollHeight}px`}
           placeholder={placeholder}
           ref={fieldRef}
           defaultValue={defaultValue}

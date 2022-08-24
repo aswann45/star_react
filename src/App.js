@@ -15,42 +15,49 @@ import NotesDetail from './components/NotesDetail';
 import LanguageDetail from './components/LanguageDetail';
 import RequestContactDetail from './components/RequestContactDetail';
 import FilesDetail from './components/FilesDetail';
+import DataTable from './components/Table';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
 function App() {
   return (
     <Container fluid className="App">
       <BrowserRouter>
         <ApiProvider>
-        <Header />
-          <Routes>
-            <Route path="/" element={<RootPage />}>
-              <Route path="users" element={<UsersPage />}>
-                <Route path=":user_id" element={<UserPage />} />
+          <DndProvider backend={HTML5Backend}>
+            <Header />
+            <Routes>
+              <Route path="/" element={<RootPage />}>
+                <Route path="users" element={<UsersPage />}>
+                  <Route path=":user_id" element={<UserPage />} />
+                </Route>
+                <Route path="member_requests" element={<DataTable />} />
+
+                <Route path="member_requests/*" element={<DetailPage />}>
+                  <Route path=":request_id/members_requests" 
+                    element={<RequestList />}/>
+                  <Route path=":request_id/children"
+                    element={<RequestList showMember />}/>
+                  <Route path=":request_id/project_details" 
+                    element={<ProjectDetailForm />} />
+                  <Route path=":request_id/recipient"
+                    element={<RecipientDetailForm />} />
+                  <Route path=":request_id/notes"
+                    element={<NotesDetail />} />
+                  <Route path=":request_id/contact"
+                    element={<RequestContactDetail />} />
+                  <Route path=":request_id/language"
+                    element={<LanguageDetail />} />
+                  <Route path=":request_id/files"
+                    element={<FilesDetail />} />
+                  <Route end path=":request_id"
+                    element={<RequestDetailForm />} />
+                </Route>
+                <Route path="login" element={<LoginPage />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Route>
-              <Route path="member_requests/*" element={<DetailPage />}>
-                <Route path=":request_id/members_requests" 
-                  element={<RequestList />}/>
-                <Route path=":request_id/children"
-                  element={<RequestList showMember />}/>
-                <Route path=":request_id/project_details" 
-                  element={<ProjectDetailForm />} />
-                <Route path=":request_id/recipient"
-                  element={<RecipientDetailForm />} />
-                <Route path=":request_id/notes"
-                  element={<NotesDetail />} />
-                <Route path=":request_id/contact"
-                  element={<RequestContactDetail />} />
-                <Route path=":request_id/language"
-                  element={<LanguageDetail />} />
-                <Route path=":request_id/files"
-                  element={<FilesDetail />} />
-                <Route end path=":request_id"
-                  element={<RequestDetailForm />} />
-              </Route>
-              <Route path="login" element={<LoginPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Route>
-          </Routes>
+            </Routes>
+          </DndProvider>
         </ApiProvider>
       </BrowserRouter>
     </Container>

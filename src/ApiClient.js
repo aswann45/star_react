@@ -18,6 +18,7 @@ class ApiClient {
           ...options.headers,
         },
         body: (options.body ? JSON.stringify(options.body) : options.formData ? options.formData :  null),
+        signal: (options.signal ? options.signal : null)
       });
     }
     catch (error) {
@@ -31,8 +32,9 @@ class ApiClient {
         }; }
       }
     }
-
-    const contentType = response.headers.get('content-type');
+    
+    const responseHeaders = response && response['headers'];
+    const contentType = responseHeaders && responseHeaders.get('content-type');
     if (contentType && contentType.indexOf('application/json') !== -1) {
       return {
         ok: response.ok,
