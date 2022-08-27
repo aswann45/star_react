@@ -13,6 +13,9 @@ import Loader from '../components/Loader';
 import RequestAccount from '../components/RequestAccount';
 import RequestList from '../components/RequestList';
 import NotesDetail from '../components/NotesDetail';
+import LanguageDetail from '../components/LanguageDetail';
+import RequestContactDetail from '../components/RequestContactDetail';
+import FilesDetail from '../components/FilesDetail';
 
 function DetailPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -26,7 +29,8 @@ function DetailPage() {
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   
   const [object, setObj] = useState();
-  const [links, setLinks] = useState()
+  const [links, setLinks] = useState({});
+  const [linksDict, setLinksDict] = useState({});
 
   const api = useApi();
 
@@ -58,6 +62,23 @@ function DetailPage() {
     })();
   }, [api, url]);
 
+  useEffect(() => {
+    setLinksDict({
+      ...(links.self && {'Request': links.self}),
+      ...(links.to_parent_request && {'Parent Request': links.to_parent_request}),
+      ...(links.child_requests && {'Child Requests': links.child_requests}),
+      ...(links.project_details && {'Project Details': links.project_details}),
+      ...(links.recipient && {'Recipient': links.recipient}),
+      ...(links.notes && {'Notes': links.notes}),
+      ...(links.language && {'Language': links.language}),
+      ...(links.member && {'Member Details': links.member}),
+      ...(links.members_requests && {'Member Requests': links.members_requests}),
+      ...(links.files && {'Files': links.files}),
+      ...(links.districts && {'Districts': links.districts}),
+      ...(links.contact && {'Contact': links.contact}),
+    });
+  }, [links])
+
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -84,7 +105,7 @@ function DetailPage() {
   return (
     <>
       {(object && object.length !== 0) ?
-        <Body sidebar={links}>
+        <Body sidebar={linksDict}>
           <Stack direction="vertical" className="DetailHeading">
             <h1>
               #{object.SubmissionID}
@@ -92,7 +113,7 @@ function DetailPage() {
               {object.RequestTitle}
             </h1>
             <h2>{object.Member}&nbsp;({object.Party})</h2>
-          <Stack direction="horizontal" gap={3}>
+          <Stack direction="horizontal" gap={2}>
             <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
               <RequestType request={object} />
               <RankingsBadges 
@@ -104,14 +125,18 @@ function DetailPage() {
           </Stack>
           <Routes>
             <Route path=":request_id/members_requests"
-              element={<RequestList />} 
+              element={<RequestList title="Member's Other Requests" />} 
+            />
+            <Route path=":request_id/children"
+              element={<RequestList showMember title="Linked Child Requests" />} 
             />
             <Route path=":request_id/project_details"
               element={<ProjectDetailForm
                 handleSubmit={handleSubmit}
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
-                formErrors={formErrors} 
+                formErrors={formErrors}
+                title="CPF Project Details"
               />} 
             />
             <Route path=":request_id/recipient"
@@ -119,11 +144,28 @@ function DetailPage() {
                 handleSubmit={handleSubmit}
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
-                formErrors={formErrors} 
+                formErrors={formErrors}
+                title="CPF Recipient Details"
               />} 
             />
             <Route path=":request_id/notes"
               element={<NotesDetail
+                title="Notes"
+              />} 
+            />
+            <Route path=":request_id/contact"
+              element={<RequestContactDetail
+                title="Request Contact"
+              />} 
+            />
+            <Route path=":request_id/language"
+              element={<LanguageDetail
+                title="Bill & Report Language"
+              />} 
+            />
+            <Route path=":request_id/files"
+              element={<FilesDetail
+                title="Files"
               />} 
             />
             <Route path=":request_id"
@@ -132,6 +174,7 @@ function DetailPage() {
                 handleBlur={handleBlur}
                 handleInputChange={handleInputChange}
                 formErrors={formErrors}
+                title="Request Details"
               />} 
             />
           </Routes>

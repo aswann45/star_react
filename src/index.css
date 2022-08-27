@@ -130,8 +130,9 @@
 }
 
 .DetailHeadingLeft {
-  margin-right: 5px;
+  margin-right: 6px;
   border-right: 1px solid #eee;
+  padding-right: 6px;
 }
 
 .DetailHeading h1 {
@@ -188,4 +189,128 @@
 .NoteItemForm .card-title h5 {
   margin-bottom: 3px;
   margin-left: 5px;
+}
+
+.LanguageItemForm {
+  margin-top: 0px;
+  padding-top: 5px;
+}
+
+.LanguageItemForm p {
+  margin-bottom: 2px;
+}
+
+.LanguageItemForm .InputField {
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+
+.LanguageItemForm .card-body {
+  padding-top: 2px;
+  padding-bottom: 6px;
+}
+
+.LanguageItemForm .card-footer {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.LanguageItemForm .card-title {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 5px;
+}
+
+.LanguageItemForm .card-title h5 {
+  margin-bottom: 3px;
+  margin-left: 5px;
+}
+
+.DetailSubHeader h1 {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.ContactCard .card-title {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  margin-bottom: 0px;
+}
+
+.ContactCard .card-title h5 {
+  margin-bottom: 3px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.ContactCard .card-body {
+  padding: 4px;
+  padding-top: 0px;
+}
+
+.RequestContactSelect {
+  padding-left: 40px;
+}
+
+.NewFileForm {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 22px;
+}
+
+.FileCard .card-title {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.FileCard h5 {
+  margin: 0px;
+}
+
+.FileCard {
+  margin-bottom: 8px;
+}
+
+.FileCard .card-body {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.FileCard .card-footer p {
+  margin: 0px;
+}
+
+.DataTable th {
+  z-index: 90000;
+}
+
+.DataTable td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  /*white-space: nowrap;*/
+}
+
+.Resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: #eee;
+  cursor: col-resize;
+}
+
+.Resizer.isResizing {
+  background: blue;
+  opacity: 1;
+}
+
+.TableToolBar {
+  padding: 5px;
+}
+
+.TableToolBar .dropdown-menu {
+  z-index: 95000;
 }

@@ -20,7 +20,7 @@ function RequestType({ request }) {
               {request.RequestType === "Program" && 
                 <p>{request.ProgramIncreaseDecrease}
                   {/*&nbsp;&mdash;&nbsp;*/}
-                  &nbsp;${program_amount}
+                  {request.ProgramAmount !== 0 ? ` $${program_amount}` : ''}
                 </p>               
               }
             </>

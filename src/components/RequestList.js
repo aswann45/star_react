@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import RequestListItem from './RequestListItem';
-import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Loader from './Loader';
 import PaginationBar from './PaginationBar';
+import DetailSubHeader from './DetailSubHeader';
 
-function RequestList({ showMember }) {
+function RequestList({ showMember, title }) {
   const [requests, setRequests] = useState();
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
@@ -13,10 +14,7 @@ function RequestList({ showMember }) {
   const location = useLocation();
   const url = location.pathname;
   const search = location.search;
-  //const [searchParams, setSearchParams] = useSearchParams();
-  //const url = '/member_requests/' + request_id + '/members_requests'
-  //const url = useLocation()
-  // add options for pagination here
+
   useEffect(() => {
     (async () => {
       const response = await api.get(url, search);
@@ -28,6 +26,7 @@ function RequestList({ showMember }) {
 
   return (
     <>
+      <DetailSubHeader title={title} />
       {(requests && requests.length !== 0) ?
         <>
           {(pageMeta && pageLinks) &&
@@ -41,7 +40,7 @@ function RequestList({ showMember }) {
           }
           </>
        : 
-          <Loader object={requests} />
+          <Loader obj={requests} />
       }
     </>
   );

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import Form from 'react-bootstrap/Form';
-import Spinner from 'react-bootstrap/Spinner';
 import InputField from '../components/InputField';
 import { useLocation } from 'react-router-dom';
 import Loader from '../components/Loader';

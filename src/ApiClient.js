@@ -14,10 +14,11 @@ class ApiClient {
       response = await fetch(this.base_url + options.url + query, {
         method: options.method,
         headers: {
-          'Content-Type': 'application/json',
+          ...(!options.headers && {'Content-Type': 'application/json'}),
           ...options.headers,
         },
-        body: options.body ? JSON.stringify(options.body) : null,
+        body: (options.body ? JSON.stringify(options.body) : options.formData ? options.formData :  null),
+        signal: (options.signal ? options.signal : null)
       });
     }
     catch (error) {
@@ -31,12 +32,18 @@ class ApiClient {
         }; }
       }
     }
-
-    return {
-      ok: response.ok,
-      status: response.status,
-      body: response.status !== 204 ? await response.json() : null
-    };
+    
+    const responseHeaders = response && response['headers'];
+    const contentType = responseHeaders && responseHeaders.get('content-type');
+    if (contentType && contentType.indexOf('application/json') !== -1) {
+      return {
+        ok: response.ok,
+        status: response.status,
+        body: response.status !== 204 ?  await response.json() : null,
+      } 
+    } else {
+      return (response);
+    }
   }
 
   async get(url, query, options) {

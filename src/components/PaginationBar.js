@@ -1,7 +1,6 @@
 import Stack from 'react-bootstrap/Stack';
 import Pagination from 'react-bootstrap/Pagination';
 import { useNavigate } from 'react-router-dom';
-import InputGroup from 'react-bootstrap/InputGroup';
 import PageLimitSelect from './PageLimitSelect';
 import PageSelector from './PageSelector';
 import Loader from './Loader';
