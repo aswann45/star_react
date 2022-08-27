@@ -5,8 +5,10 @@ import { useDrag, useDrop } from 'react-dnd';
 import { flexRender } from '@tanstack/react-table';
 import Stack from 'react-bootstrap/Stack';
 import DebouncedInput from './DebouncedInput';
+import ColumnSortToggleButton from './ColumnSortToggleButton';
+import { BsFilterCircleFill } from 'react-icons/bs';
 
-function TableHeader({ tableInstance }) {
+function TableHeader({ tableInstance, showFilters, showColumnTools }) {
   return (
     <>
       <thead> 
@@ -17,6 +19,9 @@ function TableHeader({ tableInstance }) {
                 tableInstance={tableInstance} 
                 header={header} 
                 key={header.id}
+                className='DraggableTableHeader'
+                showFilters={showFilters}
+                showColumnTools={showColumnTools}
               />
             ))}
           </tr>
@@ -40,7 +45,7 @@ const reorderColumn = (
   return [...columnOrder];
 };
 
-const DraggableTableHeader = ({ tableInstance, header }) => {
+const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTools }) => {
   const { getState, setColumnOrder } = tableInstance;
   const { columnOrder } = getState();
   const { column } = header;
@@ -77,26 +82,42 @@ const DraggableTableHeader = ({ tableInstance, header }) => {
           backgroundColor: isOver ? '#e9ecef' : '#ddd',
           position: 'sticky',
           top: 0,
-          zIndex: 99999,
+          //zIndex: 99999,
+          width: header.getSize(),
         }}
       >
-        <Stack direction="horizontal" gap={2}>
         <span 
           ref={previewRef}
-          style={{  }}
         >
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
+          {header.column.getIsFiltered() && 
+            <>
+             &nbsp;<BsFilterCircleFill />
+            </>
+          }
         </span>
-          <ColumnDragHandle dragRef={dragRef} header={header} />
-          <PinColumnToggleButton header={header} />
-        </Stack>
-        {header.column.getCanFilter() ? (
-          <div>
+        {showColumnTools &&
+          <Stack direction="horizontal" gap={2} className='ColumnTools'>
+            <ColumnDragHandle dragRef={dragRef} header={header} />
+            <PinColumnToggleButton header={header} />
+            <ColumnSortToggleButton header={header} />
+          </Stack>
+        }
+        {header.column.getCanFilter() && showFilters ? (
+          <>
             <Filter column={header.column} table={tableInstance} />
-          </div>
+          </>
         ) : null}
+        <div 
+          {...{
+            onMouseDown: header.getResizeHandler(),
+            className: `Resizer ${
+              header.column.getIsResizing() ? 'isResizing' : ''
+            }`
+          }}
+        />
       </th>
     </>
   );

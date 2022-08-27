@@ -280,3 +280,37 @@
 .FileCard .card-footer p {
   margin: 0px;
 }
+
+.DataTable th {
+  z-index: 90000;
+}
+
+.DataTable td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  /*white-space: nowrap;*/
+}
+
+.Resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: #eee;
+  cursor: col-resize;
+}
+
+.Resizer.isResizing {
+  background: blue;
+  opacity: 1;
+}
+
+.TableToolBar {
+  padding: 5px;
+}
+
+.TableToolBar .dropdown-menu {
+  z-index: 95000;
+}
