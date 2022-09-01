@@ -4,11 +4,13 @@ import Button from 'react-bootstrap/Button';
 import ColumnVisibilityToggle from './ColumnVisibilityToggle';
 import { BsFilterCircle, BsColumns, BsFilterCircleFill, BsArrowsCollapse, BsArrowsExpand } from 'react-icons/bs'
 
-function TableToolBar({ tableInstance, showFilters, setShowFilters, showColumnTools, setShowColumnTools, rowSelection}) {
+function TableToolBar({ tableInstance, showFilters, setShowFilters, showColumnTools, setShowColumnTools, rowSelection, fetchNewQuery, fetchNextPage }) {
 
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}> 
       <Button onClick={() => console.log(rowSelection)}>Log Row Selection</Button>
+      <Button onClick={fetchNewQuery}>Fetch New Query</Button>
+      <Button onClick={fetchNextPage}>Fetch Next Page</Button>
       <Dropdown>
         <Dropdown.Toggle 
           title='Toggle Visible Columns'

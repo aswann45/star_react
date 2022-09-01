@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import { 
   flexRender,
@@ -18,16 +18,48 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
+import useInfiniteQuery from '../hooks/useInfiniteQuery';
 
 // imported columns for Member Requests
 const columns = MemberRequestsColumns;
 
+
 function DataTable() {
   // URL and API request logic and state
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams] = useSearchParams();
+
+  const location = useLocation();
+  const search = location.search;
+  const url = '/member_requests/';
+  const [
+    data,
+    error,
+    totalPages, 
+    setLimit, 
+    setFilters, 
+    setOrder,
+    totalItems, 
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    isFetching,
+    fetchNextPage,
+    fetchNewQuery,
+    refreshData,
+    hasNextPage,
+    isFirstPage,
+    lastPage,
+    nextPageToFetch,
+    pageArray,
+  ] = useInfiniteQuery(url, 1, '');
+
+  /*useEffect(() => {
+    if (isFetching) {
+      fetchNewQuery();  
+    }
+  }, [isFetching, fetchNewQuery])*/
 
   const api = useApi();
-  const [data, setData] = useState([]);
+ /* const [data, setData] = useState([]);
   const [meta, setMeta] = useState();
   const [firstFetch, setFirstFetch] = useState(true);
   const [canFetchFirst, setCanFetchFirst] = useState(true);
@@ -35,9 +67,9 @@ function DataTable() {
   const [isFetchingNext, setIsFetchingNext] = useState(false);
   const [nextPage, setNextPage] = useState();
   const [showLoader, setShowLoader] = useState(true);
-  const [links, setLinks] = useState();
-  const url = '/member_requests/';
-  const fetchNextAbortController = new AbortController();
+  const [links, setLinks] = useState();*/
+  //const fetchNextAbortController = new AbortController();
+  
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnPinning, setColumnPinning] = useState({});
@@ -57,7 +89,7 @@ function DataTable() {
   const [globalFilter, setGlobalFilter] = useState('');
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     //fetchNextAbortController.abort();
     setSearchParams({
       limit: 100,
@@ -69,8 +101,17 @@ function DataTable() {
       columnFilters, 
       setSearchParams, 
     ]
-  );
-    
+  );*/
+
+  useEffect(() => {
+    setFilters(columnFilters);
+  }, [columnFilters, setFilters])
+
+  useEffect(() => {
+    setLimit(50);
+  })
+  
+  /*
   useEffect(() => {
     fetchNextAbortController.abort();
     console.log('Resetting fetch states')
@@ -78,15 +119,25 @@ function DataTable() {
     setCanFetchFirst(true);
     setNextPage();
   }, [searchParams])
+  */
 
   // sorting
   const [sorting, setSorting] = useState([]);
 
+  useEffect(() => {
+    setOrder(sorting);
+  }, [sorting, setOrder]);
+
+
   // row selection
   const [rowSelection, setRowSelection] = useState({});
   const getRowId = (originalRow, relativeIndex, parent) => {
-    return parent ? [parent.ID, originalRow.ID].join('.') : originalRow.ID;
-  }
+    //if (originalRow) {
+      return parent ? [parent.ID, originalRow.ID].join('.') : originalRow.ID;
+    //} else {
+     // return
+   // };
+  };
 
   //sub rows
   const [expanded, setExpanded] = useState({});
@@ -94,10 +145,17 @@ function DataTable() {
     return originalRow.children.length > 0 && originalRow.children;
   }
 
+  const flatData = useMemo(
+    () => data?.pages?.flatMap(page => page) ?? [],
+    [data]
+  )
+  //console.log('Data:', data)
+    //console.log('Flat Data:', flatData)
+
   // Table instance
   //
   const tableInstance = useReactTable({ 
-    data,
+    data: flatData,
     columns,
     columnResizeMode,
     state: {
@@ -113,6 +171,7 @@ function DataTable() {
     getRowId,
     getSubRows: row => row.children,
     manualFiltering: true,
+    manualSorting: true,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     onColumnPinningChange: setColumnPinning,
@@ -133,26 +192,58 @@ function DataTable() {
      
   // virtualized rows
   //
-  const totalItemsCount = meta && meta.total_items;
+  //const totalItemsCount = meta && meta.total_items;
   const tableContainerRef = useRef();
   const { rows } = tableInstance.getRowModel();
   const rowVirtualizer = useVirtualizer({
-    count: totalItemsCount && totalItemsCount,
+    //count: totalItemsCount && totalItemsCount,
+    count: totalItems && totalItems,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 41,
+    estimateSize: () => rows.length,
     overscan: 15,
   });
 
-  const totalSize = rowVirtualizer.getTotalSize();
+  const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
   //console.log('Virtual rows length:', virtualRows.length -1) 
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
   const paddingBottom = 
     virtualRows.length > 0
-    ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end)
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
     : 0
 
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement) => {
+    if (containerRefElement) {
+      const { scrollHeight, scrollTop, clientHeight } = containerRefElement
+      //console.log('scrollHeight', scrollHeight)
+      //console.log('scrollTop', scrollTop)
+      //console.log('clientHeight', clientHeight)
+      console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
+      if (
+        scrollHeight - scrollTop - clientHeight - paddingBottom < 1000 &&
+        //clientHeight - scrollTop < 100 &&
+        !isFetching &&
+        hasNextPage &&
+        flatData.length > 0
+      ) {
+        fetchNextPage()
+      }
+    }
+  }, [fetchNextPage, isFetching, hasNextPage, flatData.length, paddingBottom]
+);
+
+  useEffect(() => {
+    fetchMoreOnBottomReached(tableContainerRef.current)
+  }, [fetchMoreOnBottomReached])
+
+  useEffect(() => {
+    if (flatData.length === 0) {
+      rowVirtualizer.scrollToOffset(0)
+    }
+  }, [flatData.length])
+/*
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
@@ -232,7 +323,6 @@ function DataTable() {
     
   useEffect(() => {
     const signal = fetchNextAbortController.signal;
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
     let fetchPage;
 
     const fetchNextData = async () => {
@@ -322,9 +412,33 @@ function DataTable() {
     api,
     virtualRows.length,
   ])
+    */
+ 
+    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+    const virtualLength = virtualRows.length;
+
 
   return (
     <>
+      {/*<pre>Data: {JSON.stringify(data)}</pre>*/}
+      <pre>totalItems: {JSON.stringify(totalItems)}</pre>
+      <pre>totalPages: {JSON.stringify(totalPages)}</pre>
+      <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
+      <pre>lastPage: {JSON.stringify(lastPage)}</pre>
+      <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
+      <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
+      <pre>isFetching: {JSON.stringify(isFetching)}</pre>
+      <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
+      <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
+      <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
+      <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
+      <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+      <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
+      <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
+      <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
+      <pre>pageArray: {JSON.stringify(pageArray.length)}</pre>
+      <pre>flatData: {JSON.stringify(flatData)}</pre>
+
       <TableToolBar 
         tableInstance={tableInstance} 
         setShowFilters={setShowFilters} 
@@ -332,9 +446,12 @@ function DataTable() {
         setShowColumnTools={setShowColumnTools}
         showColumnTools={showColumnTools}
         rowSelection={rowSelection}
+        fetchNewQuery={fetchNewQuery}
+        fetchNextPage={fetchNextPage}
       />
       <div 
         className='DataTableContainer'
+        onScroll={e => fetchMoreOnBottomReached(e.target)}
         ref={tableContainerRef} 
         style={{
           height: `calc(100vh - 225px)`, // You need to have a parent height or it will try to render all the rows.
@@ -360,7 +477,7 @@ function DataTable() {
            {/*Cut here for table body component*/}
           <tbody 
             style={{
-              height: `${totalSize}px`,
+              height: `${totalVirtualSize}px`,
               //width: "100%",
               position: "relative"
             }}
@@ -404,8 +521,9 @@ function DataTable() {
           {/*End table body component*/}
           {/*Insert table footer here*/}
         </Table>
+        {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
+        {isFetching && <Loader />}
       </div>
-      {showLoader && <Loader />}
     </>
   );
 }
