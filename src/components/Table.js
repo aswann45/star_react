@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import { useLocation } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import { 
   flexRender,
@@ -23,13 +22,9 @@ import useInfiniteQuery from '../hooks/useInfiniteQuery';
 // imported columns for Member Requests
 const columns = MemberRequestsColumns;
 
-
 function DataTable() {
   // URL and API request logic and state
-  //const [searchParams] = useSearchParams();
 
-  const location = useLocation();
-  const search = location.search;
   const url = '/member_requests/';
   const [
     data,
@@ -52,24 +47,8 @@ function DataTable() {
     pageArray,
   ] = useInfiniteQuery(url, 1, '');
 
-  /*useEffect(() => {
-    if (isFetching) {
-      fetchNewQuery();  
-    }
-  }, [isFetching, fetchNewQuery])*/
-
   const api = useApi();
- /* const [data, setData] = useState([]);
-  const [meta, setMeta] = useState();
-  const [firstFetch, setFirstFetch] = useState(true);
-  const [canFetchFirst, setCanFetchFirst] = useState(true);
-  const [isFetchingFirst, setIsFetchingFirst] = useState(false);
-  const [isFetchingNext, setIsFetchingNext] = useState(false);
-  const [nextPage, setNextPage] = useState();
-  const [showLoader, setShowLoader] = useState(true);
-  const [links, setLinks] = useState();*/
-  //const fetchNextAbortController = new AbortController();
-  
+   
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnPinning, setColumnPinning] = useState({});
@@ -88,21 +67,6 @@ function DataTable() {
   const [columnFilters, setColumnFilters] = useState();
   const [globalFilter, setGlobalFilter] = useState('');
 
-
-  /*useEffect(() => {
-    //fetchNextAbortController.abort();
-    setSearchParams({
-      limit: 100,
-      //filters: JSON.stringify(columnFilters ?? []),
-      filters: JSON.stringify(columnFilters ?? []),
-      page: 1,
-    });
-  }, [
-      columnFilters, 
-      setSearchParams, 
-    ]
-  );*/
-
   useEffect(() => {
     setFilters(columnFilters);
   }, [columnFilters, setFilters])
@@ -111,16 +75,6 @@ function DataTable() {
     setLimit(50);
   })
   
-  /*
-  useEffect(() => {
-    fetchNextAbortController.abort();
-    console.log('Resetting fetch states')
-    setIsFetchingNext(false);
-    setCanFetchFirst(true);
-    setNextPage();
-  }, [searchParams])
-  */
-
   // sorting
   const [sorting, setSorting] = useState([]);
 
@@ -132,11 +86,7 @@ function DataTable() {
   // row selection
   const [rowSelection, setRowSelection] = useState({});
   const getRowId = (originalRow, relativeIndex, parent) => {
-    //if (originalRow) {
-      return parent ? [parent.ID, originalRow.ID].join('.') : originalRow.ID;
-    //} else {
-     // return
-   // };
+    return parent ? [parent.ID, originalRow.ID].join('.') : originalRow.ID;
   };
 
   //sub rows
@@ -144,14 +94,13 @@ function DataTable() {
   const getSubRowsFx = (originalRow, index) => {
     return originalRow.children.length > 0 && originalRow.children;
   }
-
+  
+  // flatten the page arrays recieved from the data.pages array
   const flatData = useMemo(
     () => data?.pages?.flatMap(page => page) ?? [],
     [data]
   )
-  //console.log('Data:', data)
-    //console.log('Flat Data:', flatData)
-
+  
   // Table instance
   //
   const tableInstance = useReactTable({ 
@@ -192,11 +141,9 @@ function DataTable() {
      
   // virtualized rows
   //
-  //const totalItemsCount = meta && meta.total_items;
   const tableContainerRef = useRef();
   const { rows } = tableInstance.getRowModel();
   const rowVirtualizer = useVirtualizer({
-    //count: totalItemsCount && totalItemsCount,
     count: totalItems && totalItems,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => rows.length,
@@ -205,7 +152,6 @@ function DataTable() {
 
   const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
-  //console.log('Virtual rows length:', virtualRows.length -1) 
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
   const paddingBottom = 
@@ -222,8 +168,7 @@ function DataTable() {
       //console.log('clientHeight', clientHeight)
       console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
       if (
-        scrollHeight - scrollTop - clientHeight - paddingBottom < 1000 &&
-        //clientHeight - scrollTop < 100 &&
+        scrollHeight - scrollTop - clientHeight - paddingBottom < 800 &&
         !isFetching &&
         hasNextPage &&
         flatData.length > 0
@@ -243,184 +188,14 @@ function DataTable() {
       rowVirtualizer.scrollToOffset(0)
     }
   }, [flatData.length])
-/*
-  useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
 
-    const fetchNewData = async () => {
-      if (firstFetch) {
-        setFirstFetch(false);
-        return true
-      }
-      if (!searchParams.get('filters')) {
-        return
-      };
-      if (searchParams.get('page') > 1) {
-        return
-      }
 
-      console.log('Refetching new set...');      
-      
-      const response = await api.get(
-        url,
-        searchParams,
-        {signal: signal}
-      );
-
-      if (response.ok) {
-        abortController.abort();
-        fetchNextAbortController.abort();
-        setData([]);
-        setLinks();
-        setMeta();
-        setRowSelection({});
-        setNextPage(null);
-      }
-
-      setData(response.ok ? response.body.data : null);
-      setMeta(response.ok ? response.body._meta : null);
-      setLinks(response.ok ? response.body._links : null);
-      setNextPage(response.ok ? (
-        Array.from(
-          Array(response.body._meta.total_pages).keys(), 
-          (n) => n !== 0 ? n + 1 : false 
-        )
-      ) 
-        : null
-      );
-      //setIsFetching(false);
-      setIsFetchingNext(response.ok ? true : null);
-
-      // make the function return false for the await promise
-      return false;
-    };
-
-    if (canFetchFirst) {
-      setIsFetchingFirst(true);
-      (async () => {
-        setShowLoader(true);
-        setCanFetchFirst(false);
-        setIsFetchingNext(false);
-        const fetchNewStatus = await fetchNewData();
-        setShowLoader(fetchNewStatus);
-        setIsFetchingFirst(fetchNewStatus);
-        setCanFetchFirst(fetchNewStatus);
-        fetchNextAbortController.abort();
-        console.log('Refetch again:', fetchNewStatus)
-      })();
-
-    };
-
-    return () => {
-      if (!canFetchFirst) {
-        abortController.abort();
-       // console.log('New page', signal);
-      }
-    };
-
-  }, [api, fetchNextAbortController, firstFetch, url, isFetchingFirst, canFetchFirst, searchParams, setSearchParams, columnFilters]);
-    
-  useEffect(() => {
-    const signal = fetchNextAbortController.signal;
-    let fetchPage;
-
-    const fetchNextData = async () => {
-      //console.log('Last item:', lastItem.index)
-      //console.log('Virtual length:', virtualRows.length)
-      if (!lastItem) {
-        return false
-      } 
-      if (lastItem.index >= virtualRows.length -1 &&
-        nextPage// !== null
-      ) {
-        fetchPage = nextPage.shift();
-        console.log('Fetch page:', fetchPage);
-        if (fetchPage === false) {
-          fetchPage = nextPage.shift();
-        }
-        if (!fetchPage) {
-          console.log('No next page to fetch')
-          fetchNextAbortController.abort();
-          return
-        }
-        if (isFetchingFirst) {
-          console.log('Caught double fetch. Exiting...')
-          fetchNextAbortController.abort();
-          return
-        }
-
-        console.log('Pages:', nextPage)
-        searchParams.set('page', fetchPage);
-        console.log('Retrieving next page...', fetchPage)
-        const response = await api.get(
-          url,
-          searchParams, 
-          {signal: fetchNextAbortController.signal},
-      );
-        if (isFetchingFirst) {
-          console.log('Caught double fetch after request. Exiting...');
-          fetchNextAbortController.abort();
-          return
-        } else {
-        
-          setData(response.ok && isFetchingNext ? prevData => ([...prevData, ...response.body.data]) : null);
-          setMeta(response.ok && isFetchingNext ? response.body._meta : null);
-          setLinks(response.ok && isFetchingNext ? response.body._links : null)
-          //setShowLoader(response.ok && false);
-          if (response.ok) {
-            fetchNextAbortController.abort();
-          }
-          if (response.body._meta.page < response.body._meta.total_pages) {
-            console.log("There's another page")
-            console.log("Total:", response.body._meta.total_pages);
-            return true
-          } else {
-            console.log('There are no more pages')
-            return false
-          }
-        }
-      }
-    };
-    if (!isFetchingFirst && isFetchingNext) {
-      setIsFetchingNext(false);
-      (async () => {
-        setShowLoader(true)
-        const fetchNextStatus = await fetchNextData();
-        setIsFetchingNext(fetchNextStatus);
-        setShowLoader(false)
-        console.log('Fetch next page:', fetchNextStatus)
-      })();
-    };
-    if (isFetchingFirst) {
-      fetchNextAbortController.abort();
-    }
-    return () => {
-      if (isFetchingFirst) {
-      fetchNextAbortController.abort();
-      }
-    }
-  }, [
-    nextPage,
-    fetchNextAbortController,
-    rowVirtualizer.getVirtualItems(),
-    searchParams,
-    isFetchingNext,
-    links,
-    isFetchingFirst,
-    totalItemsCount,
-    api,
-    virtualRows.length,
-  ])
-    */
  
     const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
     const virtualLength = virtualRows.length;
 
-
   return (
     <>
-      {/*<pre>Data: {JSON.stringify(data)}</pre>*/}
       <pre>totalItems: {JSON.stringify(totalItems)}</pre>
       <pre>totalPages: {JSON.stringify(totalPages)}</pre>
       <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
@@ -436,8 +211,10 @@ function DataTable() {
       <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
       <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
       <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
-      <pre>pageArray: {JSON.stringify(pageArray.length)}</pre>
+      <pre>pageArray: {JSON.stringify(pageArray)}</pre>
+      <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
       <pre>flatData: {JSON.stringify(flatData)}</pre>
+      <pre>sorting: {JSON.stringify(sorting)}</pre>
 
       <TableToolBar 
         tableInstance={tableInstance} 
@@ -447,7 +224,11 @@ function DataTable() {
         showColumnTools={showColumnTools}
         rowSelection={rowSelection}
         fetchNewQuery={fetchNewQuery}
-        fetchNextPage={fetchNextPage}
+        isFetching={isFetching}
+        nextPageToFetch={nextPageToFetch}
+        totalItems={totalItems}
+        fetchedItems={flatData.length}
+        refreshData={refreshData}
       />
       <div 
         className='DataTableContainer'
@@ -519,7 +300,20 @@ function DataTable() {
             )}
           </tbody>
           {/*End table body component*/}
-          {/*Insert table footer here*/}
+          {/*Insert table footer here
+          <tfoot>
+            <tr>
+              <td>
+                Items Fetched: {JSON.stringify(flatData.length)}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Total Items: {JSON.stringify(totalItems)}
+              </td>
+            </tr>
+          </tfoot>
+          End footer*/}
         </Table>
         {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
         {isFetching && <Loader />}
