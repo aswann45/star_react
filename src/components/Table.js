@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useApi } from '../contexts/ApiProvider';
+//import { useApi } from '../contexts/ApiProvider';
 import Table from 'react-bootstrap/Table';
 import { 
   flexRender,
@@ -18,13 +18,18 @@ import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
 import useInfiniteQuery from '../hooks/useInfiniteQuery';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 // imported columns for Member Requests
 const columns = MemberRequestsColumns;
 
-function DataTable() {
-  // URL and API request logic and state
 
+
+function DataTable() {
+  // retrieve saved user configuration from local storage
+  const [tableSettings, setTableSettings] = useLocalStorage('member_requests', {})
+
+  // URL and API request logic and state
   const url = '/member_requests/';
   const [
     data,
@@ -47,24 +52,25 @@ function DataTable() {
     pageArray,
   ] = useInfiniteQuery(url, 1, '');
 
-  const api = useApi();
+  //const api = useApi();
    
   // Column visibility, pinning, and order state
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [columnPinning, setColumnPinning] = useState({});
-  const [columnOrder, setColumnOrder] = useState(
+  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility);
+  const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning);
+  const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey ?? column.id)
   );
 
   // column toolbar visibilities
-  const [showFilters, setShowFilters] = useState(true);
-  const [showColumnTools, setShowColumnTools] = useState(true);
+  const [showFilters, setShowFilters] = useState(tableSettings.showFilters);
+  const [showColumnTools, setShowColumnTools] = useState(tableSettings.showColumnTools);
 
-  // column resizing
+  // column resizing -- using state for now in case we want the user to change
+  // how resizing works
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
   
   // column filters
-  const [columnFilters, setColumnFilters] = useState();
+  const [columnFilters, setColumnFilters] = useState(tableSettings.columnFilters);
   const [globalFilter, setGlobalFilter] = useState('');
 
   useEffect(() => {
@@ -76,12 +82,11 @@ function DataTable() {
   })
   
   // sorting
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState(tableSettings.sorting);
 
   useEffect(() => {
     setOrder(sorting);
   }, [sorting, setOrder]);
-
 
   // row selection
   const [rowSelection, setRowSelection] = useState({});
@@ -91,9 +96,9 @@ function DataTable() {
 
   //sub rows
   const [expanded, setExpanded] = useState({});
-  const getSubRowsFx = (originalRow, index) => {
+  /*const getSubRowsFx = (originalRow, index) => {
     return originalRow.children.length > 0 && originalRow.children;
-  }
+  }*/
   
   // flatten the page arrays recieved from the data.pages array
   const flatData = useMemo(
@@ -166,7 +171,7 @@ function DataTable() {
       //console.log('scrollHeight', scrollHeight)
       //console.log('scrollTop', scrollTop)
       //console.log('clientHeight', clientHeight)
-      console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
+      //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
       if (
         scrollHeight - scrollTop - clientHeight - paddingBottom < 800 &&
         !isFetching &&
@@ -190,9 +195,32 @@ function DataTable() {
   }, [flatData.length])
 
 
- 
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-    const virtualLength = virtualRows.length;
+  // save user configuration to local storage
+  useEffect(() => {
+    setTableSettings({
+      columnVisibility: columnVisibility,
+      columnPinning: columnPinning,
+      columnOrder: columnOrder,
+      showFilters: showFilters,
+      showColumnTools: showColumnTools,
+      columnFilters: columnFilters,
+      globalFilter: globalFilter,
+      sorting: sorting,
+    })
+  }, [
+    //setTableSettings,
+    columnVisibility, 
+    columnPinning, 
+    columnOrder, 
+    showFilters, 
+    showColumnTools,
+    columnFilters,
+    globalFilter,
+    sorting,
+  ]);
+
+  //const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+  //const virtualLength = virtualRows.length;
 
   return (
     <>
@@ -208,13 +236,14 @@ function DataTable() {
       <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
       <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
       <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
-      <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
-      <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
+      {/*<pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
+      <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>*/}
       <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
       <pre>pageArray: {JSON.stringify(pageArray)}</pre>
       <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
       <pre>flatData: {JSON.stringify(flatData)}</pre>
       <pre>sorting: {JSON.stringify(sorting)}</pre>
+      <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
 
       <TableToolBar 
         tableInstance={tableInstance} 
