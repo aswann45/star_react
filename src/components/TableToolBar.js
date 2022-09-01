@@ -2,15 +2,31 @@ import Stack from 'react-bootstrap/Stack';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import ColumnVisibilityToggle from './ColumnVisibilityToggle';
+import LoaderSmall from './LoaderSmall';
 import { BsFilterCircle, BsColumns, BsFilterCircleFill, BsArrowsCollapse, BsArrowsExpand } from 'react-icons/bs'
 
-function TableToolBar({ tableInstance, showFilters, setShowFilters, showColumnTools, setShowColumnTools, rowSelection, fetchNewQuery, fetchNextPage }) {
-
+function TableToolBar({ 
+  tableInstance, 
+  showFilters, 
+  setShowFilters, 
+  showColumnTools, 
+  setShowColumnTools, 
+  rowSelection, 
+  fetchNewQuery, 
+  isFetching,
+  nextPageToFetch,
+  totalItems,
+  fetchedItems,
+  refreshData,
+}) {
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}> 
       <Button onClick={() => console.log(rowSelection)}>Log Row Selection</Button>
-      <Button onClick={fetchNewQuery}>Fetch New Query</Button>
-      <Button onClick={fetchNextPage}>Fetch Next Page</Button>
+      {((fetchedItems === 0 && nextPageToFetch === null) || nextPageToFetch === 1) ?
+        <Button onClick={fetchNewQuery}>Fetch New Query</Button>
+        :
+        <Button onClick={refreshData}>Refresh Data</Button>
+      }
       <Dropdown>
         <Dropdown.Toggle 
           title='Toggle Visible Columns'
@@ -41,6 +57,14 @@ function TableToolBar({ tableInstance, showFilters, setShowFilters, showColumnTo
           <BsFilterCircle />
         }
       </Button>
+        {(totalItems && fetchedItems) &&
+        <span>Loaded {fetchedItems} of {totalItems}</span>
+        }
+        {isFetching && 
+          <div className='ms-auto' >
+            <LoaderSmall />
+          </div>
+        }
     </Stack>
   );
 }
