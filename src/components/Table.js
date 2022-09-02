@@ -21,12 +21,12 @@ import useInfiniteQuery from '../hooks/useInfiniteQuery';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 // imported columns for Member Requests
-const columns = MemberRequestsColumns;
 
 
 
 function DataTable() {
   // retrieve saved user configuration from local storage
+  const columns = MemberRequestsColumns();
   const [tableSettings, setTableSettings] = useLocalStorage('member_requests', {})
 
   // URL and API request logic and state
@@ -56,7 +56,7 @@ function DataTable() {
    
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility);
-  const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning);
+  const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
   const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey ?? column.id)
   );
@@ -125,7 +125,7 @@ function DataTable() {
     getRowId,
     getSubRows: row => row.children,
     manualFiltering: true,
-    manualSorting: true,
+    //manualSorting: true,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     onColumnPinningChange: setColumnPinning,
@@ -152,17 +152,29 @@ function DataTable() {
     count: totalItems && totalItems,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => rows.length,
-    overscan: 15,
+    overscan: 10,
+    //enableSmoothScroll: false,
+    paddingEnd: 800,
   });
 
   const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
 
-  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
+  const [paddingTop, setPaddingTop] = useState(0)
+  const [paddingBottom, setPaddingBottom] = useState(0)
+
+  useEffect(() => {
+    setPaddingTop(virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0)
+    setPaddingBottom(virtualRows.length > 0
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
+    : 0)
+  }, [virtualRows, totalVirtualSize])
+  /*const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
   const paddingBottom = 
     virtualRows.length > 0
     ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
     : 0
+  */
 
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement) => {
@@ -173,7 +185,7 @@ function DataTable() {
       //console.log('clientHeight', clientHeight)
       //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
       if (
-        scrollHeight - scrollTop - clientHeight - paddingBottom < 800 &&
+        scrollHeight - scrollTop - clientHeight - paddingBottom < 400 &&
         !isFetching &&
         hasNextPage &&
         flatData.length > 0
@@ -224,6 +236,7 @@ function DataTable() {
 
   return (
     <>
+      {/*
       <pre>totalItems: {JSON.stringify(totalItems)}</pre>
       <pre>totalPages: {JSON.stringify(totalPages)}</pre>
       <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
@@ -233,17 +246,18 @@ function DataTable() {
       <pre>isFetching: {JSON.stringify(isFetching)}</pre>
       <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
       <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
-      <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
+      <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
       <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
       <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
       {/*<pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
-      <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>*/}
+      <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
       <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
       <pre>pageArray: {JSON.stringify(pageArray)}</pre>
       <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
       <pre>flatData: {JSON.stringify(flatData)}</pre>
       <pre>sorting: {JSON.stringify(sorting)}</pre>
       <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
+      <pre>columnFilters: {JSON.stringify(columnFilters)}</pre>*/}
 
       <TableToolBar 
         tableInstance={tableInstance} 
@@ -264,10 +278,11 @@ function DataTable() {
         onScroll={e => fetchMoreOnBottomReached(e.target)}
         ref={tableContainerRef} 
         style={{
-          height: `calc(100vh - 225px)`, // You need to have a parent height or it will try to render all the rows.
+          height: `calc(100vh - 160px)`, // You need to have a parent height or it will try to render all the rows.
           width: "100%",
           overflow: "scroll",
-          margin: '5px'
+          margin: '5px',
+          scrollbarWidth: 'auto',
         }}>
         <Table 
           size='sm' 
@@ -329,24 +344,11 @@ function DataTable() {
             )}
           </tbody>
           {/*End table body component*/}
-          {/*Insert table footer here
-          <tfoot>
-            <tr>
-              <td>
-                Items Fetched: {JSON.stringify(flatData.length)}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Total Items: {JSON.stringify(totalItems)}
-              </td>
-            </tr>
-          </tfoot>
-          End footer*/}
         </Table>
+
+      </div>
         {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
         {isFetching && <Loader />}
-      </div>
     </>
   );
 }

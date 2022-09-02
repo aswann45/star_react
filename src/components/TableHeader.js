@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ColumnDragHandle from './ColumnDragHandle';
 import PinColumnToggleButton from './PinColumnToggleButton';
 import { useDrag, useDrop } from 'react-dnd';
@@ -7,6 +7,9 @@ import Stack from 'react-bootstrap/Stack';
 import DebouncedInput from './DebouncedInput';
 import ColumnSortToggleButton from './ColumnSortToggleButton';
 import { BsFilterCircleFill } from 'react-icons/bs';
+
+import Form from 'react-bootstrap/Form';
+import useInputChange from '../useInputChange';
 
 function TableHeader({ tableInstance, showFilters, showColumnTools }) {
   return (
@@ -92,8 +95,11 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
-          {header.column.getIsFiltered() && 
-            <>
+          {(
+            header.column.getIsFiltered() && 
+            header.column.getFilterValue().some((item) => item.trim().length > 0)
+          ) &&
+          <>
              &nbsp;<BsFilterCircleFill />
             </>
           }
@@ -129,28 +135,104 @@ function Filter ({ column, table }) {
     .flatRows[0]?.getValue(column.id);
 
   const columnFilterValue = column.getFilterValue();
+  /*
   const sortedUniqueValues = useMemo(
     () =>
       typeof firstValue === 'number'
         ? []
         : Array.from(column.getFacetedUniqueValues().keys()).sort(),
     [column.getFacetedUniqueValues()]
+  )*/
+
+  const filterValues = useMemo(
+    () =>
+      typeof firstValue === 'number'
+      ? []
+      : column.columnDef.filterValues
+      ? Array.from(column.columnDef.filterValues).sort()
+      //: [],
+      : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+      [column.getFacetedUniqueValues(), column.filterValues]
   )
 
-  return (
+  const [input, handleInputChange] = useInputChange();
+  const [selectValues, setSelectValues] = useState();
+
+  //console.log(column)
+
+  return column.columnDef.filterVariant === 'number' ? (
     <>
-      <datalist id={column.id + 'list'}>
+      <Stack direction={'horizontal'}>
+        <DebouncedInput
+          type='number'
+          size='sm'
+          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
+          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
+          initialValue={(columnFilterValue)?.[0] || ''}
+          //value={(columnFilterValue)?.[0] || ''}
+          onChange={value => 
+              column.setFilterValue((old) => [value, old?.[1]])
+          }
+          placeholder={`Min ${
+            column.getFacetedMinMaxValues()?.[0]
+              ? `(${column.getFacetedMinMaxValues()?.[0]})`
+              : ''
+          }`}
+        />
+        <DebouncedInput
+          type='number'
+          size='sm'
+          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
+          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
+          initialValue={(columnFilterValue)?.[1] || ''} 
+          //value={(columnFilterValue)?.[1] || ''}
+          onChange={value => 
+              column.setFilterValue((old) => [old?.[0], value])
+          }
+          placeholder={`Max ${
+            column.getFacetedMinMaxValues()?.[1]
+              ? `(${column.getFacetedMinMaxValues()?.[1]})`
+              : ''
+          }`}
+        />
+
+      </Stack>
+      </>
+
+      ) : (
+        <>
+      {/*<datalist id={column.id + 'list'}>
         {sortedUniqueValues.slice(0, 5000).map((value) => (
           <option value={value} key={value} />
         ))}
-      </datalist>
-      <DebouncedInput 
-        type="text"
-        initialValue={(columnFilterValue ?? '')}
-        onChange={value => column.setFilterValue(value)}
-        placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-        list={column.id + 'list'}
-      />
+      </datalist>*/}
+      {column.columnDef.filterVariant === 'text'
+        ? <>
+            <DebouncedInput 
+              type="text"
+              size='sm'
+              initialValue={(columnFilterValue ?? '')}
+              onChange={value => column.setFilterValue(value)}
+              placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
+              list={column.id + 'list'}
+            />
+          </>
+        : column.columnDef.filterVariant === 'multi-select'
+          ? <DebouncedInput 
+              type="select"
+              as='select'
+              multiple
+              htmlSize={2} 
+              size='sm'
+              initialValue={(columnFilterValue ?? null)}
+              onChange={value => column.setFilterValue(value)}
+            >
+              {filterValues.map((value) => (
+                <option title={value} value={value} key={value}>{value}</option>
+              ))}
+          </DebouncedInput>
+          : null
+      }
     </>
   );
 }
