@@ -30,7 +30,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
   useEffect(() => {
     setSearchParams({
       limit: limit ?? 25,
-      page: !isFetchingNewQuery ? nextPageToFetch : 1,
+      page: !isFetchingNewQuery ? nextPageToFetch ?? 1 : 1,
       filters: JSON.stringify(filters ?? []),
       order: JSON.stringify(order ?? []),
       ...options.searchParams ?? null,
@@ -127,6 +127,9 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
   }, [totalPages])
 
   const fetchPage = async () => {
+    if (searchParams.get('page') === null) {
+      return
+    }
     console.log('trying to fetch a page')
     setIsFetching(true);
     const pageAlreadyFetched = value => data.pageParams.some(
