@@ -52,7 +52,10 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     setTotalPages(null);
     //console.log('resetting...')
     setData({pages: [], pageParams: []});
-  }, [filters, order])
+  }, [
+    //filters, 
+    order
+  ])
   
 // set Has Next Page bool
   useEffect(() => {
@@ -126,8 +129,9 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     );
   }, [totalPages])
   
-  const updateData = (row, columnID, value) => {
-    //console.log('updating data')
+  const updateData = async (row, columnID, value) => {
+    
+    await new Promise(r => setTimeout(r, 500));
 
     const newPagesArray = (prevData) => prevData?.pages?.map(page => {
       page.map(obj => {
@@ -154,17 +158,22 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       pages: newPagesArray(prevData),
       pageParams: [...prevData.pageParams]
     }));
-
+    // check the edited column; run background update if sorted by column
+    if (order.map(o => o.id === columnID)) {
+      setIsFetchingPreviousPage(true);
+    }
+    
   };
 
   const fetchPage = async () => {
     if (searchParams.get('page') === null) {
       return
-    }
-    //console.log('trying to fetch a page')
+    }    
     setIsFetching(true);
+    
     const pageAlreadyFetched = value => data.pageParams.some(
       param => param.page === value)
+    
     if (pageAlreadyFetched(Number(searchParams.get('page')))) {
       setIsFetching(false);
       return 
@@ -177,46 +186,25 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       return array.some((arrayVal) => item.ID === arrayVal.ID);
     }
 
-
     const updateCheckedPages = (prevData, newPage) => {
       const updatedPages = prevData?.pages?.map(page => {
-      //page.filter(object1 => {
-        //console.log(!checkArrayHasItem(newPage, object1));
-        //console.log(object1)
         page.filter((obj) => !checkArrayHasItem(newPage, obj));
         console.log(page.filter((obj) => !checkArrayHasItem(newPage, obj)));
-      //})
-      //page.filter(object1 => {
-        //return newPage.some(object2 => {
-        //return !checkArrayHasItem(newPage, object1)
-        //return newPage.some(object2 => object2.ID === object1.ID);
-          //return object1.ID === object2.ID
-        //});
-      //});
-      //matches?.map(match => {
-        //const idx = page.findIndex(item => item.ID === match.ID);
-        //page.splice(page.indexOf(match), 1);
-        //return match;
-      //});
-
       return page;
       });
 
       return [...updatedPages, newPage]
     };
     
-
     const response = await api.get(
       baseURL,
       searchParams,
       {signal: abortController.signal}
     );
-    //console.log('fetching some page...')
+    
     if (response.ok) {
-      //console.log(response)
       setData(prevData => ({
-        //pages: [...updateCheckedPages(prevData, response.body.data), response.body.data],
-        pages: [...updateCheckedPages(prevData, response.body.data)],
+        pages: [...prevData.pages, response.body.data],
         pageParams: [...prevData.pageParams, {
           limit: response.body._meta.limit,
           page: response.body._meta.page,
@@ -246,13 +234,11 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       return
     }
     if (hasNextPage) {
-      //console.log('fetching next page...')
       setIsFetchingNextPage(true);
     }
   };
 
   const fetchNewQuery = () => {
-    //console.log('running fetchNewQuery...')
     if (isFetching) {
       abortController.abort();
       console.log('Aborted!')
@@ -261,45 +247,39 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     if (nextPageToFetch !== null && nextPageToFetch !== 1) {
       return
     } else {
+      setData({pages: [], pageParams: []});
       setIsFetchingNewQuery(true);
     }
   };
-
+    
+    
   const refreshData = () => {
-    //console.log('Called refresh data')
     setData(prevData => ({
       pages: [],
       pageParams: [...prevData.pageParams],
     }));
-    //setLastPage(null);
-    //setTotalPages(null);
     setTotalItems(null);
-        //console.log('pageParams:', data.pageParams)
+
     for (const param of data.pageParams) {
       async function refresh(param) {
         setIsFetching(true);
         setIsFetchingPreviousPage(true);
-        //console.log('Refresh Params:', param)
         const response = await api.get(
           baseURL,
           param,
           {signal: abortController.signal},
         );
         if (response.ok) {
-          //console.log('Refresh response:', response)
           setData(prevData => ({
             pages: [...prevData.pages, response.body.data],
             pageParams: [...prevData.pageParams],
           }));
-          //setLastPage(response.body._meta.page);
           setTotalItems(response.body._meta.total_items);
           if (response.body._meta.total_pages !== totalPages) {
             setTotalPages(response.body._meta.total_pages);
           };
 
-          //console.log('Index check:', pageArray.indexOf(response.body._meta.page))
           if (pageArray.indexOf(response.body._meta.page) > -1) {
-            //console.log('Removing page:', response.body._meta.page)
             pageArray.splice(pageArray.indexOf(response.body._meta.page), 1);
           }
           setLastPage(lastPage)
@@ -312,6 +292,64 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       refresh(param);
     }
   }
+  
+  const splicePrevData = (prevData, newPage) => {
+    const newArray = prevData;
+    const removed = prevData?.pages?.splice(Number(newPage.body._meta.page - 1), 1, newPage.body.data);    
+    return prevData.pages;
+  }
+
+  const backgroundRefreshData = () => {
+    // refreshes data by the page; loops through page params and makes get calls
+    console.log('Background refresh')
+    if (isFetching) {
+      return
+    }
+    setIsFetching(true);
+    setIsFetchingPreviousPage(true);
+    
+    for (const param of data.pageParams) {
+      async function refresh(param) {
+        setIsFetching(true);
+        setIsFetchingPreviousPage(true);
+
+        await new Promise(r => setTimeout(r, 500));
+        const response = await api.get(
+          baseURL,
+          param,
+          {signal: abortController.signal},
+        );
+        if (response.ok) {
+          const newPageIdx = response.body._meta?.page - 1;
+          setData(prevData => ({
+            pages: splicePrevData(prevData, response),
+            pageParams: [...prevData.pageParams],
+          }));
+        }
+        return true
+      }
+      refresh(param); 
+    }
+  }
+  
+  useEffect(() => {
+    if (!isFetchingPreviousPage) {
+      return
+    //} else if (isFetching) {
+      //null
+    } else {
+      setIsFetching(true);
+      const timeout = setTimeout(() => {   
+        backgroundRefreshData();
+        setIsFetchingPreviousPage(false);
+        setIsFetching(false);
+      }, 2000);
+      return () => {
+        clearTimeout();
+        
+      }
+    }
+  }, [isFetchingPreviousPage])
 
   return [
     data, 
@@ -333,6 +371,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     nextPageToFetch,
     pageArray,
     updateData,
+    backgroundRefreshData,
   ];
 };
 

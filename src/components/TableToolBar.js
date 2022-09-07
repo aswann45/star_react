@@ -17,16 +17,14 @@ function TableToolBar({
   nextPageToFetch,
   totalItems,
   fetchedItems,
-  refreshData,
+  backgroundRefreshData,
 }) {
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}> 
+      
       <Button onClick={() => console.log(rowSelection)}>Log Row Selection</Button>
-      {((fetchedItems === 0 && nextPageToFetch === null) || nextPageToFetch === 1) ?
-        <Button onClick={fetchNewQuery}>Fetch New Query</Button>
-        :
-        <Button onClick={refreshData}>Refresh Data</Button>
-      }
+      <Button onClick={fetchNewQuery}>Fetch New Query</Button>
+
       <Dropdown>
         <Dropdown.Toggle 
           title='Toggle Visible Columns'

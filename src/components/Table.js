@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
 //import { useApi } from '../contexts/ApiProvider';
 import Table from 'react-bootstrap/Table';
 import { 
@@ -51,12 +51,13 @@ function DataTable() {
     nextPageToFetch,
     pageArray,
     updateData,
+    backgroundRefreshData,
   ] = useInfiniteQuery(url, 1, '');
 
   //const api = useApi();
    
   // Column visibility, pinning, and order state
-  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility);
+  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
   const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
   const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey ?? column.id)
@@ -71,15 +72,15 @@ function DataTable() {
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
   
   // column filters
-  const [columnFilters, setColumnFilters] = useState(tableSettings.columnFilters);
+  const [columnFilters, setColumnFilters] = useState(tableSettings.columnFilters ?? {});
   const [globalFilter, setGlobalFilter] = useState('');
-
+  
   useEffect(() => {
     setFilters(columnFilters);
   }, [columnFilters, setFilters])
 
   useEffect(() => {
-    setLimit(50);
+    setLimit(100);
   })
   
   // sorting
@@ -131,7 +132,7 @@ function DataTable() {
     getRowId,
     getSubRows: row => row.children,
     manualFiltering: true,
-    //manualSorting: true,
+    manualSorting: true,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     onColumnPinningChange: setColumnPinning,
@@ -191,7 +192,7 @@ function DataTable() {
       //console.log('clientHeight', clientHeight)
       //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
       if (
-        scrollHeight - scrollTop - clientHeight - paddingBottom < 400 &&
+        scrollHeight - scrollTop - clientHeight - paddingBottom < 600 &&
         !isFetching &&
         hasNextPage &&
         flatData.length > 0
@@ -244,6 +245,12 @@ function DataTable() {
     <>
       {/*
       <pre>totalItems: {JSON.stringify(totalItems)}</pre>
+      
+      //<pre>columnVisibility: {JSON.stringify(columnVisibility, null, 2)}</pre>
+      //<pre>columnFilters: {JSON.stringify(columnFilters, null, 2)}</pre>
+      
+      <pre>sorting: {JSON.stringify(sorting, null, 2)}</pre>
+      
       <pre>totalPages: {JSON.stringify(totalPages)}</pre>
       <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
       <pre>lastPage: {JSON.stringify(lastPage)}</pre>
@@ -255,15 +262,15 @@ function DataTable() {
       <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
       <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
       <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
-      {/*<pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
+      <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
       <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
       <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
       <pre>pageArray: {JSON.stringify(pageArray)}</pre>
-      <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>*/}
-      {/*
+      <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
+      
       <pre>sorting: {JSON.stringify(sorting)}</pre>
       <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
-      <pre>columnFilters: {JSON.stringify(columnFilters)}</pre>*/}
+      */}
 
       <TableToolBar 
         tableInstance={tableInstance} 
@@ -277,7 +284,7 @@ function DataTable() {
         nextPageToFetch={nextPageToFetch}
         totalItems={totalItems}
         fetchedItems={flatData.length}
-        refreshData={refreshData}
+        backgroundRefreshData={backgroundRefreshData}
       />
       <div 
         className='DataTableContainer'
