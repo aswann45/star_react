@@ -57,6 +57,9 @@ function TableToolBar({
           <BsFilterCircle />
         }
       </Button>
+      <Button onClick={() => tableInstance.resetColumnFilters(true)}>
+        Clear All Filters
+      </Button>
         {(totalItems && fetchedItems) &&
         <span>Loaded {fetchedItems} of {totalItems}</span>
         }

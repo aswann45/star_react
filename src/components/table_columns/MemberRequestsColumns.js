@@ -6,7 +6,7 @@ import useMemberFilterOptions from '../../hooks/useMemberFilterOptions';
 import useAgencyFilterOptions from '../../hooks/useAgencyFilterOptions';
 import useAccountFilterOptions from '../../hooks/useAccountFilterOptions';
 import useProgramFilterOptions from '../../hooks/useProgramFilterOptions';
-
+import EditableTableCell from '../EditableTableCell';
 
 function MemberRequestsColumns() {
   const columnHelper = createColumnHelper();
@@ -53,7 +53,8 @@ function MemberRequestsColumns() {
     }),
 
     columnHelper.accessor('RequestTitle', {
-      cell: info => info.getValue(),
+      //cell: info => info.getValue(),
+      cell: props => EditableTableCell(props),
       header: 'Request Title',
       filterVariant: 'text',
     }),
@@ -65,7 +66,7 @@ function MemberRequestsColumns() {
         'Ag', 
         'CJS',
         'Defense',
-        'Energy & Water',
+        'Energy and Water',
         'FSGG',
         'Homeland',
         'Interior',

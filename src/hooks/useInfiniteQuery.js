@@ -50,7 +50,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     setNextPageToFetch(1);
     setLastPage(null);
     setTotalPages(null);
-    console.log('resetting...')
+    //console.log('resetting...')
     setData({pages: [], pageParams: []});
   }, [filters, order])
   
@@ -77,7 +77,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
 
   // set Next Page to Fetch
   useEffect(() => {
-    console.log('Setting fetch page...')
+    //console.log('Setting fetch page...')
     let fetchPage;
     if (hasNextPage) {
       fetchPage = pageArray.shift();
@@ -87,7 +87,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     } else {
       fetchPage = null;
     };
-    console.log('Fetch page:', fetchPage);
+    //console.log('Fetch page:', fetchPage);
     setNextPageToFetch(fetchPage);
   }, [hasNextPage, pageArray, lastPage])
   
@@ -125,12 +125,43 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       )
     );
   }, [totalPages])
+  
+  const updateData = (row, columnID, value) => {
+    //console.log('updating data')
+
+    const newPagesArray = (prevData) => prevData?.pages?.map(page => {
+      page.map(obj => {
+        if (obj.ID === row.id) {
+          obj[columnID] = value;
+          (async () => {
+            const objURL = `${baseURL}/${obj.ID}`
+            const response = await api.put(objURL, '', {
+              body: {
+                [columnID]: value,
+              }
+            })
+            if (!response.ok) {
+              console.log('There is a problem!!!', response)
+            };
+          })()
+        };
+        return obj;
+      });
+      return page;
+    });
+
+    setData(prevData => ({
+      pages: newPagesArray(prevData),
+      pageParams: [...prevData.pageParams]
+    }));
+
+  };
 
   const fetchPage = async () => {
     if (searchParams.get('page') === null) {
       return
     }
-    console.log('trying to fetch a page')
+    //console.log('trying to fetch a page')
     setIsFetching(true);
     const pageAlreadyFetched = value => data.pageParams.some(
       param => param.page === value)
@@ -142,16 +173,50 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       return 
     }
 
+    const checkArrayHasItem = (array, item) => {
+      return array.some((arrayVal) => item.ID === arrayVal.ID);
+    }
+
+
+    const updateCheckedPages = (prevData, newPage) => {
+      const updatedPages = prevData?.pages?.map(page => {
+      //page.filter(object1 => {
+        //console.log(!checkArrayHasItem(newPage, object1));
+        //console.log(object1)
+        page.filter((obj) => !checkArrayHasItem(newPage, obj));
+        console.log(page.filter((obj) => !checkArrayHasItem(newPage, obj)));
+      //})
+      //page.filter(object1 => {
+        //return newPage.some(object2 => {
+        //return !checkArrayHasItem(newPage, object1)
+        //return newPage.some(object2 => object2.ID === object1.ID);
+          //return object1.ID === object2.ID
+        //});
+      //});
+      //matches?.map(match => {
+        //const idx = page.findIndex(item => item.ID === match.ID);
+        //page.splice(page.indexOf(match), 1);
+        //return match;
+      //});
+
+      return page;
+      });
+
+      return [...updatedPages, newPage]
+    };
+    
+
     const response = await api.get(
       baseURL,
       searchParams,
       {signal: abortController.signal}
     );
-    console.log('fetching some page...')
+    //console.log('fetching some page...')
     if (response.ok) {
       //console.log(response)
       setData(prevData => ({
-        pages: [...prevData.pages, response.body.data],
+        //pages: [...updateCheckedPages(prevData, response.body.data), response.body.data],
+        pages: [...updateCheckedPages(prevData, response.body.data)],
         pageParams: [...prevData.pageParams, {
           limit: response.body._meta.limit,
           page: response.body._meta.page,
@@ -166,7 +231,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       setTotalItems(response.body._meta.total_items);
       setIsFetching(false);
     } else {
-      console.log(response)
+      console.log('Things are not ok!!!', response)
       setError(response.body.error);
       setIsFetching(false);
     }
@@ -181,13 +246,13 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       return
     }
     if (hasNextPage) {
-      console.log('fetching next page...')
+      //console.log('fetching next page...')
       setIsFetchingNextPage(true);
     }
   };
 
   const fetchNewQuery = () => {
-    console.log('running fetchNewQuery...')
+    //console.log('running fetchNewQuery...')
     if (isFetching) {
       abortController.abort();
       console.log('Aborted!')
@@ -201,7 +266,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
   };
 
   const refreshData = () => {
-    console.log('Called refresh data')
+    //console.log('Called refresh data')
     setData(prevData => ({
       pages: [],
       pageParams: [...prevData.pageParams],
@@ -209,19 +274,19 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     //setLastPage(null);
     //setTotalPages(null);
     setTotalItems(null);
-        console.log('pageParams:', data.pageParams)
+        //console.log('pageParams:', data.pageParams)
     for (const param of data.pageParams) {
       async function refresh(param) {
         setIsFetching(true);
         setIsFetchingPreviousPage(true);
-        console.log('Refresh Params:', param)
+        //console.log('Refresh Params:', param)
         const response = await api.get(
           baseURL,
           param,
           {signal: abortController.signal},
         );
         if (response.ok) {
-          console.log('Refresh response:', response)
+          //console.log('Refresh response:', response)
           setData(prevData => ({
             pages: [...prevData.pages, response.body.data],
             pageParams: [...prevData.pageParams],
@@ -232,9 +297,9 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
             setTotalPages(response.body._meta.total_pages);
           };
 
-          console.log('Index check:', pageArray.indexOf(response.body._meta.page))
+          //console.log('Index check:', pageArray.indexOf(response.body._meta.page))
           if (pageArray.indexOf(response.body._meta.page) > -1) {
-            console.log('Removing page:', response.body._meta.page)
+            //console.log('Removing page:', response.body._meta.page)
             pageArray.splice(pageArray.indexOf(response.body._meta.page), 1);
           }
           setLastPage(lastPage)
@@ -267,6 +332,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     lastPage,
     nextPageToFetch,
     pageArray,
+    updateData,
   ];
 };
 

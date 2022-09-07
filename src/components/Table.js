@@ -50,6 +50,7 @@ function DataTable() {
     lastPage,
     nextPageToFetch,
     pageArray,
+    updateData,
   ] = useInfiniteQuery(url, 1, '');
 
   //const api = useApi();
@@ -105,7 +106,9 @@ function DataTable() {
     () => data?.pages?.flatMap(page => page) ?? [],
     [data]
   )
-  
+
+  // editable data
+    
   // Table instance
   //
   const tableInstance = useReactTable({ 
@@ -121,6 +124,9 @@ function DataTable() {
       sorting,
       rowSelection,
       expanded,
+    },
+    meta: {
+      updateData: updateData,
     },
     getRowId,
     getSubRows: row => row.children,
@@ -152,7 +158,7 @@ function DataTable() {
     count: totalItems && totalItems,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => rows.length,
-    overscan: 10,
+    overscan: 15,
     //enableSmoothScroll: false,
     paddingEnd: 800,
   });
@@ -253,8 +259,8 @@ function DataTable() {
       <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
       <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
       <pre>pageArray: {JSON.stringify(pageArray)}</pre>
-      <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
-      <pre>flatData: {JSON.stringify(flatData)}</pre>
+      <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>*/}
+      {/*
       <pre>sorting: {JSON.stringify(sorting)}</pre>
       <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
       <pre>columnFilters: {JSON.stringify(columnFilters)}</pre>*/}
@@ -349,6 +355,7 @@ function DataTable() {
       </div>
         {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
         {isFetching && <Loader />}
+      <pre>Data: {JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }

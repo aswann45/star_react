@@ -6,7 +6,7 @@ function LoaderSmall({ obj } ){
   return(
     <>
       {obj === undefined ?
-        <Container className="Loader">
+        <Container className="LoaderSmall">
           <Spinner animation="border" />
         </Container>
         :
