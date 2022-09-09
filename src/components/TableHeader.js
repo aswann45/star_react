@@ -97,6 +97,7 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
             : flexRender(header.column.columnDef.header, header.getContext())}
           {(
             header.column.getIsFiltered() && 
+            // TODO: check this -- problem with typing in text box
             header.column.getFilterValue().some((item) => item.trim().length > 0)
           ) &&
           <>
@@ -150,15 +151,12 @@ function Filter ({ column, table }) {
       ? []
       : column.columnDef.filterValues
       ? Array.from(column.columnDef.filterValues).sort()
-      //: [],
       : Array.from(column.getFacetedUniqueValues().keys()).sort(),
       [column.getFacetedUniqueValues(), column.filterValues]
   )
 
   const [input, handleInputChange] = useInputChange();
   const [selectValues, setSelectValues] = useState();
-
-  //console.log(column)
 
   return column.columnDef.filterVariant === 'number' ? (
     <>
@@ -214,7 +212,7 @@ function Filter ({ column, table }) {
               initialValue={(columnFilterValue ?? '')}
               onChange={value => column.setFilterValue(value)}
               placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-              list={column.id + 'list'}
+              //list={column.id + 'list'}
             />
           </>
         : column.columnDef.filterVariant === 'multi-select'
