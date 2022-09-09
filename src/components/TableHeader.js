@@ -89,25 +89,34 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
           width: header.getSize(),
         }}
       >
-        <span 
-          ref={previewRef}
-        >
-          {header.isPlaceholder
-            ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
-          {(
-            header.column.getIsFiltered() && 
+        
+        
+        <Stack direction='horizontal' gap={1}>
+          
+          <ColumnDragHandle dragRef={dragRef} header={header} />
+          
+            {header.isPlaceholder ? 
+              null : 
+              <span ref={previewRef}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </span>
+            }
+          
+          {(header.column.getIsFiltered() && 
             // TODO: check this -- problem with typing in text box
             header.column.getFilterValue().some((item) => item.trim().length > 0)
-          ) &&
-          <>
-             &nbsp;<BsFilterCircleFill />
-            </>
+            ) &&
+            // show filter circle if filtered
+            <span>
+             <BsFilterCircleFill style={{display: 'block'}}/>
+            </span>
           }
-        </span>
+        </Stack>
+
+
         {showColumnTools &&
           <Stack direction="horizontal" gap={2} className='ColumnTools'>
-            <ColumnDragHandle dragRef={dragRef} header={header} />
+
             <PinColumnToggleButton header={header} />
             <ColumnSortToggleButton header={header} />
           </Stack>
