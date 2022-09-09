@@ -1,3 +1,4 @@
+//import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import RowSelectCheckbox from '../RowSelectCheckbox';
 import RowExpandButton from '../RowExpandButton';
@@ -27,24 +28,25 @@ function MemberRequestsColumns() {
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
       filterVariant: 'number',
-      cell: ({ row, getValue }) => (
+      cell: (props) => (
         <Stack
           direction='horizontal'
           style={{
-            paddingLeft: `${row.depth * 2}rem`,
+            paddingLeft: `${props.row.depth * 2}rem`,
             paddingRight: '5px',
           }}
           gap={2}
         >
           <RowSelectCheckbox 
-            checked={row.getIsSelected()}
-            indeterminate={row.getIsSomeSelected()}
-            onChange={row.getToggleSelectedHandler()}
+            checked={props.row.getIsSelected()}
+            indeterminate={props.row.getIsSomeSelected()}
+            onChange={props.row.getToggleSelectedHandler()}
           />
-          {getValue()}
-          {row.getCanExpand() ?
+          {props.getValue()}
+          
+          {props.row?.original?._links?.child_requests ?
             <span className={'ms-auto'}>
-              <RowExpandButton row={row} /> 
+              <RowExpandButton row={props.row} table={props.table} /> 
             </span> :
               null
             }
@@ -102,19 +104,31 @@ function MemberRequestsColumns() {
       filterValues: ['D', 'R', 'I']
     }),
     columnHelper.accessor('ProjectPriority', {
-      cell: info => info.getValue(),
+      cell: props => EditableTableCell(props),
       header: 'CPF Priority',
       filterVariant: 'number',
+      inputType: 'multi-select',
+      inputValues: Array.from(
+        {length: 15}, (_, i) => i + 1
+      ),
     }),
     columnHelper.accessor('Top10Ranking', {
-      cell: info => info.getValue(),
+      cell: props => EditableTableCell(props),
       header: 'Top 10 Ranking',
       filterVariant: 'number',
+      inputType: 'multi-select',
+      inputValues: Array.from(
+        {length: 10}, (_, i) => i + 1
+      ),
     }),
     columnHelper.accessor('PriorityRanking', {
-      cell: info => info.getValue(),
+      cell: props => EditableTableCell(props),
       header: 'Sub Priority',
       filterVariant: 'number',
+      inputType: 'multi-select',
+      inputValues: Array.from(
+        {length: 70}, (_, i) => i + 1
+      ),
     }),
     columnHelper.accessor('Agency', {
       cell: info => info.getValue(),
@@ -145,6 +159,12 @@ function MemberRequestsColumns() {
           programFilterOptions.map(program => program.Program)
         )
       ),
+    }),
+    columnHelper.accessor('RequestDescription', {
+      cell: props => EditableTableCell(props),
+      header: 'Description',
+      filterVariant: 'text',
+      inputType: 'textarea',
     }),
   ];
 
