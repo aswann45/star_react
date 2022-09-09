@@ -92,16 +92,14 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
         
         
         <Stack direction='horizontal' gap={1}>
-          
           <ColumnDragHandle dragRef={dragRef} header={header} />
-          
-            {header.isPlaceholder ? 
-              null : 
-              <span ref={previewRef}>
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </span>
-            }
-          
+          <PinColumnToggleButton header={header} />
+          {header.isPlaceholder ? 
+            null : 
+            <span ref={previewRef}>
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </span>
+          }
           {(header.column.getIsFiltered() && 
             // TODO: check this -- problem with typing in text box
             header.column.getFilterValue().some((item) => item.trim().length > 0)
@@ -111,14 +109,15 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
              <BsFilterCircleFill style={{display: 'block'}}/>
             </span>
           }
+          <ColumnSortToggleButton header={header}/>
         </Stack>
 
 
         {showColumnTools &&
           <Stack direction="horizontal" gap={2} className='ColumnTools'>
 
-            <PinColumnToggleButton header={header} />
-            <ColumnSortToggleButton header={header} />
+            
+            
           </Stack>
         }
         {header.column.getCanFilter() && showFilters ? (

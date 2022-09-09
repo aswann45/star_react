@@ -7,22 +7,22 @@ function PinColumnToggleButton ({ header }) {
       {!header.isPlaceholder && header.column.getCanPin() && (
         <>
           {header.column.getIsPinned() !== 'left' ? (
-            <Button 
+            <span 
               variant={'light'} 
               size={'sm'} 
               onClick={() => {header.column.pin('left')}}
             >
-              <BsPinAngle />
-            </Button>
+              <BsPinAngle style={{display: 'block'}}/>
+            </span>
       ) : null}
           {header.column.getIsPinned() ? (
-            <Button 
+            <span 
               variant={'secondary'} 
               size={'sm'} 
               onClick={() => {header.column.pin(false)}}
             >
-              <BsPinFill />
-            </Button>
+              <BsPinFill style={{display: 'block'}}/>
+            </span>
           ) : null}
         </>
       )}
