@@ -313,6 +313,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
       return
     } else {
       setData({pages: [], pageParams: []});
+      setLastPage();
       setNextPageToFetch(1);
       setIsFetchingNewQuery(true);
     }
