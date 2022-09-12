@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { useApi } from '../contexts/ApiProvider';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Table from 'react-bootstrap/Table';
 import { 
   flexRender,
@@ -18,86 +16,96 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
-
-// imported columns for Member Requests
-const columns = MemberRequestsColumns;
+import useInfiniteQuery from '../hooks/useInfiniteQuery';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 function DataTable() {
-  // URL and API request logic and state
-  const [searchParams, setSearchParams] = useSearchParams();
+  // member request columns 
+  // TODO: make the columns something to feed into the component
+  const columns = MemberRequestsColumns();
+  // retrieve saved user configuration from local storage
+  const [tableSettings, setTableSettings] = useLocalStorage('member_requests', {})
 
-  const api = useApi();
-  const [data, setData] = useState([]);
-  const [meta, setMeta] = useState();
-  const [firstFetch, setFirstFetch] = useState(true);
-  const [canFetchFirst, setCanFetchFirst] = useState(true);
-  const [isFetchingFirst, setIsFetchingFirst] = useState(false);
-  const [isFetchingNext, setIsFetchingNext] = useState(false);
-  const [nextPage, setNextPage] = useState();
-  const [showLoader, setShowLoader] = useState(true);
-  const [links, setLinks] = useState();
+  // URL and API request logic and state
   const url = '/member_requests/';
-  const fetchNextAbortController = new AbortController();
+  const [
+    data,
+    //error,
+    //totalPages, 
+    setLimit, 
+    setFilters, 
+    setOrder,
+    totalItems, 
+    setTotalItems,
+    //isFetchingNextPage,
+    //isFetchingPreviousPage,
+    isFetching,
+    fetchNextPage,
+    fetchNewQuery,
+    refreshData,
+    hasNextPage,
+    //isFirstPage,
+    //lastPage,
+    nextPageToFetch,
+    //pageArray,
+    updateData,
+    //backgroundRefreshData,
+    //setIsFetchingPreviousPage,
+    fetchChildRecords,
+    rowIsLoading,
+  ] = useInfiniteQuery(url, 1, '');
+   
   // Column visibility, pinning, and order state
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [columnPinning, setColumnPinning] = useState({});
-  const [columnOrder, setColumnOrder] = useState(
+  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
+  const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
+  const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey ?? column.id)
   );
 
   // column toolbar visibilities
-  const [showFilters, setShowFilters] = useState(true);
-  const [showColumnTools, setShowColumnTools] = useState(true);
+  const [showFilters, setShowFilters] = useState(tableSettings.showFilters);
+  const [showColumnTools, setShowColumnTools] = useState(tableSettings.showColumnTools);
 
-  // column resizing
+  // column resizing -- using state for now in case we want the user to change
+  // how resizing works
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
   
   // column filters
-  const [columnFilters, setColumnFilters] = useState();
+  const [columnFilters, setColumnFilters] = useState(tableSettings.columnFilters);
   const [globalFilter, setGlobalFilter] = useState('');
-
+  
+  useEffect(() => {
+    setFilters(columnFilters);
+  }, [columnFilters, setFilters])
 
   useEffect(() => {
-    //fetchNextAbortController.abort();
-    setSearchParams({
-      limit: 100,
-      //filters: JSON.stringify(columnFilters ?? []),
-      filters: JSON.stringify(columnFilters ?? []),
-      page: 1,
-    });
-  }, [
-      columnFilters, 
-      setSearchParams, 
-    ]
-  );
-    
-  useEffect(() => {
-    fetchNextAbortController.abort();
-    console.log('Resetting fetch states')
-    setIsFetchingNext(false);
-    setCanFetchFirst(true);
-    setNextPage();
-  }, [searchParams])
-
+    setLimit(100);
+  })
+  
   // sorting
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState(tableSettings.sorting);
+  useEffect(() => {
+    setOrder(sorting);
+  }, [sorting, setOrder]);
 
   // row selection
   const [rowSelection, setRowSelection] = useState({});
   const getRowId = (originalRow, relativeIndex, parent) => {
-    return parent ? [parent.ID, originalRow.ID].join('.') : originalRow.ID;
-  }
+    return originalRow.ID;
+  };
 
   //sub rows
   const [expanded, setExpanded] = useState({});
-  const getSubRowsFx = (originalRow, index) => {
-    return originalRow.children.length > 0 && originalRow.children;
-  }
-
+  
+  // flatten the page arrays recieved from the data.pages array
+  const flatData = useMemo(
+    () => data?.pages?.flatMap(page => page) ?? [],
+    [data]
+  )
+    
   // Table instance
-  //
   const tableInstance = useReactTable({ 
-    data,
+    data: flatData,
     columns,
     columnResizeMode,
     state: {
@@ -110,9 +118,17 @@ function DataTable() {
       rowSelection,
       expanded,
     },
+    meta: {
+      updateData: updateData,
+      fetchChildRecords: fetchChildRecords,
+      rowIsLoading: rowIsLoading,
+      setTotalItems: setTotalItems,
+    },
     getRowId,
-    getSubRows: row => row.children,
+    getSubRows: row => row.subRows,
     manualFiltering: true,
+    manualSorting: true,
+    autoResetExpanded: false,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     onColumnPinningChange: setColumnPinning,
@@ -132,199 +148,126 @@ function DataTable() {
 
      
   // virtualized rows
-  //
-  const totalItemsCount = meta && meta.total_items;
   const tableContainerRef = useRef();
   const { rows } = tableInstance.getRowModel();
   const rowVirtualizer = useVirtualizer({
-    count: totalItemsCount && totalItemsCount,
+    count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 41,
-    overscan: 15,
+    //estimateSize: () => rows.length,
+    estimateSize: () => 42,
+    overscan: 20,
+    enableSmoothScroll: false,
+    paddingEnd: 800,
   });
 
-  const totalSize = rowVirtualizer.getTotalSize();
+  const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
-  //console.log('Virtual rows length:', virtualRows.length -1) 
-
-  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
-  const paddingBottom = 
-    virtualRows.length > 0
-    ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end)
-    : 0
+  const [paddingTop, setPaddingTop] = useState(0)
+  const [paddingBottom, setPaddingBottom] = useState(0)
 
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
+    setPaddingTop(virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0)
+    setPaddingBottom(virtualRows.length > 0
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
+    : 0)
+  }, [virtualRows, totalVirtualSize])
+  
+  // fetch more data when we get to the bottom of the loaded rows
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
+        //console.log('scrollHeight', scrollHeight)
+        //console.log('scrollTop', scrollTop)
+        //console.log('clientHeight', clientHeight)
+        //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
 
-    const fetchNewData = async () => {
-      if (firstFetch) {
-        setFirstFetch(false);
-        return true
+        if (
+          scrollHeight - scrollTop - clientHeight - paddingBottom < 500 &&
+          !isFetching &&
+          hasNextPage &&
+          flatData.length > 0
+        ) {
+          // refresh previous pages, then fetch the next page (avoid duplicates)
+          refreshData();
+          fetchNextPage();        
+        }
       }
-      if (!searchParams.get('filters')) {
-        return
-      };
-      if (searchParams.get('page') > 1) {
-        return
-      }
+    }, [
+      fetchNextPage, 
+      isFetching, 
+      hasNextPage, 
+      flatData.length, 
+      paddingBottom,
+    ]
+  );
 
-      console.log('Refetching new set...');      
-      
-      const response = await api.get(
-        url,
-        searchParams,
-        {signal: signal}
-      );
-
-      if (response.ok) {
-        abortController.abort();
-        fetchNextAbortController.abort();
-        setData([]);
-        setLinks();
-        setMeta();
-        setRowSelection({});
-        setNextPage(null);
-      }
-
-      setData(response.ok ? response.body.data : null);
-      setMeta(response.ok ? response.body._meta : null);
-      setLinks(response.ok ? response.body._links : null);
-      setNextPage(response.ok ? (
-        Array.from(
-          Array(response.body._meta.total_pages).keys(), 
-          (n) => n !== 0 ? n + 1 : false 
-        )
-      ) 
-        : null
-      );
-      //setIsFetching(false);
-      setIsFetchingNext(response.ok ? true : null);
-
-      // make the function return false for the await promise
-      return false;
-    };
-
-    if (canFetchFirst) {
-      setIsFetchingFirst(true);
-      (async () => {
-        setShowLoader(true);
-        setCanFetchFirst(false);
-        setIsFetchingNext(false);
-        const fetchNewStatus = await fetchNewData();
-        setShowLoader(fetchNewStatus);
-        setIsFetchingFirst(fetchNewStatus);
-        setCanFetchFirst(fetchNewStatus);
-        fetchNextAbortController.abort();
-        console.log('Refetch again:', fetchNewStatus)
-      })();
-
-    };
-
-    return () => {
-      if (!canFetchFirst) {
-        abortController.abort();
-       // console.log('New page', signal);
-      }
-    };
-
-  }, [api, fetchNextAbortController, firstFetch, url, isFetchingFirst, canFetchFirst, searchParams, setSearchParams, columnFilters]);
-    
   useEffect(() => {
-    const signal = fetchNextAbortController.signal;
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-    let fetchPage;
+    fetchMoreOnBottomReached(tableContainerRef.current)
+  }, [fetchMoreOnBottomReached])
 
-    const fetchNextData = async () => {
-      //console.log('Last item:', lastItem.index)
-      //console.log('Virtual length:', virtualRows.length)
-      if (!lastItem) {
-        return false
-      } 
-      if (lastItem.index >= virtualRows.length -1 &&
-        nextPage// !== null
-      ) {
-        fetchPage = nextPage.shift();
-        console.log('Fetch page:', fetchPage);
-        if (fetchPage === false) {
-          fetchPage = nextPage.shift();
-        }
-        if (!fetchPage) {
-          console.log('No next page to fetch')
-          fetchNextAbortController.abort();
-          return
-        }
-        if (isFetchingFirst) {
-          console.log('Caught double fetch. Exiting...')
-          fetchNextAbortController.abort();
-          return
-        }
+  // scroll to top when we reset the data state
+  useEffect(() => {
+    if (flatData.length === 0) {
+      rowVirtualizer.scrollToOffset(0)
+    }
+  }, [flatData.length])
 
-        console.log('Pages:', nextPage)
-        searchParams.set('page', fetchPage);
-        console.log('Retrieving next page...', fetchPage)
-        const response = await api.get(
-          url,
-          searchParams, 
-          {signal: fetchNextAbortController.signal},
-      );
-        if (isFetchingFirst) {
-          console.log('Caught double fetch after request. Exiting...');
-          fetchNextAbortController.abort();
-          return
-        } else {
-        
-          setData(response.ok && isFetchingNext ? prevData => ([...prevData, ...response.body.data]) : null);
-          setMeta(response.ok && isFetchingNext ? response.body._meta : null);
-          setLinks(response.ok && isFetchingNext ? response.body._links : null)
-          //setShowLoader(response.ok && false);
-          if (response.ok) {
-            fetchNextAbortController.abort();
-          }
-          if (response.body._meta.page < response.body._meta.total_pages) {
-            console.log("There's another page")
-            console.log("Total:", response.body._meta.total_pages);
-            return true
-          } else {
-            console.log('There are no more pages')
-            return false
-          }
-        }
-      }
-    };
-    if (!isFetchingFirst && isFetchingNext) {
-      setIsFetchingNext(false);
-      (async () => {
-        setShowLoader(true)
-        const fetchNextStatus = await fetchNextData();
-        setIsFetchingNext(fetchNextStatus);
-        setShowLoader(false)
-        console.log('Fetch next page:', fetchNextStatus)
-      })();
-    };
-    if (isFetchingFirst) {
-      fetchNextAbortController.abort();
-    }
-    return () => {
-      if (isFetchingFirst) {
-      fetchNextAbortController.abort();
-      }
-    }
+  // save user configuration to local storage
+  useEffect(() => {
+    setTableSettings({
+      columnVisibility: columnVisibility,
+      columnPinning: columnPinning,
+      columnOrder: columnOrder,
+      showFilters: showFilters,
+      showColumnTools: showColumnTools,
+      columnFilters: columnFilters,
+      globalFilter: globalFilter,
+      sorting: sorting,
+    })
   }, [
-    nextPage,
-    fetchNextAbortController,
-    rowVirtualizer.getVirtualItems(),
-    searchParams,
-    isFetchingNext,
-    links,
-    isFetchingFirst,
-    totalItemsCount,
-    api,
-    virtualRows.length,
-  ])
+    columnVisibility, 
+    columnPinning, 
+    columnOrder, 
+    showFilters, 
+    showColumnTools,
+    columnFilters,
+    globalFilter,
+    sorting,
+  ]);
+
+  //const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+  //const virtualLength = virtualRows.length;
 
   return (
     <>
+      {/*
+        <pre>totalItems: {JSON.stringify(totalItems)}</pre>
+        <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
+        <pre>Data: {JSON.stringify(data, null, 2)}</pre>
+        <pre>columnVisibility: {JSON.stringify(columnVisibility, null, 2)}</pre>
+        <pre>columnFilters: {JSON.stringify(columnFilters, null, 2)}</pre>
+        <pre>sorting: {JSON.stringify(sorting, null, 2)}</pre>
+        <pre>totalPages: {JSON.stringify(totalPages)}</pre>
+        <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
+        <pre>lastPage: {JSON.stringify(lastPage)}</pre>
+        <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
+        <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
+        <pre>isFetching: {JSON.stringify(isFetching)}</pre>
+        <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
+        <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>      
+        <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
+        <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
+        <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+        <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
+        <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
+        <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
+        <pre>pageArray: {JSON.stringify(pageArray)}</pre>
+        <pre>pageArray Length: {JSON.stringify(pageArray.length)}</pre>
+        <pre>sorting: {JSON.stringify(sorting)}</pre>
+        <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
+      */}
+
       <TableToolBar 
         tableInstance={tableInstance} 
         setShowFilters={setShowFilters} 
@@ -332,15 +275,23 @@ function DataTable() {
         setShowColumnTools={setShowColumnTools}
         showColumnTools={showColumnTools}
         rowSelection={rowSelection}
+        fetchNewQuery={fetchNewQuery}
+        isFetching={isFetching}
+        nextPageToFetch={nextPageToFetch}
+        totalItems={totalItems}
+        fetchedItems={flatData.length}
+        //backgroundRefreshData={backgroundRefreshData}
       />
       <div 
         className='DataTableContainer'
+        onScroll={e => fetchMoreOnBottomReached(e.target)}
         ref={tableContainerRef} 
         style={{
-          height: `calc(100vh - 225px)`, // You need to have a parent height or it will try to render all the rows.
+          height: `calc(100vh - 160px)`, // You need to have a parent height or it will try to render all the rows.
           width: "100%",
           overflow: "scroll",
-          margin: '5px'
+          margin: '5px',
+          scrollbarWidth: 'auto',
         }}>
         <Table 
           size='sm' 
@@ -360,7 +311,7 @@ function DataTable() {
            {/*Cut here for table body component*/}
           <tbody 
             style={{
-              height: `${totalSize}px`,
+              height: `${totalVirtualSize}px`,
               //width: "100%",
               position: "relative"
             }}
@@ -376,13 +327,23 @@ function DataTable() {
                 return null;
               } 
               return (
-                <tr key={row.id} style={{height: "41px"}}>
+                <tr 
+                  key={row.id} 
+                  style={{
+                    height: "42px"
+                    //minHeight: `${virtualRow.size}px`,
+                    //transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
                   {row.getVisibleCells().map(cell => {
                     return (
                       <td 
                         key={cell.id} 
                         style={{
                           width: cell.column.getSize(),
+                          //height: '42px'
+                          //minHeight: `${virtualRow.size}px`,
+                          //transform: `translateY(${virtualRow.start}px)`,
                         }}
                       >
                         {flexRender(
@@ -402,10 +363,10 @@ function DataTable() {
             )}
           </tbody>
           {/*End table body component*/}
-          {/*Insert table footer here*/}
         </Table>
       </div>
-      {showLoader && <Loader />}
+        {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
+        {isFetching && <Loader />}
     </>
   );
 }

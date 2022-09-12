@@ -6,25 +6,24 @@ function ColumnSortToggleButton({ header }) {
   return (
     <>
     {header.column.getCanSort() &&
-    <Button
+    <span
       {...{
-        className: header.column.getCanSort()
-          ? 'cursor-pointer select-none'
-          : '',
+        className: header.column.getCanSort() ? 
+          'cursor-pointer select-none ms-auto' : 
+          '',
         onClick: header.column.getToggleSortingHandler(),
         variant: header.column.getIsSorted() ? 'secondary' : 'light',
-        size: 'sm'
       }}
     >
       {!header.column.getIsSorted() ?
-        <FaSort /> :
+        <FaSort style={{display: 'block'}}/> :
           header.column.getIsSorted() === 'asc' ?
-            <FaSortUp /> :
+            <FaSortUp style={{display: 'block'}}/> :
           header.column.getIsSorted() === 'desc' ?
-            <FaSortDown /> :
+            <FaSortDown style={{display: 'block'}}/> :
             null
       }
-    </Button>
+    </span>
     }
     </>
   );
