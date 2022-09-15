@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
+import { useLocation, useOutletContext } from 'react-router-dom';
+
 import RequestListItem from './RequestListItem';
-import { useLocation } from 'react-router-dom';
-import Loader from './Loader';
-import PaginationBar from './PaginationBar';
+import Loader from './loaders/Loader';
+import PaginationBar from './navigation/PaginationBar';
 import DetailSubHeader from './DetailSubHeader';
 
 function RequestList({ showMember, title }) {
@@ -12,6 +13,7 @@ function RequestList({ showMember, title }) {
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
+  const [endpoint] = useOutletContext();
   const url = location.pathname;
   const search = location.search;
 

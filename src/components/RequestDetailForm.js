@@ -1,22 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../contexts/ApiProvider';
+import { useOutletContext } from 'react-router-dom';
+
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
-import InputField from '../components/InputField';
-import { useLocation } from 'react-router-dom';
+
+import InputField from './form/InputField';
 import DetailSubHeader from './DetailSubHeader';
 
-function RequestDetailForm({ handleSubmit, handleBlur, handleInputChange, formErrors, title }) {
+function RequestDetailForm({ title }) {
 
-  const location = useLocation();
+  const [endpoint, handleSubmit, handleBlur, handleInputChange, formErrors, setObj, setLinks] = useOutletContext();
   const [object, setObject] = useState();
   const api = useApi();
-  const url = location.pathname;
 
   const fetchData = useCallback(async () => {
-    const response = await api.get(url);
+    const response = await api.get(endpoint);
     setObject(response.ok ? response.body : null);
-  }, [api, url]);
+    setObj(response.ok ? response.body : null);
+    setLinks(response.ok ? response.body._links : null);
+  }, [api, endpoint]);
 
   useEffect(() => {
     //(async () => {

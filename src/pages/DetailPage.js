@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useApi } from '../contexts/ApiProvider';
+import { useParams, Routes, Route, useLocation, Outlet } from 'react-router-dom';
+import useInputChange from '../useInputChange';
+
 import Stack from 'react-bootstrap/Stack';
-import Body from '../components/Body';
+import Body from '../components/navigation/Body';
 import RankingsBadges from '../components/RankingsBadges';
 import RequestType from '../components/RequestType';
-import useInputChange from '../useInputChange';
-import { useApi } from '../contexts/ApiProvider';
-import { useParams, Routes, Route, useLocation } from 'react-router-dom';
+import RequestAccount from '../components/RequestAccount';
+import Loader from '../components/loaders/Loader';
+
+
 import RequestDetailForm from '../components/RequestDetailForm';
 import ProjectDetailForm from '../components/ProjectDetailForm';
 import RecipientDetailForm from '../components/RecipientDetailForm';
-import Loader from '../components/Loader';
-import RequestAccount from '../components/RequestAccount';
+
+
+
 import RequestList from '../components/RequestList';
 import NotesDetail from '../components/NotesDetail';
 import LanguageDetail from '../components/LanguageDetail';
@@ -123,61 +129,13 @@ function DetailPage() {
             <RequestAccount object_id={object.ID}/>
            </Stack>
           </Stack>
-          <Routes>
-            <Route path=":request_id/members_requests"
-              element={<RequestList title="Member's Other Requests" />} 
-            />
-            <Route path=":request_id/children"
-              element={<RequestList showMember title="Linked Child Requests" />} 
-            />
-            <Route path=":request_id/project_details"
-              element={<ProjectDetailForm
-                handleSubmit={handleSubmit}
-                handleBlur={handleBlur}
-                handleInputChange={handleInputChange}
-                formErrors={formErrors}
-                title="CPF Project Details"
-              />} 
-            />
-            <Route path=":request_id/recipient"
-              element={<RecipientDetailForm
-                handleSubmit={handleSubmit}
-                handleBlur={handleBlur}
-                handleInputChange={handleInputChange}
-                formErrors={formErrors}
-                title="CPF Recipient Details"
-              />} 
-            />
-            <Route path=":request_id/notes"
-              element={<NotesDetail
-                title="Notes"
-              />} 
-            />
-            <Route path=":request_id/contact"
-              element={<RequestContactDetail
-                title="Request Contact"
-              />} 
-            />
-            <Route path=":request_id/language"
-              element={<LanguageDetail
-                title="Bill & Report Language"
-              />} 
-            />
-            <Route path=":request_id/files"
-              element={<FilesDetail
-                title="Files"
-              />} 
-            />
-            <Route path=":request_id"
-              element={<RequestDetailForm 
-                handleSubmit={handleSubmit}
-                handleBlur={handleBlur}
-                handleInputChange={handleInputChange}
-                formErrors={formErrors}
-                title="Request Details"
-              />} 
-            />
-          </Routes>
+          <RequestDetailForm 
+            handleSubmit={handleSubmit}
+            handleBlur={handleBlur}
+            handleInputChange={handleInputChange}
+            formErrors={formErrors}
+            title="Request Details"
+          />
         </Body>
       :
       <Loader obj={object}/>

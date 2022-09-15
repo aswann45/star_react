@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import Form from 'react-bootstrap/Form';
-import InputField from '../components/InputField';
-import { useLocation } from 'react-router-dom';
-import Loader from '../components/Loader';
+import { useLocation, useOutletContext } from 'react-router-dom';
 
-function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formErrors }) {
+import Form from 'react-bootstrap/Form';
+
+import InputField from './form/InputField';
+import Loader from './loaders/Loader';
+
+function ProjectDetailForm() {
+  const [endpoint, handleSubmit, handleBlur, handleInputChange, formErrors,] = useOutletContext();
   const location = useLocation();
   const [detail, setDetail] = useState();
   const api = useApi();
-  const url = location.pathname;
+  const url = endpoint + '/project_details'
 
   const formatter = new Intl.NumberFormat('en-US');
   const amountRequested = useRef();
@@ -17,7 +20,8 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
   const handleCurrencyFormat = (event) => {
     const parsed_value = parseInt(event.target.value.replace(/,/g, ''));
     const formatted_value = formatter.format(parsed_value);
-    event.target.value = formatted_value;
+    console.log(isNaN(parsed_value))
+    event.target.value = !isNaN(parsed_value) ? formatted_value : '';
   };
 
   useEffect(() => {
@@ -51,7 +55,7 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
             blurHandler={handleBlur} 
             error={formErrors.ChamberAmount} />
           <InputField
-            name="ChamberAmountInternal"
+            name="ChamberInternalAmount"
             label="Draft $ Funded (House/Senate)"
             defaultValue={formatter.format(detail.ChamberInternalAmount)}
             changeHandler={handleInputChange}
@@ -69,7 +73,7 @@ function ProjectDetailForm({ handleSubmit, handleBlur, handleInputChange, formEr
             blurHandler={handleBlur} 
             error={formErrors.ChamberAmount} />
           <InputField
-            name="ConferenceAmountInternal"
+            name="ConferenceInternalAmount"
             label="Draft $ Funded (Conference)"
             defaultValue={formatter.format(detail.ConferenceInternalAmount)}
             changeHandler={handleInputChange}
