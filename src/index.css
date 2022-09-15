@@ -1,6 +1,6 @@
 .App {
   padding: 0;
-  font-family: "Futura", 'DINPro', 'Gill Sans MT', 'Roboto', sans-serif;
+  font-family: "Futura", 'Gill Sans MT', 'DINPro', 'Roboto', sans-serif;
 }
 
 .Header {
@@ -312,5 +312,15 @@
 }
 
 .TableToolBar .dropdown-menu {
-  z-index: 95000;
+  z-index: 96000;
+}
+
+.NotePopover:hover {
+  background-color: grey;
+  padding: 1px;
+}
+
+.DetailExpandButton:hover {
+  background-color: grey;
+  padding: 1px;
 }
