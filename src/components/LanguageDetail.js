@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import LanguageItemForm from './LanguageItemForm';
-import NewLanguageItem from './NewLanguageItem';
 import { useLocation, useParams } from 'react-router-dom';
-import Loader from './Loader';
-import PaginationBar from './PaginationBar';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
+
 import DetailSubHeader from './DetailSubHeader';
+import LanguageItemForm from './LanguageItemForm';
+import NewLanguageItem from './NewLanguageItem';
+import Loader from './loaders/Loader';
+import PaginationBar from './navigation/PaginationBar';
 
 let counter = 1;
 

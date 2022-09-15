@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import { useParams, useLocation } from 'react-router-dom';
 
-import DetailSubHeader from './DetailSubHeader';
-import PaginationBar from './PaginationBar';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import InputField from './InputField';
-import InputSelect from './InputSelect';
 import Button from 'react-bootstrap/Button';
-import Loader from './Loader';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
+
+import Loader from './loaders/Loader';
+import InputField from './form/InputField';
+import InputSelect from './form/InputSelect';
+import PaginationBar from './navigation/PaginationBar';
+import DetailSubHeader from './DetailSubHeader';
+
 
 function FilesDetail({ title }) {
 

@@ -2,11 +2,14 @@ import { useApi } from '../contexts/ApiProvider';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useInputChange from '../useInputChange';
+
+import Stack from 'react-bootstrap/Stack';
+
 import DetailSubHeader from './DetailSubHeader';
-import Loader from './Loader';
+import Loader from './loaders/Loader';
 import RequestContactSelect from './RequestContactSelect';
 import ContactCard from './ContactCard';
-import Stack from 'react-bootstrap/Stack';
+
 
 function RequestContactDetail({ title }) {
   const api = useApi();

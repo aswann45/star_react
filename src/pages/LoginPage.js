@@ -1,4 +1,4 @@
-import Body from '../components/Body';
+import Body from '../components/navigation/Body';
 
 function LoginPage() {
   return (

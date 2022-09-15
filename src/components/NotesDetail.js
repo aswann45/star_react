@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 //import useInputChange from '../useInputChange';
+import { useLocation, useParams } from 'react-router-dom';
+
+import Stack from 'react-bootstrap/Stack';
+import Button from 'react-bootstrap/Button';
+
 import NoteItemForm from './NoteItemForm';
 import NewNoteItem from './NewNoteItem';
-import { useLocation, useParams } from 'react-router-dom';
-import Loader from './Loader';
-import PaginationBar from './PaginationBar';
-import Button from 'react-bootstrap/Button';
+import Loader from './loaders/Loader';
+import PaginationBar from './navigation/PaginationBar';
 import DetailSubHeader from './DetailSubHeader';
-import Stack from 'react-bootstrap/Stack';
+
 
 let counter = 1;
 

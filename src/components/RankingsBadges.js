@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useApi } from '../contexts/ApiProvider';
+
 import Stack from 'react-bootstrap/Stack';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import Loader from './Loader';
-import { useApi } from '../contexts/ApiProvider';
+
+import Loader from './loaders/Loader';
+
 
 function RankingOptions({ 
   options_count, request, field, priority, setPriority 
