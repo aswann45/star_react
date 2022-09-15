@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import { BsChevronBarContract, BsChevronBarExpand } from 'react-icons/bs';
-import LoaderSmall from './LoaderSmall'
+import LoaderSmall from '../loaders/LoaderSmall'
 
 function RowExpandButton({ row, table }) {
   
@@ -19,22 +19,24 @@ function RowExpandButton({ row, table }) {
   return(
     <>
       {table?.options?.meta?.rowIsLoading?.[row.id] ? 
-        <LoaderSmall /> :
+        <LoaderSmall style={{display: 'block'}}/> :
+        row?.original?._links?.child_requests ?
         <>
-          <Button
+          <span
             {...{
               onClick: (e) => handleClick(),
               style: {cursor: 'pointer'},
               size: 'sm',
-              variant: 'dark'
+              //variant: 'dark'
             }}
           >
             {row.getIsExpanded() ?
-              <BsChevronBarContract /> :
-              <BsChevronBarExpand /> 
+              <BsChevronBarContract style={{display: 'block'}}/> :
+              <BsChevronBarExpand style={{display: 'block'}}/> 
             }
-          </Button>
+          </span> 
         </>
+      : null
       }
     </>
   );

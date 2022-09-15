@@ -1,15 +1,18 @@
 import { useMemo, useState } from 'react';
-import ColumnDragHandle from './ColumnDragHandle';
-import PinColumnToggleButton from './PinColumnToggleButton';
 import { useDrag, useDrop } from 'react-dnd';
+import useInputChange from '../../useInputChange';
 import { flexRender } from '@tanstack/react-table';
+
 import Stack from 'react-bootstrap/Stack';
-import DebouncedInput from './DebouncedInput';
-import ColumnSortToggleButton from './ColumnSortToggleButton';
+import Form from 'react-bootstrap/Form';
 import { BsFilterCircleFill } from 'react-icons/bs';
 
-import Form from 'react-bootstrap/Form';
-import useInputChange from '../useInputChange';
+import ColumnDragHandle from './ColumnDragHandle';
+import PinColumnToggleButton from './PinColumnToggleButton';
+import DebouncedInput from './DebouncedInput';
+import ColumnSortToggleButton from './ColumnSortToggleButton';
+
+
 
 function TableHeader({ tableInstance, showFilters, showColumnTools }) {
   return (
@@ -228,7 +231,7 @@ function Filter ({ column, table }) {
               type="select"
               as='select'
               multiple
-              htmlSize={2} 
+              htmlSize={4} 
               size='sm'
               initialValue={(columnFilterValue ?? null)}
               onChange={value => column.setFilterValue(value)}

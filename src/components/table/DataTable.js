@@ -11,23 +11,23 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import Loader from './Loader';
+import Loader from '../loaders/Loader';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
+//import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
-import useInfiniteQuery from '../hooks/useInfiniteQuery';
-import useLocalStorage from '../hooks/useLocalStorage';
+import useInfiniteQuery from '../../hooks/useInfiniteQuery';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
-function DataTable() {
+function DataTable({ columns, url, localStorageLocation }) {
   // member request columns 
   // TODO: make the columns something to feed into the component
-  const columns = MemberRequestsColumns();
+  //const columns = MemberRequestsColumns();
   // retrieve saved user configuration from local storage
-  const [tableSettings, setTableSettings] = useLocalStorage('member_requests', {})
+  const [tableSettings, setTableSettings] = useLocalStorage(localStorageLocation, {})
 
   // URL and API request logic and state
-  const url = '/member_requests/';
+  //const url = '/member_requests/';
   const [
     data,
     //error,
@@ -37,15 +37,15 @@ function DataTable() {
     setOrder,
     totalItems, 
     setTotalItems,
-    //isFetchingNextPage,
-    //isFetchingPreviousPage,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
     isFetching,
     fetchNextPage,
     fetchNewQuery,
     refreshData,
     hasNextPage,
-    //isFirstPage,
-    //lastPage,
+    isFirstPage,
+    lastPage,
     nextPageToFetch,
     //pageArray,
     updateData,
@@ -53,13 +53,16 @@ function DataTable() {
     //setIsFetchingPreviousPage,
     fetchChildRecords,
     rowIsLoading,
+    setIsDetail,
+    groupRequests,
+    resetSearch,
   ] = useInfiniteQuery(url, 1, '');
    
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
   const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
   const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
-    columns.map(column => column.accessorKey ?? column.id)
+    columns.map(column => column.accessorKey || column.id)
   );
 
   // column toolbar visibilities
@@ -123,6 +126,8 @@ function DataTable() {
       fetchChildRecords: fetchChildRecords,
       rowIsLoading: rowIsLoading,
       setTotalItems: setTotalItems,
+      setIsDetail: setIsDetail,
+      groupRequests: groupRequests,
     },
     getRowId,
     getSubRows: row => row.subRows,
@@ -183,14 +188,14 @@ function DataTable() {
         //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
 
         if (
-          scrollHeight - scrollTop - clientHeight - paddingBottom < 500 &&
+          scrollHeight - scrollTop - clientHeight - paddingBottom < 300 &&
           !isFetching &&
           hasNextPage &&
           flatData.length > 0
         ) {
           // refresh previous pages, then fetch the next page (avoid duplicates)
           refreshData();
-          fetchNextPage();        
+          fetchNextPage();
         }
       }
     }, [
@@ -241,7 +246,14 @@ function DataTable() {
 
   return (
     <>
-      {/*
+    {/*<pre>isFetching: {JSON.stringify(isFetching)}</pre>
+        <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
+        <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
+<pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
+        <pre>lastPage: {JSON.stringify(lastPage)}</pre>
+        <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
+        <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
+      
         <pre>totalItems: {JSON.stringify(totalItems)}</pre>
         <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
         <pre>Data: {JSON.stringify(data, null, 2)}</pre>
@@ -249,13 +261,8 @@ function DataTable() {
         <pre>columnFilters: {JSON.stringify(columnFilters, null, 2)}</pre>
         <pre>sorting: {JSON.stringify(sorting, null, 2)}</pre>
         <pre>totalPages: {JSON.stringify(totalPages)}</pre>
-        <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
-        <pre>lastPage: {JSON.stringify(lastPage)}</pre>
-        <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
-        <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
-        <pre>isFetching: {JSON.stringify(isFetching)}</pre>
-        <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
-        <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>      
+        
+              
         <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
         <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
         <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
@@ -279,9 +286,12 @@ function DataTable() {
         isFetching={isFetching}
         nextPageToFetch={nextPageToFetch}
         totalItems={totalItems}
+        resetSearch={resetSearch}
         fetchedItems={flatData.length}
         //backgroundRefreshData={backgroundRefreshData}
       />
+                  {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
+        {isFetching && <Loader />}
       <div 
         className='DataTableContainer'
         onScroll={e => fetchMoreOnBottomReached(e.target)}
@@ -330,8 +340,8 @@ function DataTable() {
                 <tr 
                   key={row.id} 
                   style={{
-                    height: "42px"
-                    //minHeight: `${virtualRow.size}px`,
+                    //height: "42px"
+                    height: `${virtualRow.size}px`,
                     //transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
@@ -365,8 +375,7 @@ function DataTable() {
           {/*End table body component*/}
         </Table>
       </div>
-        {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
-        {isFetching && <Loader />}
+
     </>
   );
 }

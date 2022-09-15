@@ -12,7 +12,7 @@ function PinColumnToggleButton ({ header }) {
               size={'sm'} 
               onClick={() => {header.column.pin('left')}}
             >
-              <BsPinAngle style={{display: 'block'}}/>
+              <BsPinAngle style={{display: 'block', cursor: 'pointer'}}/>
             </span>
       ) : null}
           {header.column.getIsPinned() ? (
@@ -21,7 +21,7 @@ function PinColumnToggleButton ({ header }) {
               size={'sm'} 
               onClick={() => {header.column.pin(false)}}
             >
-              <BsPinFill style={{display: 'block'}}/>
+              <BsPinFill style={{display: 'block', cursor: 'pointer'}}/>
             </span>
           ) : null}
         </>

@@ -2,7 +2,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { useSearchParams } from 'react-router-dom';
 
-function PageLimitSelect(){
+function PageLimitSelect() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function handleSelect(event_key) {
@@ -17,6 +17,8 @@ function PageLimitSelect(){
         ...searchParams
       })
     }
+    //setItemLimit(newLimit)
+    //}
   };
 
   return(

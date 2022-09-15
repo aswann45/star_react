@@ -6,7 +6,7 @@ function Loader({ obj } ){
 
   return(
     <>
-      {obj === undefined ?
+      {!obj ?
         <Container className="Loader">
           <Stack gap={3} direction="horizontal">
             <h1>Loading...</h1>

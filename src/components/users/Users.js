@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
-import { useApi } from '../contexts/ApiProvider';
+import { useApi } from '../../contexts/ApiProvider';
 import User from './User';
 import { Outlet } from 'react-router-dom';
 

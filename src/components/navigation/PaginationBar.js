@@ -3,7 +3,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import { useNavigate } from 'react-router-dom';
 import PageLimitSelect from './PageLimitSelect';
 import PageSelector from './PageSelector';
-import Loader from './Loader';
+import Loader from '../loaders/Loader';
 
 function PaginationBar({ url, pageMeta, pageLinks }) {
 

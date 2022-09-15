@@ -7,7 +7,7 @@ const ColumnDragHandle = ({ header, dragRef }) => (
       {header.column.getIsPinned() ? 
         null :
         <span ref={dragRef} >
-            <FaGripLinesVertical style={{display: 'block', opacity: 0.6}}/>
+            <FaGripLinesVertical style={{display: 'block', opacity: 0.6, cursor: 'grab'}}/>
         </span>
       }
     </>

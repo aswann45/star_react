@@ -15,6 +15,9 @@ function Sidebar({ sidebar }) {
             <Nav.Link as={NavLink} to="/">Root</Nav.Link>
           </Nav.Item>
           <Nav.Item>
+            <Nav.Link as={NavLink} to="/member_requests">Requests Table</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
             <Nav.Link as={NavLink} to="/users">Users</Nav.Link>
           </Nav.Item>
         </>

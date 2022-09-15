@@ -3,11 +3,13 @@ import { createColumnHelper } from '@tanstack/react-table';
 import RowSelectCheckbox from '../RowSelectCheckbox';
 import RowExpandButton from '../RowExpandButton';
 import Stack from 'react-bootstrap/Stack';
-import useMemberFilterOptions from '../../hooks/useMemberFilterOptions';
-import useAgencyFilterOptions from '../../hooks/useAgencyFilterOptions';
-import useAccountFilterOptions from '../../hooks/useAccountFilterOptions';
-import useProgramFilterOptions from '../../hooks/useProgramFilterOptions';
+import useMemberFilterOptions from '../../../hooks/useMemberFilterOptions';
+import useAgencyFilterOptions from '../../../hooks/useAgencyFilterOptions';
+import useAccountFilterOptions from '../../../hooks/useAccountFilterOptions';
+import useProgramFilterOptions from '../../../hooks/useProgramFilterOptions';
 import EditableTableCell from '../EditableTableCell';
+import DetailExpandButton from '../DetailExpandButton';
+import NotePopover from '../NotePopover';
 
 function MemberRequestsColumns() {
   const columnHelper = createColumnHelper();
@@ -19,15 +21,10 @@ function MemberRequestsColumns() {
 
     
   const columns = [
-    columnHelper.accessor('ID', {
-      cell: info => info.getValue(),
-      header: 'StarID',
-      filterVariant: 'number',
-    }),
-
-    columnHelper.accessor('SubmissionID', {
-      header: 'ID',
-      filterVariant: 'number',
+    
+    columnHelper.display({
+      id: 'actions',
+      header: 'Actions',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -42,14 +39,43 @@ function MemberRequestsColumns() {
             indeterminate={props.row.getIsSomeSelected()}
             onChange={props.row.getToggleSelectedHandler()}
           />
-          {props.getValue()}
           
-          {props.row?.original?._links?.child_requests ?
-            <span className={'ms-auto'}>
-              <RowExpandButton row={props.row} table={props.table} /> 
-            </span> :
-              null
-            }
+          <DetailExpandButton 
+            endpoint={props.row?.original?._links?.self} 
+            setIsDetail={props.table.options.meta?.setIsDetail} 
+          />
+          
+          <NotePopover row={props.row} />
+          
+          <NotePopover row={props.row} type='flag' />
+          
+          
+          <span className={'ms-auto'}>
+            <RowExpandButton row={props.row} table={props.table} /> 
+          </span>
+        </Stack>
+      )
+    }),
+    
+    columnHelper.accessor('ID', {
+      cell: info => info.getValue(),
+      header: 'StarID',
+      filterVariant: 'number',
+    }),  
+
+    columnHelper.accessor('SubmissionID', {
+      header: 'ID',
+      filterVariant: 'number',
+      cell: (props) => (
+        <Stack
+          direction='horizontal'
+          style={{
+            paddingLeft: `${props.row.depth * 2}rem`,
+            paddingRight: '5px',
+          }}
+          gap={2}
+        >
+        {props.getValue()}
         </Stack>
       )
     }),

@@ -1,9 +1,10 @@
 import Stack from 'react-bootstrap/Stack';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import ColumnVisibilityToggle from './ColumnVisibilityToggle';
-import LoaderSmall from './LoaderSmall';
 import { BsFilterCircle, BsColumns, BsFilterCircleFill, BsArrowsCollapse, BsArrowsExpand } from 'react-icons/bs'
+
+import ColumnVisibilityToggle from './ColumnVisibilityToggle';
+import LoaderSmall from '../loaders/LoaderSmall';
 
 function TableToolBar({ 
   tableInstance, 
@@ -12,13 +13,21 @@ function TableToolBar({
   rowSelection, 
   fetchNewQuery, 
   isFetching,
+  totalItems,
+  resetSearch,
 }) {
+  
+  const handleGroupingClick = () => {
+    tableInstance.options.meta?.groupRequests(rowSelection);
+    tableInstance.resetRowSelection(true);
+  }
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}> 
-      
-      <Button onClick={() => console.log(rowSelection)}>Log Row Selection</Button>
-      <Button onClick={fetchNewQuery}>Fetch New Results</Button>
-
+      <Button onClick={handleGroupingClick}>Group Selected Rows</Button>
+    {totalItems && totalItems > 0 ?
+        <Button onClick={resetSearch}>Reset Search</Button>
+      : <Button onClick={fetchNewQuery}>Fetch New Results</Button>
+    }
       <Dropdown>
         <Dropdown.Toggle title='Toggle Visible Columns'>
           
