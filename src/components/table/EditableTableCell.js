@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Form from 'react-bootstrap/Form';
 
 
@@ -10,10 +10,10 @@ function EditableTableCell ({ getValue, row, column, table }) {
   const parsedInitialValue = useCallback((value) => {
     if (column.columnDef.inputType === 'currency') {
       const formattedValue = formatter.format(value);
-      console.log('Outer formatted value', formattedValue);
+      //console.log('Outer formatted value', formattedValue);
       if (formattedValue && !isNaN(formattedValue)) {
-        console.log('Original value', value)
-        console.log('Formatted value', formattedValue);
+       // console.log('Original value', value)
+       // console.log('Formatted value', formattedValue);
         return formattedValue;
       }
       return formattedValue;
@@ -22,8 +22,12 @@ function EditableTableCell ({ getValue, row, column, table }) {
     }
   }, [])
   
-  const v = getValue()
-  const initialValue = useCallback(parsedInitialValue(getValue()), []);
+  //const v = getValue()
+  //const initialValue = parsedInitialValue(v)
+  const initialValue = useCallback(parsedInitialValue(getValue()), [getValue]);
+  //const [initialValue, setInitialValue] = useState(parsedInitialValue(getValue()))
+  //let initialValue = parsedInitialValue(getValue());
+  //const initialValue = parsedInitialValue(getValue());
   //console.log(initialValue)
   const [value, setValue] = useState(initialValue);
   //const [textBoxHeight, setTextBoxHeight] = useState(42)
@@ -32,10 +36,10 @@ function EditableTableCell ({ getValue, row, column, table }) {
   const handleCurrencyFormat = (event) => {
     const parsed_value = parseInt(event.target.value.replace(/,/g, ''));
     const formatted_value = formatter.format(parsed_value);
-    console.warn(isNaN(parsed_value))
+    //console.warn(isNaN(parsed_value))
     
     event.target.value = !isNaN(parsed_value) ? formatted_value : '';
-    console.log(event.target.value)
+    //console.log(event.target.value)
     setValue(event.target.value);
   };
 
@@ -44,6 +48,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
     //console.log('blur')
     if (initialValue !== value) {
       table.options.meta?.updateData(row, column.id, value)
+      //initialValue = value;
     }; 
   };
 
@@ -53,7 +58,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
 
   useEffect(() => {
     setValue(initialValue)
-  }, [initialValue]);
+  }, [initialValue])
 
   return (
     

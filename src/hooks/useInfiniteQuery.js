@@ -146,7 +146,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     await new Promise(r => setTimeout(r, 500));
     // get a shallow copy of the current array of pages with the
     // updated object
-    const newPagesArray = (prevData) => prevData?.pages?.map(page => {
+    /*const newPagesArray = (prevData) => prevData?.pages?.map(page => {
       page.map(obj => {
         if (obj.ID === row.id) {
           // if the row ID matches the object ID, update the value
@@ -167,11 +167,24 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
         return obj;
       });
       return page;
+    });*/
+    const objURL = `${baseURL}/${row.id}`
+    const response = await api.put(objURL, '', {
+      body: {
+        [columnID]: value,
+      }
     });
-    
+
+    const newPagesArray = (prevData, response) => prevData?.pages?.map(page => {
+      const newPage = [...page];
+      newPage[newPage.findIndex((obj) => obj.ID === response.body.ID)] = response.body;
+      console.log(newPage)
+      return newPage;
+    }) ?? [];
+
     // update the data state with the new array
     setData(prevData => ({
-      pages: newPagesArray(prevData),
+      pages: newPagesArray(prevData, response),
       pageParams: [...prevData.pageParams]
     }));   
   };
