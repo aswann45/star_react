@@ -182,15 +182,15 @@ function CPFFundingColumns() {
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('ConferenceAllocationD', {
+    columnHelper.accessor('ConferenceAllocationHouse', {
       cell: props => EditableTableCell(props),
-      header: 'Conference Dem Allocation',
+      header: 'Conference House Allocation',
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('ConferenceAllocationR', {
+    columnHelper.accessor('ConferenceAllocationSenate', {
       cell: props => EditableTableCell(props),
-      header: 'Conference GOP Allocation',
+      header: 'Conference Senate Allocation',
       filterVariant: 'number',
       inputType: 'currency',
     }),
@@ -200,8 +200,9 @@ function CPFFundingColumns() {
       filterVariant: 'multi-select',
       inputType: 'text',
       filterValues: [
-        'H',
-        'S',
+        'House',
+        'Senate',
+        'Bicameral',
     ],
     }),
   ];

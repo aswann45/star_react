@@ -255,8 +255,8 @@ function DataTable({ columns, url, localStorageLocation }) {
         <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
       
         <pre>totalItems: {JSON.stringify(totalItems)}</pre>
-        <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
         <pre>Data: {JSON.stringify(data, null, 2)}</pre>
+        <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
         <pre>columnVisibility: {JSON.stringify(columnVisibility, null, 2)}</pre>
         <pre>columnFilters: {JSON.stringify(columnFilters, null, 2)}</pre>
         <pre>sorting: {JSON.stringify(sorting, null, 2)}</pre>
