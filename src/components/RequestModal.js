@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, useOutletContext, useLocation } from 'react-router-dom';
+import { Outlet,  useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useApi } from '../contexts/ApiProvider';
 import useInputChange from '../useInputChange';
 
@@ -13,18 +13,19 @@ import RequestType from './RequestType';
 import RequestAccount from './RequestAccount';
 import Loader from './loaders/Loader';
 
-
-function DetailModal() {
-  // router outlet context
-  const [endpoint, ID, show, setShow, setIsDetail] = useOutletContext();
-  // hide modal
+function RequestModal() {
+  const { request_id } = useParams(':request_id');
+  const request_url = `/requests/${request_id}`;
+  const location = useLocation();
+  const backgroundLocation = location.state.backgroundLocation;
+  //console.log(location.state)
+  const navigate = useNavigate();
+  
+  const [show, setShow] = useState(true);
   const handleClose = () => {
     setShow(false);
-    setIsDetail(false);
-  };
-  
-
-  //console.log('Endpoint', endpoint)
+    navigate(backgroundLocation);
+  }
   
   // api call logic for get requests
   const [object, setObj] = useState();
@@ -34,32 +35,23 @@ function DetailModal() {
   
   useEffect(() => {
     setLinksDict({
-      ...(links.self && {'Request': links.self}),
+      ...(links.self && {'Request': `/requests/${request_id}`}),
       ...(links.to_parent_request && {'Parent Request': links.to_parent_request}),
-      ...(links.child_requests && {'Child Requests': links.child_requests}),
-      ...(links.project_details && {'Project Details': links.project_details}),
-      ...(links.recipient && {'Recipient': links.recipient}),
-      ...(links.notes && {'Notes': links.notes}),
-      ...(links.language && {'Language': links.language}),
-      ...(links.member && {'Member Details': links.member}),
-      ...(links.members_requests && {'Member Requests': links.members_requests}),
-      ...(links.files && {'Files': links.files}),
-      ...(links.districts && {'Districts': links.districts}),
-      ...(links.contact && {'Contact': links.contact}),
+      ...(links.child_requests && {'Child Requests': `/requests/${request_id}/child_requests`}),
+      ...(links.project_details && {'Project Details': `/requests/${request_id}/project_details`}),
+      ...(links.recipient && {'Recipient': `/requests/${request_id}/recipient`}),
+      ...(links.notes && {'Notes': `/requests/${request_id}/notes`}),
+      ...(links.language && {'Language': `/requests/${request_id}/language`}),
+      ...(links.member && {'Member Details': `/requests/${request_id}/member`}),
+      ...(links.members_requests && {'Member Requests': `/requests/${request_id}/members_requests`}),
+      ...(links.files && {'Files': `/requests/${request_id}/files`}),
+      ...(links.districts && {'Districts': `/requests/${request_id}/districts`}),
+      ...(links.contact && {'Contact': `/requests/${request_id}/contact`}),
     });
   }, [links])
 
   const api = useApi();
-  /*useEffect(() => {
-    (async () => {
-      console.log('modal get request')
-      const response = await api.get(endpoint);
-      setObj(response.ok ? response.body : null);
-      setLinks(response.ok ? response.body._links : null)
-    })();
-  }, [api, endpoint]);*/
   
-  // input handler; check if updated before committing
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   const [formErrors, setFormErrors] = useState({});
   
@@ -87,7 +79,6 @@ function DetailModal() {
   };
   
   // api call logic for updates
-  const location = useLocation();
   const path = location.pathname;
   let ending = path.slice(path.lastIndexOf('/'));
   let put_url;
@@ -102,25 +93,22 @@ function DetailModal() {
         put_url = `/recipients/${recipient_id}`
         break;
       default:
-        put_url = endpoint;
+        put_url = request_url;
     }
   };
   
-  // 
   
   return (
-    <>
-      <Modal 
-        //fullscreen
-        show={show} 
-        onHide={handleClose} 
-        animation={false} 
-        style={{zIndex: 95000,}}>
-          
-        <Modal.Header closeButton />
-          
-        <Modal.Body>
-          <Body sidebar={linksDict}>
+    <Modal
+      show={show} 
+      dialogClassName="modal-90w"
+      onHide={handleClose} 
+      animation={false}
+      style={{zIndex: 95000}}>
+        
+      <Modal.Header closeButton />
+      <Modal.Body>
+        <Body sidebar={linksDict} background={backgroundLocation}>
           {(object && object.length !== 0) ?
             
             
@@ -135,29 +123,37 @@ function DetailModal() {
                   <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
                     <RequestType request={object} />
                     <RankingsBadges 
-                      url={endpoint} 
+                      url={request_url} 
                     />
                   </Stack>
-                <RequestAccount object_id={object.ID}/>
+                <RequestAccount url={request_url}/>
                </Stack>
               </Stack>
                
              :
 
             <Loader obj={object}/>} 
-            <Outlet context={[endpoint, ID, handleSubmit, handleBlur, handleInputChange, formErrors, setObj, setLinks]}/>  
+            <Outlet context={
+              [request_url, 
+              request_id, 
+              handleSubmit, 
+              handleBlur, 
+              handleInputChange, 
+              formErrors, 
+              setObj, 
+              setLinks]
+            }/>  
           </Body>
-        </Modal.Body>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant='secondary' onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
+      <Modal.Footer>
+        <Button variant='secondary' onClick={handleClose}>
+          Close
+        </Button>
+      </Modal.Footer>
 
-      </Modal>
-    </>
+    </Modal>
   );
 };
 
-export default DetailModal;
+export default RequestModal;
