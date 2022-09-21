@@ -24,6 +24,7 @@ function MemberRequestsProgLangTable () {
         columns={columns} 
         url='/requests/'
         localStorageLocation='member_requests' 
+        getURL='/requests/prog_lang'
       />
     </>
   );

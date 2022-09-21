@@ -23,7 +23,8 @@ function MemberRequestsCPFsTable () {
       <DataTable 
         columns={columns} 
         url='/requests/'
-        localStorageLocation='member_requests_cpfs' 
+        localStorageLocation='member_requests_cpfs'
+        getURL='/requests/cpfs'
       />
     </>
   );

@@ -12,6 +12,7 @@ function CPFConferenceFundingTable () {
         columns={columns} 
         url='/project_details/'
         localStorageLocation='conference_project_funding' 
+        getURL='/project_details/conference'
       />
     </>
   );

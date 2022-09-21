@@ -24,6 +24,7 @@ function CPFHouseFundingTable () {
         columns={columns} 
         url='/project_details/'
         localStorageLocation='house_project_funding' 
+        getURL='/project_details/house'
       />
     </>
   );

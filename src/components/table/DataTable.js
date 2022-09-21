@@ -19,7 +19,7 @@ import TableToolBar from './TableToolBar';
 import useInfiniteQuery from '../../hooks/useInfiniteQuery';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
-function DataTable({ columns, url, localStorageLocation }) {
+function DataTable({ columns, url, localStorageLocation, getURL }) {
   // member request columns 
   // TODO: make the columns something to feed into the component
   //const columns = MemberRequestsColumns();
@@ -56,7 +56,8 @@ function DataTable({ columns, url, localStorageLocation }) {
     setIsDetail,
     groupRequests,
     resetSearch,
-  ] = useInfiniteQuery(url, 1, '');
+    removeProjects,
+  ] = useInfiniteQuery(url, 1, '', getURL);
    
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
@@ -128,6 +129,7 @@ function DataTable({ columns, url, localStorageLocation }) {
       setTotalItems: setTotalItems,
       setIsDetail: setIsDetail,
       groupRequests: groupRequests,
+      removeProjects: removeProjects,
     },
     getRowId,
     getSubRows: row => row.subRows,
