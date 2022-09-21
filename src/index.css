@@ -14,7 +14,7 @@
 }
 
 .Sidebar {
-  width: 160px;
+  /*width: 160px;*/
   margin: 5px;
   margin-right: 0px;
   position: sticky;
@@ -40,6 +40,22 @@
 }
 
 .Sidebar a:visited {
+  color: #444;
+}
+
+.TopBarNav .nav-item .active {
+  background-color: #def;
+}
+
+.TopBarNav a {
+  color: #444;
+}
+
+.TopBarNav a:hover {
+  background-color: #eee;
+}
+
+.TopBarNav a:visited {
   color: #444;
 }
 
@@ -323,4 +339,13 @@
 .DetailExpandButton:hover {
   background-color: grey;
   padding: 1px;
+}
+
+.modal-90w {
+  width: 90%;
+  max-width: none!important;
+}
+
+.modal-open {
+  font-family: "Futura", 'Gill Sans MT', 'DINPro', 'Roboto', sans-serif;
 }
