@@ -12,7 +12,7 @@ const useAgencyFilterOptions = () => {
       setAgencies(response.ok ? response.body.data : null);
     };
     fetchAgencies();
-  }, [api])
+  }, [])
 
   return agencies;
 };

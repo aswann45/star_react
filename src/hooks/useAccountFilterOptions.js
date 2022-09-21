@@ -12,7 +12,7 @@ const useAccountFilterOptions = () => {
       setAccounts(response.ok ? response.body.data : null);
     };
     fetchAccounts();
-  }, [api])
+  }, [])
 
   return accounts;
 };
