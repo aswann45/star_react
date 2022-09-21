@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import { useSearchParams } from 'react-router-dom';
 
-const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
+const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   // api context and search parameter state
   const api = useApi();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -266,7 +266,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     await new Promise(r => setTimeout(r, 1000));
     // get the page
     const response = await api.get(
-      baseURL,
+      getURL ? getURL : baseURL,
       searchParams,
       // attach the fetching abort controller to the request
       {signal: abortController.signal}
@@ -504,7 +504,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     
     console.log(data)
     const response = await api.post(
-      `/member_requests/group`,
+      `/requests/group`,
       '',
       {
         signal: abortController.signal,
@@ -522,6 +522,43 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     }))
       console.log(data)
       setRowIsLoading({});
+    };
+    //await new Promise(r => setTimeout(r, 5000));
+    //return setIsFetching(false);
+  }
+  
+  const removeProjects = async (projectIDs, stage) => {    
+         
+    const newPagesArray = (oldPagesArray) => oldPagesArray?.pages.map((page) => 
+           
+      page.filter((row) => 
+        !projectIDs.includes(row.ID)
+      )
+      //console.log(newPage)
+      //console.log(projectIDs)
+      //console.log(page.some((row) => row.ID === returnedParentID));
+      //console.log(page[page.findIndex((row) => row.ID === returnedParentID)])// 
+      //console.log(page)
+      
+    ) ?? [];
+    
+    console.log(data)
+    const response = await api.post(
+      `/project_details/exclude`,
+      '',
+      {
+        signal: abortController.signal,
+        body: {ids: projectIDs, stage: stage}
+      }
+    );
+    if (response.ok) {
+      console.log(response)
+      
+      setData(prevData => ({
+        pages: newPagesArray(prevData),
+        pageParams: prevData.pageParams,
+    }))
+      console.log(data)
     };
     //await new Promise(r => setTimeout(r, 5000));
     //return setIsFetching(false);
@@ -555,6 +592,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options) => {
     setIsDetail,
     groupRequests,
     resetSearch,
+    removeProjects,
   ];
 };
 

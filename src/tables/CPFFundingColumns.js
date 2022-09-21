@@ -198,6 +198,26 @@ function CPFFundingColumns(
         'Bicameral',
     ],
     }),
+    columnHelper.accessor('ChamberDisposition', {
+      cell: info => info.getValue(),
+      header: 'Request Chamber Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+    ],
+    }),
+    columnHelper.accessor('FinalDisposition', {
+      cell: info => info.getValue(),
+      header: 'Request Final Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+    ],
+    }),
   ];
 
   return columns;

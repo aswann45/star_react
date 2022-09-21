@@ -5,6 +5,7 @@ import RowExpandButton from '../components/table/RowExpandButton';
 import EditableTableCell from '../components/table/EditableTableCell';
 import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
+import ProjectExcludeButton from '../components/table/ProjectExcludeButton';
 
 function CPFHouseFundingColumns(
   memberFilterOptions, 
@@ -38,6 +39,12 @@ function CPFHouseFundingColumns(
             endpoint={`/requests/${props.row?.original?.RequestID}`}
             RequestID={props.row?.original?.RequestID} 
             setIsDetail={props.table.options.meta?.setIsDetail} 
+          />
+          
+          <ProjectExcludeButton 
+            table={props.table}
+            row={props.row}
+            stage='chamber'
           />
           
           <NotePopover row={props.row} />
