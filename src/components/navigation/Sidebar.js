@@ -1,21 +1,22 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
-function Sidebar({ sidebar }) {
+function Sidebar({ sidebar, background }) {
+  //console.log(background)
   return (
     <>
       <Navbar sticky="top" className="flex-column Sidebar">
       {
         sidebar ?
-          <LinkList links_dict={sidebar} />
+          <LinkList links_dict={sidebar} background={background} />
         :
         <>
           <Nav.Item>
-            <Nav.Link as={NavLink} to="/">Root</Nav.Link>
+            <Nav.Link as={NavLink} to="/member_requests">Browse Member Requests</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link as={NavLink} to="/member_requests">Requests Table</Nav.Link>
+            <Nav.Link as={NavLink} to="/project_funding">Fund CPFs</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link as={NavLink} to="/users">Users</Nav.Link>
@@ -28,7 +29,9 @@ function Sidebar({ sidebar }) {
 }
 
 function LinkList({ links_dict }) {
-
+  let location = useLocation();
+  const background = location.state.backgroundLocation;
+  //console.log(background)
   return (
     <>
       {Object.entries(links_dict).map(([name, link]) => {
@@ -37,13 +40,13 @@ function LinkList({ links_dict }) {
         } else if (name === "Request"){
           return (
             <Nav.Item key={name}>
-              <Nav.Link end as={NavLink} to={link}>{name}</Nav.Link>
+              <Nav.Link end as={NavLink} to={link} state={{ backgroundLocation : background }}>{name}</Nav.Link>
             </Nav.Item>
           ); 
         } else {
           return (
             <Nav.Item key={name}>
-              <Nav.Link as={NavLink} to={link}>{name}</Nav.Link>
+              <Nav.Link as={NavLink} to={link} state={{ backgroundLocation : background }}>{name}</Nav.Link>
             </Nav.Item>
           );  
         }

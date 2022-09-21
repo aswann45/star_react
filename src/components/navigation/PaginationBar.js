@@ -1,12 +1,13 @@
 import Stack from 'react-bootstrap/Stack';
 import Pagination from 'react-bootstrap/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PageLimitSelect from './PageLimitSelect';
 import PageSelector from './PageSelector';
 import Loader from '../loaders/Loader';
 
-function PaginationBar({ url, pageMeta, pageLinks }) {
-
+function PaginationBar({ url, pageMeta, pageLinks, keepBackground }) {
+  const location = useLocation();
+  const background = location.state.backgroundLocation;
   const navigate = useNavigate();
   const currentPage = pageMeta.page;
   const lastPage = pageMeta.total_pages;
@@ -19,7 +20,11 @@ function PaginationBar({ url, pageMeta, pageLinks }) {
       <Pagination.Item 
         key={pageNum} 
         onClick={
-          () => navigate(`${url}?page=${pageNum}&limit=${pageMeta.limit}`)
+          () => {keepBackground ? 
+                  navigate(`${url}?page=${pageNum}&limit=${pageMeta.limit}`,
+                   { state : { backgroundLocation : background } }) :
+                  navigate(`${url}?page=${pageNum}&limit=${pageMeta.limit}`)
+                }
         }
         active={pageNum === currentPage}
       >
@@ -32,7 +37,7 @@ function PaginationBar({ url, pageMeta, pageLinks }) {
       <>
       {pageLinks ?
         <Stack direction="horizontal" gap={2} className="PaginationBar">
-          <PageLimitSelect />
+          <PageLimitSelect keepBackground={keepBackground}/>
           <PageSelector
             url={url}
             currentPage={currentPage}
@@ -40,7 +45,8 @@ function PaginationBar({ url, pageMeta, pageLinks }) {
             minPage={minPage}
             maxPage={maxPage}
             pageLinks={pageLinks}
-            limit={pageMeta.limit}>
+            limit={pageMeta.limit}
+            keepBackground={keepBackground}>
             {betweenPages}
           </PageSelector>
         </Stack>
