@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useOutletContext } from 'react-router-dom';
 
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
@@ -16,11 +16,9 @@ import DetailSubHeader from './DetailSubHeader';
 
 
 function FilesDetail({ title }) {
-
+  const [request_url, request_id] = useOutletContext();
   const api = useApi();
-  const params = useParams(':request_id')
-  const requestID = params.request_id;
-  const url = '/member_requests/' + requestID + '/files'
+  const url = request_url + '/files'
   const [newFile, setNewFile] = useState([]);
   const [newFileType, setNewFileType] = useState();
   const [files, setFiles] = useState();
@@ -37,7 +35,7 @@ function FilesDetail({ title }) {
     const url = '/files/';
     const response = await api.post(url, '', {
       body: {
-        RequestID: requestID,
+        RequestID: request_id,
         Type: newFileType,
       },
     });
@@ -86,6 +84,7 @@ function FilesDetail({ title }) {
           url={pageURL} 
           pageMeta={pageMeta} 
           pageLinks={pageLinks} 
+          keepBackground={true}
         />
       }
       <div>

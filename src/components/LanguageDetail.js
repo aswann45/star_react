@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useOutletContext } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 
@@ -13,16 +13,20 @@ import PaginationBar from './navigation/PaginationBar';
 let counter = 1;
 
 function LanguageDetail({ title }) {
+  const [request_url, 
+    request_id, 
+    handleSubmit, 
+    handleBlur, 
+    handleInputChange, 
+    formErrors] = useOutletContext();
   const [languages, setLanguages] = useState();
   const [newLanguages, setNewLanguages] = useState([]);
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
-  const url = location.pathname;
+  const url = request_url + '/language';
   const search = location.search;
-  const params = useParams(':request_id');
-  const request_id = params.request_id;
 
   function onAddButtonClick () {
     const newLanguage = {
@@ -69,7 +73,7 @@ function LanguageDetail({ title }) {
         {(languages && languages.length !== 0) ?
           <>
             {(pageMeta && pageLinks) &&
-            <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+            <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
             }
             {
             languages.map(language => <LanguageItemForm key={language.ID} 
@@ -78,7 +82,7 @@ function LanguageDetail({ title }) {
                 />)
             }
             {(pageMeta && pageLinks) &&
-            <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+            <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
             }
             </>
          : 

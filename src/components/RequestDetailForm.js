@@ -10,16 +10,23 @@ import DetailSubHeader from './DetailSubHeader';
 
 function RequestDetailForm({ title }) {
 
-  const [endpoint, handleSubmit, handleBlur, handleInputChange, formErrors, setObj, setLinks] = useOutletContext();
+  const [request_url, 
+        request_id, 
+        handleSubmit, 
+        handleBlur, 
+        handleInputChange, 
+        formErrors, 
+        setObj, 
+        setLinks] = useOutletContext();
   const [object, setObject] = useState();
   const api = useApi();
-
+  
   const fetchData = useCallback(async () => {
-    const response = await api.get(endpoint);
+    const response = await api.get(request_url);
     setObject(response.ok ? response.body : null);
     setObj(response.ok ? response.body : null);
     setLinks(response.ok ? response.body._links : null);
-  }, [api, endpoint]);
+  }, [api, request_url]);
 
   useEffect(() => {
     //(async () => {

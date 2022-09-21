@@ -13,8 +13,8 @@ function RequestList({ showMember, title }) {
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
-  const [endpoint] = useOutletContext();
-  const url = location.pathname;
+  const [request_url, request_id] = useOutletContext();
+  const url = request_url + '/members_requests';
   const search = location.search;
 
   useEffect(() => {
@@ -32,13 +32,13 @@ function RequestList({ showMember, title }) {
       {(requests && requests.length !== 0) ?
         <>
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           {
           requests.map(request => <RequestListItem key={request.ID} request={request} showMember={showMember}/>)
           }
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           </>
        : 

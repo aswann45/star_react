@@ -8,11 +8,13 @@ import InputField from './form/InputField';
 import Loader from './loaders/Loader';
 
 function ProjectDetailForm() {
-  const [endpoint, handleSubmit, handleBlur, handleInputChange, formErrors,] = useOutletContext();
+  const [request_url, request_id, handleSubmit, handleBlur, handleInputChange, formErrors,] = useOutletContext();
   const location = useLocation();
   const [detail, setDetail] = useState();
   const api = useApi();
-  const url = endpoint + '/project_details'
+  //const url = endpoint + '/project_details'
+  //const url = endpoint
+  const url = request_url + '/project_details'
 
   const formatter = new Intl.NumberFormat('en-US');
   const amountRequested = useRef();
@@ -33,8 +35,9 @@ function ProjectDetailForm() {
 
   return (
     <>
-      {detail ? 
+      {detail ?  
         <Form onSubmit={handleSubmit}>
+    
           <InputField
             name="ProjectAmountRequested"
             label="$ Requested"

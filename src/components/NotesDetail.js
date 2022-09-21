@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 //import useInputChange from '../useInputChange';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useOutletContext } from 'react-router-dom';
 
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button';
@@ -16,16 +16,22 @@ import DetailSubHeader from './DetailSubHeader';
 let counter = 1;
 
 function NotesDetail({ title }) {
+  const [request_url, 
+    request_id, 
+    handleSubmit, 
+    handleBlur, 
+    handleInputChange, 
+    formErrors] = useOutletContext();
   const [notes, setNotes] = useState();
   const [newNotes, setNewNotes] = useState([]);
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
-  const url = location.pathname;
+  const url = request_url + '/notes';
   const search = location.search;
   const params = useParams(':request_id');
-  const request_id = params.request_id;
+  
 
   function onAddButtonClick () {
     const newNote = {
@@ -76,7 +82,7 @@ function NotesDetail({ title }) {
       {(notes && notes.length !== 0) ?
         <>
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           {
           notes.map(note => <NoteItemForm key={note.ID} 
@@ -85,7 +91,7 @@ function NotesDetail({ title }) {
               />)
           }
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           </>
        : 

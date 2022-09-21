@@ -6,21 +6,20 @@ import Form from 'react-bootstrap/Form';
 
 import InputSelect from './form/InputSelect';
 
-function RequestAccount({ object_id }) {
+function RequestAccount({ url }) {
   
   const [object, setObject] = useState({});
   const [agencies, setAgencies] = useState();
   const [accounts, setAccounts] = useState();
   const [programs, setPrograms] = useState();
   const api = useApi();
-  const request_url = '/member_requests/' + object_id
 
   useEffect(() => {
     (async () => {
-      const response = await api.get(request_url);
+      const response = await api.get(url);
       setObject(response.ok ? response.body : null);
     })();
-  }, [api, request_url])
+  }, [api, url])
 
   const [formErrors, setFormErrors] = useState({});
     
@@ -38,7 +37,7 @@ function RequestAccount({ object_id }) {
   
   const handleProgramChange = async (event) => {
       setProgramID(event.currentTarget.value);
-      const data = await api.put(request_url, '', {
+      const data = await api.put(url, '', {
         body: 
         {
           ProgramID: event.currentTarget.value
@@ -54,7 +53,7 @@ function RequestAccount({ object_id }) {
   const handleAccountChange = async (event) => {
     setProgramID('');
     setAccountID(event.currentTarget.value);
-    const data = await api.put(request_url, '', {
+    const data = await api.put(url, '', {
       body: 
       {
         AccountID: event.currentTarget.value,
@@ -72,7 +71,7 @@ function RequestAccount({ object_id }) {
     setAgencyID(event.currentTarget.value);
     setAccountID('');
     setProgramID('');
-    const data = await api.put(request_url, '', {
+    const data = await api.put(url, '', {
       body: 
       {
         AgencyID: event.currentTarget.value,

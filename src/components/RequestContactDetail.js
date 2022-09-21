@@ -16,7 +16,7 @@ function RequestContactDetail({ title }) {
   const params = useParams(':request_id');
   //const url = location.pathname;
   const request_id = params.request_id;
-  const url = request_id && `/member_requests/${request_id}/contact`
+  const url = request_id && `/requests/${request_id}/contact`
   const [contact, setContact] = useState();
   const [contacts, setContacts] = useState();
   const [editing, setEditing] = useState(false);

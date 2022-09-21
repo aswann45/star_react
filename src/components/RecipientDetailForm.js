@@ -8,11 +8,16 @@ import InputField from './form/InputField';
 import Loader from './loaders/Loader';
 
 function RecipientDetailForm() {
-  const [endpoint, handleSubmit, handleBlur, handleInputChange, formErrors,] = useOutletContext();
+  const [request_url, 
+    request_id, 
+    handleSubmit, 
+    handleBlur, 
+    handleInputChange, 
+    formErrors] = useOutletContext();
   const location = useLocation();
   const [detail, setDetail] = useState();
   const api = useApi();
-  const url = endpoint + '/recipient';
+  const url = request_url + '/recipient';
 
   useEffect(() => {
     (async () => {
