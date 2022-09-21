@@ -290,8 +290,7 @@ function DataTable({ columns, url, localStorageLocation }) {
         fetchedItems={flatData.length}
         //backgroundRefreshData={backgroundRefreshData}
       />
-                  {(flatData.length < 1 && !isFetching) && <p>There is no data to display.</p>}
-        {isFetching && <Loader />}
+        {(flatData.length < 1 && !isFetching) && <p>Please select new filter parameters.</p>}
       <div 
         className='DataTableContainer'
         onScroll={e => fetchMoreOnBottomReached(e.target)}
