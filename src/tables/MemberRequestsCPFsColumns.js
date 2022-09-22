@@ -42,9 +42,9 @@ function MemberRequestsCPFsColumns(
             setIsDetail={props.table.options.meta?.setIsDetail} 
           />
           
-          <NotePopover row={props.row} />
+          <NotePopover row={props.row} table={props.table} />
           
-          <NotePopover row={props.row} type='flag' />
+          <NotePopover row={props.row} table={props.table} type='flag' />
           
           
           <span className={'ms-auto'}>
@@ -83,6 +83,11 @@ function MemberRequestsCPFsColumns(
       header: 'Request Title',
       filterVariant: 'text',
     }),
+    columnHelper.accessor('AnalystTitle', {
+      cell: props => EditableTableCell(props),
+      header: 'Analyst Title',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('Subcommittee', {
       cell: info => info.getValue(),
       header: 'Subcommittee',
@@ -102,6 +107,14 @@ function MemberRequestsCPFsColumns(
         'THUD',
     ],
     }),
+    columnHelper.accessor('ProjectAmountRequested', {
+      cell: info => { 
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'CPF Request $',
+      filterVariant: 'number',
+    }),
     columnHelper.accessor('Member', {
       cell: info => info.getValue(),
       header: 'Member',
@@ -112,9 +125,20 @@ function MemberRequestsCPFsColumns(
     }),
     columnHelper.accessor('Party', {
       cell: info => info.getValue(),
-      header: 'Party',
+      header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
+    }),
+    columnHelper.accessor('MemberState', {
+      cell: info => info.getValue(),
+      header: 'Member State',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'AL', 'AK', 'AZ', 'AR', 'CA','CO','CT','DE','DC','FL','GA','HI','ID','IL',
+        'IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV',
+        'NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','PR','RI','SC','SD','TN','TX',
+        'UT','VT','VA','VI','WA','WV','WI','WY'
+      ]
     }),
     columnHelper.accessor('ProjectPriority', {
       cell: props => EditableTableCell(props),
@@ -178,6 +202,37 @@ function MemberRequestsCPFsColumns(
       header: 'Description',
       filterVariant: 'text',
       inputType: 'textarea',
+    }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'Recipient',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: info => info.getValue(),
+      header: 'Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: info => info.getValue(),
+      header: 'Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('OrganizationEIN', {
+      cell: info => info.getValue(),
+      header: 'Recipient EIN',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RequestChamber', {
+      cell: info => info.getValue(),
+      header: 'Origin Chamber',
+      filterVariant: 'multi-select',
+      inputType: 'text',
+      filterValues: [
+        'House',
+        'Senate',
+        //'Bicameral',
+      ],
     }),
   ];
 

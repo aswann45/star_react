@@ -336,6 +336,11 @@
   padding: 1px;
 }
 
+.ProjectExcludeButton:hover {
+  background-color: grey;
+  padding: 1px;
+}
+
 .DetailExpandButton:hover {
   background-color: grey;
   padding: 1px;

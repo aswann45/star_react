@@ -39,10 +39,18 @@ function CPFConferenceFundingColumns(
             setIsDetail={props.table.options.meta?.setIsDetail} 
           />
           
-          <NotePopover row={props.row} />
+          <NotePopover 
+            row={props.row} 
+            table={props.table} 
+            _requestID={props.row?.RequestID} 
+          />
           
-          <NotePopover row={props.row} type='flag' />
-          
+          <NotePopover 
+            row={props.row} 
+            table={props.table}
+            type='flag' 
+            _requestID={props.row?.RequestID} 
+          />          
           
           <span className={'ms-auto'}>
             <RowExpandButton row={props.row} table={props.table} /> 
@@ -79,6 +87,11 @@ function CPFConferenceFundingColumns(
       header: 'Request Title',
       filterVariant: 'text',
     }),
+    columnHelper.accessor('AnalystTitle', {
+      cell: info => info.getValue(),
+      header: 'Analyst Title',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('Subcommittee', {
       cell: info => info.getValue(),
       header: 'Subcommittee',
@@ -108,9 +121,20 @@ function CPFConferenceFundingColumns(
     }),
     columnHelper.accessor('Party', {
       cell: info => info.getValue(),
-      header: 'Party',
+      header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
+    }),
+    columnHelper.accessor('MemberState', {
+      cell: info => info.getValue(),
+      header: 'Member State',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'AL', 'AK', 'AZ', 'AR', 'CA','CO','CT','DE','DC','FL','GA','HI','ID','IL',
+        'IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV',
+        'NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','PR','RI','SC','SD','TN','TX',
+        'UT','VT','VA','VI','WA','WV','WI','WY'
+      ]
     }),
     columnHelper.accessor('ProjectPriority', {
       cell: props => EditableTableCell(props),
@@ -150,6 +174,14 @@ function CPFConferenceFundingColumns(
           programFilterOptions.map(program => program.Program)
         )
       ),
+    }),
+    columnHelper.accessor('ProjectAmountRequested', {
+      cell: info => { 
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'CPF Request $',
+      filterVariant: 'number',
     }),
     columnHelper.accessor('ChamberAmount', {
       cell: info => info.getValue(),
@@ -195,8 +227,21 @@ function CPFConferenceFundingColumns(
       filterValues: [
         'House',
         'Senate',
-        'Bicameral',
-    ],
+        //'Bicameral',
+      ],
+    }),
+    columnHelper.accessor('members_names', {
+      cell: info => info.getValue().join(', '),
+      header: 'House Requestors',
+    }),
+    columnHelper.accessor('senators_names', {
+      cell: info => info.getValue().join(', '),
+      header: 'Senate Requestors',
+    }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'Recipient',
+      filterVariant: 'text',
     }),
   ];
 

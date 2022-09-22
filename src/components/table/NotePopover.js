@@ -117,14 +117,17 @@ const FlagNote = ({
   setShow, 
   flagStatus,
   setFlagStatus,
+  table,
+  row
 }) => {
   
   const note_url = '/notes/';
-  const flag_url = `/member_requests/${requestID}`;
+  const flag_url = `/requests/${requestID}`;
   const api = useApi();
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFlagStatus(true);
+    table.options.meta?.updateData(row, 'FlaggedStatus', true)
     const flagData = await api.put(flag_url, '', {
       body: {FlaggedStatus: true}
     });
@@ -164,18 +167,19 @@ const FlagNote = ({
 
 
 
-function NotePopover ({ row, type }) {
+function NotePopover ({ row, table, type, _requestID }) {
   const api = useApi();
   const [input, handleInputChange] = useInputChange();
   const [formErrors, setFormErrors] = useState({});
   const [show, setShow] = useState(false);
   const target = useRef(null);
-  const requestID = row.original.ID
-  const flag_url = `/member_requests/${requestID}`;
+  const requestID = _requestID ? _requestID : row.original.ID;
+  const flag_url = `/requests/${requestID}`;
   const [flagStatus, setFlagStatus] = useState(row.original.FlaggedStatus);
   
   const handleClick = async () => {
     setFlagStatus(false);
+    table.options.meta?.updateData(row, 'FlaggedStatus', false)
     const flagData = await api.put(flag_url, '', {
       body: {FlaggedStatus: false}
     });
@@ -199,7 +203,9 @@ function NotePopover ({ row, type }) {
     formErrors, 
     setFormErrors, 
     setShow, 
-    setFlagStatus
+    setFlagStatus,
+    table,
+    row
   })
   
   return (
@@ -207,12 +213,12 @@ function NotePopover ({ row, type }) {
     {type === 'flag' ?
      
         flagStatus === true ? 
-        <span className='NotePopover' onClick={handleClick}>
+        <span title='Unflag Item' className='NotePopover' onClick={handleClick}>
           <FaFlag style={{display: 'block', cursor: 'pointer'}}/>
         </span>
         :
         <OverlayTrigger show={show} trigger="click" placement="top" overlay={flagOverlay}>
-          <span className='NotePopover' onClick={() => setShow(!show)}>
+          <span title='Unflag Item' className='NotePopover' onClick={() => setShow(!show)}>
             <FaRegFlag style={{display: 'block', cursor: 'pointer'}}/>
           </span>
         </OverlayTrigger>
@@ -220,7 +226,7 @@ function NotePopover ({ row, type }) {
 
      :
     <OverlayTrigger show={show} trigger="click" placement="top" overlay={overlay}>
-      <span className='NotePopover' onClick={() => setShow(!show)}>
+      <span title='Add Note' className='NotePopover' onClick={() => setShow(!show)}>
         <FaStickyNote style={{display: 'block', cursor: 'pointer'}}/>
       </span>
     </OverlayTrigger>

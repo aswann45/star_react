@@ -106,7 +106,7 @@ const DraggableTableHeader = ({ tableInstance, header, showFilters, showColumnTo
           {(header.column.getIsFiltered() && 
             column.columnDef.filterVariant === 'number' ? 
             // TODO: check this -- problem with typing in text box
-            header.column.getFilterValue().some((item) => item.trim().length > 0)
+            header.column.getFilterValue().some((item) => item?.trim().length > 0)
             : header.column.getFilterValue()
             ) &&
             // show filter circle if filtered

@@ -19,7 +19,7 @@ import TableToolBar from './TableToolBar';
 import useInfiniteQuery from '../../hooks/useInfiniteQuery';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
-function DataTable({ columns, url, localStorageLocation, getURL }) {
+function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }) {
   // member request columns 
   // TODO: make the columns something to feed into the component
   //const columns = MemberRequestsColumns();
@@ -162,7 +162,7 @@ function DataTable({ columns, url, localStorageLocation, getURL }) {
     getScrollElement: () => tableContainerRef.current,
     //estimateSize: () => rows.length,
     estimateSize: () => 42,
-    overscan: 20,
+    overscan: 30,
     enableSmoothScroll: false,
     paddingEnd: 800,
   });
@@ -290,6 +290,7 @@ function DataTable({ columns, url, localStorageLocation, getURL }) {
         totalItems={totalItems}
         resetSearch={resetSearch}
         fetchedItems={flatData.length}
+        allowGrouping={allowGrouping}
         //backgroundRefreshData={backgroundRefreshData}
       />
         {(flatData.length < 1 && !isFetching) && <p>Please select new filter parameters.</p>}

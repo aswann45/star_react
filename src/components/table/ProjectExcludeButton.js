@@ -10,6 +10,7 @@ function ProjectExcludeButton({ table, row, stage }) {
     <>
       <span
         {...{
+          className: 'ProjectExcludeButton',
           onClick: (e) => handleClick(),
           style: {cursor: 'pointer'},
           //size: 'sm',

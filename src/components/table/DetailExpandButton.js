@@ -15,6 +15,7 @@ function DetailExpandButton({endpoint, RequestID, setIsDetail}) {
         as={Link} 
         to={endpoint} 
         onClick={handleShow} 
+        title='Show Details'
         state={{backgroundLocation: location}} 
         className='DetailExpandButton'
       >

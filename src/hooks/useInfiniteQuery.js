@@ -324,7 +324,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   
   const resetSearch = () => {
     setData({pages: [], pageParams: []});
-    setLastPage();
+    setLastPage(null);
     setNextPageToFetch(1);  
     setTotalItems(null);
     setIsFetching(false);
