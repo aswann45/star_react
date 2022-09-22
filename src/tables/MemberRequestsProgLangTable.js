@@ -25,6 +25,7 @@ function MemberRequestsProgLangTable () {
         url='/requests/'
         localStorageLocation='member_requests' 
         getURL='/requests/prog_lang'
+        allowGrouping={true}
       />
     </>
   );

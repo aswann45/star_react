@@ -25,6 +25,7 @@ function MemberRequestsCPFsTable () {
         url='/requests/'
         localStorageLocation='member_requests_cpfs'
         getURL='/requests/cpfs'
+        allowGrouping={true}
       />
     </>
   );

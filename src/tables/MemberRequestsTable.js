@@ -24,6 +24,7 @@ function MemberRequestsTable () {
         columns={columns} 
         url='/requests/'
         localStorageLocation='member_requests' 
+        allowGrouping={true}
       />
     </>
   );

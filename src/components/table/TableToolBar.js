@@ -15,6 +15,7 @@ function TableToolBar({
   isFetching,
   totalItems,
   resetSearch,
+  allowGrouping,
 }) {
   
   const handleGroupingClick = () => {
@@ -23,7 +24,9 @@ function TableToolBar({
   }
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}> 
-      <Button onClick={handleGroupingClick}>Group Selected Rows</Button>
+      {allowGrouping &&
+        <Button onClick={handleGroupingClick}>Group Selected Rows</Button>
+      }
     {totalItems && totalItems > 0 ?
         <Button onClick={resetSearch}>Reset Search</Button>
       : <Button onClick={fetchNewQuery}>Fetch New Results</Button>
