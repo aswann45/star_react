@@ -231,6 +231,18 @@ function CPFFundingColumns(
         //'Bicameral',
     ],
     }),
+    columnHelper.accessor('ProjectChamber', {
+      cell: info => info.getValue(),
+      header: 'Project Chamber',
+      filterVariant: 'multi-select',
+      inputType: 'text',
+      filterValues: [
+        'House',
+        'Senate',
+        //'Bicameral',
+    ],
+    }),
+
     columnHelper.accessor('ChamberDisposition', {
       cell: info => info.getValue(),
       header: 'Request Chamber Disposition',

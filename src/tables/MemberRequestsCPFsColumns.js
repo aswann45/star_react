@@ -224,7 +224,8 @@ function MemberRequestsCPFsColumns(
       filterVariant: 'text',
     }),
     columnHelper.accessor('RequestChamber', {
-      cell: info => info.getValue(),
+      //cell: info => info.getValue(),
+      cell: props => EditableTableCell(props),
       header: 'Origin Chamber',
       filterVariant: 'multi-select',
       inputType: 'text',
