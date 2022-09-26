@@ -4,6 +4,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas'
 
 import Header from '../components/navigation/Header';
 import Sidebar from '../components/navigation/Sidebar';
+import MiniDash from '../components/MiniDash';
 
 function RootPage() {
   
@@ -22,6 +23,7 @@ function RootPage() {
       >
         <Sidebar />
       </Offcanvas>
+      <MiniDash />
       <Outlet />
     </>
   );
