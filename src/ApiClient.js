@@ -1,8 +1,8 @@
 class ApiClient {
   constructor() {
-    this.base_url = '';
+    this.base_url = '/api';
   }
-  
+
   async request(options) {
     let query = new URLSearchParams(options.query || {}).toString();
     if (query !== '') {
@@ -32,7 +32,7 @@ class ApiClient {
         }; }
       }
     }
-    
+
     const responseHeaders = response && response['headers'];
     const contentType = responseHeaders && responseHeaders.get('content-type');
     if (contentType && contentType.indexOf('application/json') !== -1) {
@@ -40,7 +40,7 @@ class ApiClient {
         ok: response.ok,
         status: response.status,
         body: response.status !== 204 ?  await response.json() : null,
-      } 
+      }
     } else {
       return (response);
     }
