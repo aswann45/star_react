@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
+import { useParams } from 'react-router-dom';
+
 import Spinner from 'react-bootstrap/Spinner';
 import Stack from 'react-bootstrap/Stack';
-import { useParams } from 'react-router-dom';
-import Body from '../components/Body';
-import AgenciesAccounts from '../components/AgenciesAccounts'
+
+import Body from '../components/navigation/Body';
+import AgenciesAccounts from '../components/agencies_accounts/AgenciesAccounts'
 
 function UserPage() {
   const { user_id } = useParams();

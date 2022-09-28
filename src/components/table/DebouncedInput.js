@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 
-function DebouncedInput({ initialValue, onChange, debounce=100, ...props }) {
+  function DebouncedInput({ initialValue, onChange, debounce=300, ...props }) {
   const [value, setValue] = useState(initialValue);
   
   useEffect(() => {

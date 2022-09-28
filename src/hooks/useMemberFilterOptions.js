@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, memo } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 
 const useMemberFilterOptions = () => {
@@ -12,7 +12,7 @@ const useMemberFilterOptions = () => {
       setMembers(response.ok ? response.body.data : null);
     };
     fetchMembers();
-  }, [api])
+  }, [])
 
   return members;
 };

@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import useInputChange from '../useInputChange';
+
 import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import InputField from './InputField';
-import InputSelect from './InputSelect';
-import useInputChange from '../useInputChange';
+
+import InputField from './form/InputField';
+import InputSelect from './form/InputSelect';
+
 
 function NewLanguageItem({ api, handleRemove, list_id, request_id }) {
     

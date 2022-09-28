@@ -1,5 +1,5 @@
-import Body from '../components/Body';
-import Users from '../components/Users';
+import Body from '../components/navigation/Body';
+import Users from '../components/users/Users';
 
 function UsersPage() {
   return (

@@ -12,7 +12,7 @@ const useProgramFilterOptions = () => {
       setPrograms(response.ok ? response.body.data : null);
     };
     fetchPrograms();
-  }, [api])
+  }, [])
 
   return programs;
 };

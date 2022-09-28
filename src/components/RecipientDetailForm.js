@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
-import Form from 'react-bootstrap/Form';
-import InputField from '../components/InputField';
-import { useLocation } from 'react-router-dom';
-import Loader from '../components/Loader';
+import { useLocation, useOutletContext } from 'react-router-dom';
 
-function RecipientDetailForm({ handleSubmit, handleBlur, handleInputChange, formErrors }) {
+import Form from 'react-bootstrap/Form';
+
+import InputField from './form/InputField';
+import Loader from './loaders/Loader';
+
+function RecipientDetailForm() {
+  const [request_url, 
+    request_id, 
+    handleSubmit, 
+    handleBlur, 
+    handleInputChange, 
+    formErrors] = useOutletContext();
   const location = useLocation();
   const [detail, setDetail] = useState();
   const api = useApi();
-  const url = location.pathname;
+  const url = request_url + '/recipient';
 
   useEffect(() => {
     (async () => {
@@ -24,7 +32,6 @@ function RecipientDetailForm({ handleSubmit, handleBlur, handleInputChange, form
     <>
       {(detail && Object.keys(detail).length !== 0) ?
         <>
-          {console.log(Object.keys(detail).length)}
         <Form onSubmit={handleSubmit}>
           <InputField
             name="RecipientLegalName"

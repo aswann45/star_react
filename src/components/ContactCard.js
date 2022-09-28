@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import Stack from 'react-bootstrap/Stack';
-import InputField from './InputField';
+import InputField from './form/InputField';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 

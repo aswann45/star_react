@@ -1,5 +1,6 @@
 import Form from 'react-bootstrap/Form';
-import InputSelect from './InputSelect';
+
+import InputSelect from './form/InputSelect';
 
 function RequestContactSelect({ contacts, handleContactSelect, formErrors }){
   

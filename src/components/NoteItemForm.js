@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import useInputChange from '../useInputChange';
+
 import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
-import InputField from './InputField';
-import useInputChange from '../useInputChange';
+
+import InputField from './form/InputField';
+
 
 function NoteItemForm({ note, api }) {
     

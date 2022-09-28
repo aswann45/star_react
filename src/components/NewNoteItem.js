@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import useInputChange from '../useInputChange';
+
 import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import InputField from './InputField';
-import InputSelect from './InputSelect';
-import useInputChange from '../useInputChange';
+
+import InputField from './form/InputField';
+import InputSelect from './form/InputSelect';
 
 function NewNoteItem({ api, handleRemove, list_id, request_id }) {
     
@@ -64,11 +66,13 @@ function NewNoteItem({ api, handleRemove, list_id, request_id }) {
       <Stack direction="horizontal" gap={2} className="NoteItemFooter">
         <Button 
           variant="primary"
+          size='sm'
           type="submit">
           Save New Note
         </Button>
         <Button 
           variant="danger" 
+          size='sm'
           onClick={() => handleRemove(list_id)}>
           Cancel
         </Button>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
+import { useLocation, useOutletContext } from 'react-router-dom';
+
 import RequestListItem from './RequestListItem';
-import { useLocation } from 'react-router-dom';
-import Loader from './Loader';
-import PaginationBar from './PaginationBar';
+import Loader from './loaders/Loader';
+import PaginationBar from './navigation/PaginationBar';
 import DetailSubHeader from './DetailSubHeader';
 
 function RequestList({ showMember, title }) {
@@ -12,7 +13,8 @@ function RequestList({ showMember, title }) {
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
-  const url = location.pathname;
+  const [request_url, request_id] = useOutletContext();
+  const url = request_url + '/members_requests';
   const search = location.search;
 
   useEffect(() => {
@@ -30,13 +32,13 @@ function RequestList({ showMember, title }) {
       {(requests && requests.length !== 0) ?
         <>
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           {
           requests.map(request => <RequestListItem key={request.ID} request={request} showMember={showMember}/>)
           }
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} />
+          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           </>
        : 

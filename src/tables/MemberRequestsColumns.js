@@ -1,33 +1,26 @@
-//import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import RowSelectCheckbox from '../RowSelectCheckbox';
-import RowExpandButton from '../RowExpandButton';
 import Stack from 'react-bootstrap/Stack';
-import useMemberFilterOptions from '../../hooks/useMemberFilterOptions';
-import useAgencyFilterOptions from '../../hooks/useAgencyFilterOptions';
-import useAccountFilterOptions from '../../hooks/useAccountFilterOptions';
-import useProgramFilterOptions from '../../hooks/useProgramFilterOptions';
-import EditableTableCell from '../EditableTableCell';
 
-function MemberRequestsColumns() {
-  const columnHelper = createColumnHelper();
-  const memberFilterOptions = useMemberFilterOptions();
+import RowSelectCheckbox from '../components/table/RowSelectCheckbox';
+import RowExpandButton from '../components/table/RowExpandButton';
+import EditableTableCell from '../components/table/EditableTableCell';
+import DetailExpandButton from '../components/table/DetailExpandButton';
+import NotePopover from '../components/table/NotePopover';
 
-  const agencyFilterOptions = useAgencyFilterOptions();
-  const accountFilterOptions = useAccountFilterOptions();
-  const programFilterOptions = useProgramFilterOptions();
-
-    
+function MemberRequestsColumns(
+  memberFilterOptions,
+  agencyFilterOptions, 
+  accountFilterOptions, 
+  programFilterOptions
+) {
+  
+  const columnHelper = createColumnHelper(); 
+  const urlPrefix = '/requests/'
+  
   const columns = [
-    columnHelper.accessor('ID', {
-      cell: info => info.getValue(),
-      header: 'StarID',
-      filterVariant: 'number',
-    }),
-
-    columnHelper.accessor('SubmissionID', {
-      header: 'ID',
-      filterVariant: 'number',
+    columnHelper.display({
+      id: 'actions',
+      header: 'Actions',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -42,14 +35,44 @@ function MemberRequestsColumns() {
             indeterminate={props.row.getIsSomeSelected()}
             onChange={props.row.getToggleSelectedHandler()}
           />
-          {props.getValue()}
           
-          {props.row?.original?._links?.child_requests ?
-            <span className={'ms-auto'}>
-              <RowExpandButton row={props.row} table={props.table} /> 
-            </span> :
-              null
-            }
+          <DetailExpandButton 
+            endpoint={`${urlPrefix}${props.row?.original?.ID}`} 
+            ID={props.row?.original?.ID}
+            setIsDetail={props.table.options.meta?.setIsDetail} 
+          />
+          
+          <NotePopover row={props.row} table={props.table} />
+          
+          <NotePopover row={props.row} table={props.table} type='flag' />
+          
+          
+          <span className={'ms-auto'}>
+            <RowExpandButton row={props.row} table={props.table} /> 
+          </span>
+        </Stack>
+      )
+    }),
+    
+    columnHelper.accessor('ID', {
+      cell: info => info.getValue(),
+      header: 'StarID',
+      filterVariant: 'number',
+    }),  
+
+    columnHelper.accessor('SubmissionID', {
+      header: 'ID',
+      filterVariant: 'number',
+      cell: (props) => (
+        <Stack
+          direction='horizontal'
+          style={{
+            paddingLeft: `${props.row.depth * 2}rem`,
+            paddingRight: '5px',
+          }}
+          gap={2}
+        >
+        {props.getValue()}
         </Stack>
       )
     }),
@@ -58,6 +81,11 @@ function MemberRequestsColumns() {
       //cell: info => info.getValue(),
       cell: props => EditableTableCell(props),
       header: 'Request Title',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('AnalystTitle', {
+      cell: props => EditableTableCell(props),
+      header: 'Analyst Title',
       filterVariant: 'text',
     }),
     columnHelper.accessor('Subcommittee', {
@@ -89,6 +117,22 @@ function MemberRequestsColumns() {
         'Language',
       ]
     }),
+    columnHelper.accessor('ProjectAmountRequested', {
+      cell: info => { 
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'CPF Request $',
+      filterVariant: 'number',
+    }),
+    columnHelper.accessor('ProgramAmount', {
+      cell: info => { 
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'Programmatic Request $',
+      filterVariant: 'number',
+    }),
     columnHelper.accessor('Member', {
       cell: info => info.getValue(),
       header: 'Member',
@@ -99,9 +143,20 @@ function MemberRequestsColumns() {
     }),
     columnHelper.accessor('Party', {
       cell: info => info.getValue(),
-      header: 'Party',
+      header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
+    }),
+    columnHelper.accessor('MemberState', {
+      cell: info => info.getValue(),
+      header: 'Member State',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'AL', 'AK', 'AZ', 'AR', 'CA','CO','CT','DE','DC','FL','GA','HI','ID','IL',
+        'IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV',
+        'NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','PR','RI','SC','SD','TN','TX',
+        'UT','VT','VA','VI','WA','WV','WI','WY'
+      ]
     }),
     columnHelper.accessor('ProjectPriority', {
       cell: props => EditableTableCell(props),
@@ -165,6 +220,26 @@ function MemberRequestsColumns() {
       header: 'Description',
       filterVariant: 'text',
       inputType: 'textarea',
+    }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'CPF Recipient',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: info => info.getValue(),
+      header: 'CPF Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: info => info.getValue(),
+      header: 'CPF Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('OrganizationEIN', {
+      cell: info => info.getValue(),
+      header: 'CPF Recipient EIN',
+      filterVariant: 'text',
     }),
   ];
 
