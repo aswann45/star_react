@@ -18,9 +18,6 @@ function Sidebar({ sidebar, background }) {
           <Nav.Item>
             <Nav.Link as={NavLink} to="/project_funding">Fund CPFs</Nav.Link>
           </Nav.Item>
-          <Nav.Item>
-            <Nav.Link as={NavLink} to="/users">Users</Nav.Link>
-          </Nav.Item>
         </>
       }
       </Navbar>
@@ -42,13 +39,13 @@ function LinkList({ links_dict }) {
             <Nav.Item key={name}>
               <Nav.Link end as={NavLink} to={link} state={{ backgroundLocation : background }}>{name}</Nav.Link>
             </Nav.Item>
-          ); 
+          );
         } else {
           return (
             <Nav.Item key={name}>
               <Nav.Link as={NavLink} to={link} state={{ backgroundLocation : background }}>{name}</Nav.Link>
             </Nav.Item>
-          );  
+          );
         }
       })}
     </>

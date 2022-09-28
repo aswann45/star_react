@@ -7,23 +7,22 @@ import Sidebar from '../components/navigation/Sidebar';
 import MiniDash from '../components/MiniDash';
 
 function RootPage() {
-  
-  const [showSidebar, setShowSidebar] = useState(false); 
+
+  const [showSidebar, setShowSidebar] = useState(false);
   const handleShow = () => setShowSidebar(true);
   const handleClose = () => setShowSidebar(false);
-  
+
   return (
     <>
       <Header handleClick={handleShow} />
-      <Offcanvas 
-        show={showSidebar} 
-        onHide={handleClose} 
-        onClick={handleClose} 
+      <Offcanvas
+        show={showSidebar}
+        onHide={handleClose}
+        onClick={handleClose}
         style={{zIndex: 97000}}
       >
         <Sidebar />
       </Offcanvas>
-      <MiniDash />
       <Outlet />
     </>
   );
