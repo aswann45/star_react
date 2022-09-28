@@ -29,7 +29,7 @@ function FilesDetail({ title }) {
   const search = location.search;
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
-    
+
   async function handleSubmit (event) {
     event.preventDefault();
     const url = '/files/';
@@ -72,26 +72,26 @@ function FilesDetail({ title }) {
   return (
     <>
       <DetailSubHeader title={title} />
-      <NewFileForm 
-        handleSubmit={handleSubmit} 
+      <NewFileForm
+        handleSubmit={handleSubmit}
         handleFileAdd={handleFileAdd}
         handleFileTypeSelect={handleFileTypeSelect}
         formErrors={formErrors}
         newFile={newFile}
       />
       {(pageMeta && pageLinks) &&
-        <PaginationBar 
-          url={pageURL} 
-          pageMeta={pageMeta} 
-          pageLinks={pageLinks} 
+        <PaginationBar
+          url={pageURL}
+          pageMeta={pageMeta}
+          pageLinks={pageLinks}
           keepBackground={true}
         />
       }
       <div>
         {
           files ?
-            files.map(file => <FileCard 
-              key={file.ID} 
+            files.map(file => <FileCard
+              key={file.ID}
               file={file}
               setDeletedFile={setDeletedFile}
               />)
@@ -140,15 +140,15 @@ function FileCard({ file, setDeletedFile }) {
       <Card.Title>
         <Stack direction="horizontal" gap={1}>
           <h5>{file.Type}</h5>
-          <Button 
+          <Button
             className={'ms-auto'}
             size={'sm'}
             onClick={() => handleDownloadButtonClick(file._links.download_file)}
           >
             Download File
           </Button>
-          <Button 
-            variant={'danger'} 
+          <Button
+            variant={'danger'}
             size={'sm'}
             onClick={() => handleRemoveButtonClick(file._links.self)}
           >
@@ -160,7 +160,7 @@ function FileCard({ file, setDeletedFile }) {
         {!file.Path &&
         <Alert variant={'danger'}>Missing file location!</Alert>
         }
-        <InputField 
+        <InputField
           name={file.ID}
           as_type="textarea"
           helperText="File notes"
@@ -192,7 +192,7 @@ function NewFileForm({ handleSubmit, handleFileTypeSelect, handleFileAdd, formEr
     <Form onSubmit={handleSubmit} className="NewFileForm">
       <Form.Text>Upload a new file for this request.</Form.Text>
       <Stack direction="horizontal">
-        <InputSelect 
+        <InputSelect
           name={"Type"}
           changeHandler={handleFileTypeSelect}
           error={formErrors.Type}
@@ -200,6 +200,7 @@ function NewFileForm({ handleSubmit, handleFileTypeSelect, handleFileAdd, formEr
           <option value="" hidden>Select file type...</option>
           <option value="Request Letter">Request Letter</option>
           <option value="Support Letter">Suppport Letter</option>
+          <option value="Language File">Language File</option>
           <option value="Financial File">Financial File (CPFs)</option>
           <option value="Supplemental File">Supplemental File</option>
           <option value="Other">Other File</option>
