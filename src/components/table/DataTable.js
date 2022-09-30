@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Table from 'react-bootstrap/Table';
-import { 
+import Container from 'react-bootstrap/Container';
+import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -31,11 +32,11 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   const [
     data,
     //error,
-    //totalPages, 
-    setLimit, 
-    setFilters, 
+    //totalPages,
+    setLimit,
+    setFilters,
     setOrder,
-    totalItems, 
+    totalItems,
     setTotalItems,
     isFetchingNextPage,
     isFetchingPreviousPage,
@@ -47,7 +48,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     isFirstPage,
     lastPage,
     nextPageToFetch,
-    //pageArray,
+    pageArray,
+    totalPages,
     updateData,
     //backgroundRefreshData,
     //setIsFetchingPreviousPage,
@@ -247,7 +249,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   //const virtualLength = virtualRows.length;
 
   return (
-    <>
+    <Container fluid>
+
     {/*<pre>isFetching: {JSON.stringify(isFetching)}</pre>
         <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
         <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
@@ -378,7 +381,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         </Table>
       </div>
 
-    </>
+    </Container>
   );
 }
 
