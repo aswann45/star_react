@@ -7,14 +7,14 @@ import Loader from './loaders/Loader';
 import PaginationBar from './navigation/PaginationBar';
 import DetailSubHeader from './DetailSubHeader';
 
-function RequestList({ showMember, title }) {
+function RequestList({ showMember, title, endpoint_suffix }) {
   const [requests, setRequests] = useState();
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
   const api = useApi();
   const location = useLocation();
   const [request_url, request_id] = useOutletContext();
-  const url = request_url + '/members_requests';
+  const url = request_url + endpoint_suffix;
   const search = location.search;
 
   useEffect(() => {

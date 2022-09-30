@@ -49,11 +49,11 @@ function App() {
             <Route path="/" element={<RootPage />}>              
               <Route path='requests/:request_id' element={<RequestModal />}>
                 <Route index element={<RequestDetailForm title="Request Details" />} />
-                <Route path="members_requests" 
-                  element={<RequestList title="Member's Other Requests" />} />
-                <Route path="children"
-                  element={<RequestList showMember />}/>
-                <Route path="project_details" 
+                <Route path="members_requests"
+                  element={<RequestList title="Member's Other Requests" endpoint_suffix='/members_requests' />} />
+                <Route path="child_requests"
+                  element={<RequestList showMember title="Child Requests" endpoint_suffix='/children' />}/>
+                <Route path="project_details"
                   element={<ProjectDetailForm title='Project Details'/>} />
                 <Route path="recipient"
                   element={<RecipientDetailForm title='Project Recipient'/>} />
@@ -89,11 +89,11 @@ function App() {
             <Routes>
               <Route path='requests/:request_id' element={<RequestModal />}>
                 <Route index element={<RequestDetailForm title="Request Details" />} />
-                <Route path="members_requests" 
-                  element={<RequestList title="Member's Other Requests" />} />
-                <Route path="children"
-                  element={<RequestList showMember />}/>
-                <Route path="project_details" 
+                <Route path="members_requests"
+                  element={<RequestList title="Member's Other Requests" endpoint_suffix='/members_requests' />} />
+                <Route path="child_requests"
+                  element={<RequestList showMember title="Child Requests" endpoint_suffix='/children' />}/>
+                <Route path="project_details"
                   element={<ProjectDetailForm title='Project Details'/>} />
                 <Route path="recipient"
                   element={<RecipientDetailForm title='Project Recipient'/>} />
