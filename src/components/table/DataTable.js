@@ -69,7 +69,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   );
 
   // column toolbar visibilities
-  const [showFilters, setShowFilters] = useState(tableSettings.showFilters);
+  const [showFilters, setShowFilters] = useState(tableSettings.showFilters || true);
   const [showColumnTools, setShowColumnTools] = useState(tableSettings.showColumnTools);
 
   // column resizing -- using state for now in case we want the user to change
