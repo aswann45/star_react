@@ -7,8 +7,8 @@ import Card from 'react-bootstrap/Card';
 import InputField from './form/InputField';
 
 function LanguageItemForm({ language, api }) {
-    
-  const language_url = (language ? language._links.self : '')
+
+  const language_url = (language ? `/language/${language.ID}` : '')
   const [formErrors, setFormErrors] = useState({});
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   const handleBlur = async (event) => {
@@ -37,7 +37,7 @@ function LanguageItemForm({ language, api }) {
         <Card.Title>
           <h5>
               {
-                (language.BillReport && language.BillReport !== '') ? 
+                (language.BillReport && language.BillReport !== '') ?
                   language.BillReport + " Language:"
                   : "Language:"
               }
