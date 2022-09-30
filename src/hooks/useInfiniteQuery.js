@@ -321,17 +321,20 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       setIsFetchingNextPage(true);
     }
   };
-  
-  
+
+
   const resetSearch = () => {
     setData({pages: [], pageParams: []});
     setLastPage(null);
-    setNextPageToFetch(1);  
+    setPageArray([]);
+    //setNextPageToFetch(1);
     setTotalItems(null);
+    setTotalPages(null);
     setIsFetching(false);
+    setSearchParams((oldParams) => ({...oldParams, page: 1}));
   }
-  
-  // function to set fetching status state to 
+
+  // function to set fetching status state to
   // fetch the first page for a new query
   const fetchNewQuery = () => {
     if (isFetching) {
@@ -566,13 +569,13 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   }
 
   return [
-    data, 
-    //error, 
-    //totalPages, 
-    setLimit, 
-    setFilters, 
+    data,
+    //error,
+    //totalPages,
+    setLimit,
+    setFilters,
     setOrder,
-    totalItems, 
+    totalItems,
     setTotalItems,
     isFetchingNextPage,
     isFetchingPreviousPage,
@@ -584,7 +587,8 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     isFirstPage,
     lastPage,
     nextPageToFetch,
-    //pageArray,
+    pageArray,
+    totalPages,
     updateData,
     //backgroundRefreshData,
     //setIsFetchingPreviousPage,
