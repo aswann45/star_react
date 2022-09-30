@@ -194,7 +194,8 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     // set loading state (will render loading spinner)
     setRowIsLoading(prevRows => ({...prevRows, [row.id]: true}));
     // get the endpoint from the row's metadata
-    const childRequestsURL = row?.original?._links?.child_requests || null;
+    const childRequestsURL = row?.original?._links?.child_requests.replace('/api', '') || null;
+
     // make the request and return the promise
     const childRequests = async (row) => {
       if (childRequestsURL === null) {
