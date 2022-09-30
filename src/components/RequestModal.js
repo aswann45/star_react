@@ -42,10 +42,10 @@ function RequestModal() {
       ...(links.recipient && {'Recipient': `/requests/${request_id}/recipient`}),
       ...(links.notes && {'Notes': `/requests/${request_id}/notes`}),
       ...(links.language && {'Language': `/requests/${request_id}/language`}),
-      ...(links.member && {'Member Details': `/requests/${request_id}/member`}),
+      //...(links.member && {'Member Details': `/requests/${request_id}/member`}),
       ...(links.members_requests && {'Member Requests': `/requests/${request_id}/members_requests`}),
       ...(links.files && {'Files': `/requests/${request_id}/files`}),
-      ...(links.districts && {'Districts': `/requests/${request_id}/districts`}),
+      //...(links.districts && {'Districts': `/requests/${request_id}/districts`}),
       ...(links.contact && {'Contact': `/requests/${request_id}/contact`}),
     });
   }, [links])
