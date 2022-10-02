@@ -7,7 +7,7 @@ function handleKeyDown(event) {
 }
 
 function InputField(
-  { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows, horizontal }
+  { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows, horizontal, ...props }
 ) {
   return (
     <Form.Group controlId={name} className="InputField">
@@ -26,6 +26,7 @@ function InputField(
           onChange={changeHandler}
           onBlur={blurHandler}
           onKeyUp={keyUpHandler}
+          readOnly={props.readOnly ? true : false}
         />
         <Form.Text className="text-danger">{error}</Form.Text>
         {helperText && <Form.Text>{helperText}</Form.Text>}
@@ -44,13 +45,14 @@ function InputField(
           onChange={changeHandler}
           onBlur={blurHandler}
           onKeyUp={keyUpHandler}
+          readOnly={props.readOnly ? true : false}
         />
         <Form.Text className="text-danger">{error}</Form.Text>
         {helperText && <Form.Text>{helperText}</Form.Text>}
       </>
-   } 
+   }
       </Form.Group>
-    
+
   );
 }
 
