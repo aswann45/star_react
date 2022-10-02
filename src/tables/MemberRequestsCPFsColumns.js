@@ -54,11 +54,11 @@ function MemberRequestsCPFsColumns(
       )
     }),
 
-    columnHelper.accessor('ID', {
+    /*columnHelper.accessor('ID', {
       cell: info => info.getValue(),
       header: 'StarID',
       filterVariant: 'number',
-    }),
+    }),*/
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',

@@ -9,14 +9,14 @@ import NotePopover from '../components/table/NotePopover';
 
 function MemberRequestsProgLangColumns(
   memberFilterOptions,
-  agencyFilterOptions, 
-  accountFilterOptions, 
+  agencyFilterOptions,
+  accountFilterOptions,
   programFilterOptions
 ) {
-  
-  const columnHelper = createColumnHelper(); 
+
+  const columnHelper = createColumnHelper();
   const urlPrefix = '/requests/'
-  
+
   const columns = [
     columnHelper.display({
       id: 'actions',
@@ -30,35 +30,35 @@ function MemberRequestsProgLangColumns(
           }}
           gap={2}
         >
-          <RowSelectCheckbox 
+          <RowSelectCheckbox
             checked={props.row.getIsSelected()}
             indeterminate={props.row.getIsSomeSelected()}
             onChange={props.row.getToggleSelectedHandler()}
           />
-          
-          <DetailExpandButton 
-            endpoint={`${urlPrefix}${props.row?.original?.ID}`} 
+
+          <DetailExpandButton
+            endpoint={`${urlPrefix}${props.row?.original?.ID}`}
             ID={props.row?.original?.ID}
-            setIsDetail={props.table.options.meta?.setIsDetail} 
+            setIsDetail={props.table.options.meta?.setIsDetail}
           />
-          
+
           <NotePopover row={props.row} table={props.table} />
-          
+
           <NotePopover row={props.row} table={props.table} type='flag' />
-          
-          
+
+
           <span className={'ms-auto'}>
-            <RowExpandButton row={props.row} table={props.table} /> 
+            <RowExpandButton row={props.row} table={props.table} />
           </span>
         </Stack>
       )
     }),
-    
-    columnHelper.accessor('ID', {
+
+    /*columnHelper.accessor('ID', {
       cell: info => info.getValue(),
       header: 'StarID',
       filterVariant: 'number',
-    }),  
+    }),*/
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
@@ -93,7 +93,7 @@ function MemberRequestsProgLangColumns(
       header: 'Subcommittee',
       filterVariant: 'multi-select',
       filterValues: [
-        'Ag', 
+        'Ag',
         'CJS',
         'Defense',
         'Energy and Water',
@@ -103,7 +103,7 @@ function MemberRequestsProgLangColumns(
         'Labor HHS',
         'Leg Branch',
         'MilCon',
-        'SFOPS', 
+        'SFOPS',
         'THUD',
     ],
     }),
@@ -117,7 +117,7 @@ function MemberRequestsProgLangColumns(
       ]
     }),
     columnHelper.accessor('ProgramAmount', {
-      cell: info => { 
+      cell: info => {
         const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
         return amount
       },
