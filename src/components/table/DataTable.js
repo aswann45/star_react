@@ -59,8 +59,9 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     groupRequests,
     resetSearch,
     removeProjects,
+    exportRows,
   ] = useInfiniteQuery(url, 1, '', getURL);
-   
+
   // Column visibility, pinning, and order state
   const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
   const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
@@ -75,11 +76,11 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   // column resizing -- using state for now in case we want the user to change
   // how resizing works
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
-  
+
   // column filters
   const [columnFilters, setColumnFilters] = useState(tableSettings.columnFilters);
   const [globalFilter, setGlobalFilter] = useState('');
-  
+
   useEffect(() => {
     setFilters(columnFilters);
   }, [columnFilters, setFilters])
@@ -87,7 +88,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   useEffect(() => {
     setLimit(100);
   })
-  
+
   // sorting
   const [sorting, setSorting] = useState(tableSettings.sorting);
   useEffect(() => {
@@ -102,15 +103,15 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
 
   //sub rows
   const [expanded, setExpanded] = useState({});
-  
+
   // flatten the page arrays recieved from the data.pages array
   const flatData = useMemo(
     () => data?.pages?.flatMap(page => page) ?? [],
     [data]
   )
-    
+
   // Table instance
-  const tableInstance = useReactTable({ 
+  const tableInstance = useReactTable({
     data: flatData,
     columns,
     columnResizeMode,
@@ -132,6 +133,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
       setIsDetail: setIsDetail,
       groupRequests: groupRequests,
       removeProjects: removeProjects,
+      exportRows: exportRows,
+      exportURLPrefix: url,
     },
     getRowId,
     getSubRows: row => row.subRows,
@@ -146,7 +149,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onExpandedChange: setExpanded,
-    getCoreRowModel: getCoreRowModel(), 
+    getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -155,7 +158,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     getExpandedRowModel: getExpandedRowModel(),
   });
 
-     
+
   // virtualized rows
   const tableContainerRef = useRef();
   const { rows } = tableInstance.getRowModel();
@@ -180,7 +183,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
     : 0)
   }, [virtualRows, totalVirtualSize])
-  
+
   // fetch more data when we get to the bottom of the loaded rows
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement) => {
@@ -203,10 +206,10 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         }
       }
     }, [
-      fetchNextPage, 
-      isFetching, 
-      hasNextPage, 
-      flatData.length, 
+      fetchNextPage,
+      isFetching,
+      hasNextPage,
+      flatData.length,
       paddingBottom,
     ]
   );
@@ -235,10 +238,10 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
       sorting: sorting,
     })
   }, [
-    columnVisibility, 
-    columnPinning, 
-    columnOrder, 
-    showFilters, 
+    columnVisibility,
+    columnPinning,
+    columnOrder,
+    showFilters,
     showColumnTools,
     columnFilters,
     globalFilter,
@@ -258,7 +261,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         <pre>lastPage: {JSON.stringify(lastPage)}</pre>
         <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
         <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
-      
+
         <pre>totalItems: {JSON.stringify(totalItems)}</pre>
         <pre>Data: {JSON.stringify(data, null, 2)}</pre>
         <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
@@ -266,8 +269,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         <pre>columnFilters: {JSON.stringify(columnFilters, null, 2)}</pre>
         <pre>sorting: {JSON.stringify(sorting, null, 2)}</pre>
         <pre>totalPages: {JSON.stringify(totalPages)}</pre>
-        
-              
+
+
         <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
         <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
         <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
@@ -280,9 +283,9 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         <pre>tableSettings: {JSON.stringify(tableSettings)}</pre>
       */}
 
-      <TableToolBar 
-        tableInstance={tableInstance} 
-        setShowFilters={setShowFilters} 
+      <TableToolBar
+        tableInstance={tableInstance}
+        setShowFilters={setShowFilters}
         showFilters={showFilters}
         setShowColumnTools={setShowColumnTools}
         showColumnTools={showColumnTools}
@@ -297,10 +300,10 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         //backgroundRefreshData={backgroundRefreshData}
       />
         {(flatData.length < 1 && !isFetching) && <p>Please select new filter parameters.</p>}
-      <div 
+      <div
         className='DataTableContainer'
         onScroll={e => fetchMoreOnBottomReached(e.target)}
-        ref={tableContainerRef} 
+        ref={tableContainerRef}
         style={{
           height: `calc(100vh - 160px)`, // You need to have a parent height or it will try to render all the rows.
           width: "100%",
@@ -308,23 +311,23 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
           margin: '5px',
           scrollbarWidth: 'auto',
         }}>
-        <Table 
-          size='sm' 
-          striped 
-          bordered 
-          hover 
-          className='DataTable' 
+        <Table
+          size='sm'
+          striped
+          bordered
+          hover
+          className='DataTable'
           style={{
             width: tableInstance.getCenterTotalSize(),
           }}
         >
-          <TableHeader 
-            tableInstance={tableInstance} 
-            showFilters={showFilters} 
+          <TableHeader
+            tableInstance={tableInstance}
+            showFilters={showFilters}
             showColumnTools={showColumnTools}
           />
            {/*Cut here for table body component*/}
-          <tbody 
+          <tbody
             style={{
               height: `${totalVirtualSize}px`,
               //width: "100%",
@@ -340,10 +343,10 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
               const row = rows[virtualRow.index];
               if (!row) {
                 return null;
-              } 
+              }
               return (
-                <tr 
-                  key={row.id} 
+                <tr
+                  key={row.id}
                   style={{
                     //height: "42px"
                     height: `${virtualRow.size}px`,
@@ -352,8 +355,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
                 >
                   {row.getVisibleCells().map(cell => {
                     return (
-                      <td 
-                        key={cell.id} 
+                      <td
+                        key={cell.id}
                         style={{
                           width: cell.column.getSize(),
                           //height: '42px'

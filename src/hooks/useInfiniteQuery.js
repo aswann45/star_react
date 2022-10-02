@@ -507,6 +507,42 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     //return setIsFetching(false);
   }
 
+  const exportRows = async (requestIDs, exportURLPrefix) => {
+
+    setIsFetching(true)
+    const response = await api.post(
+      `${exportURLPrefix}export_rows`,
+      searchParams,
+      {
+        signal: abortController.signal,
+        body: {
+          ids: requestIDs ? requestIDs : null,
+          filters: searchParams.get('filters'),
+          order: searchParams.get('order'),
+        }
+      }
+    );
+    if (!response.ok) {
+      console.log('The reponse is not ok!')
+    } else {
+      const fileBlob = await response.blob();
+      const fileURL = URL.createObjectURL(fileBlob);
+      let tempLink = document.createElement('a');
+      let disposition = response.headers.get('content-disposition');
+      let fileName = (disposition && disposition.indexOf('attachment') !== -1) ?
+        disposition.split('filename=')[1] :
+        ''
+      tempLink.href = fileURL;
+      if (fileName !== '') {
+        tempLink.setAttribute('download', fileName);
+        tempLink.click();
+      } else {
+        window.open(fileURL);
+      }
+      setIsFetching(false);
+    }
+  }
+
   return [
     data,
     //error,
@@ -537,6 +573,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     groupRequests,
     resetSearch,
     removeProjects,
+    exportRows,
   ];
 };
 
