@@ -21,7 +21,8 @@ function NoteItemForm({ note, api }) {
       setChanged({});
       const data = await api.put(note_url, '', {
         body: {
-          [key]: value
+          [key]: value,
+          EditorID: localStorage.get('currentUserID')
         }
       });
       if (!data.ok) {

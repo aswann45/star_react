@@ -10,7 +10,7 @@ import InputField from './form/InputField';
 import InputSelect from './form/InputSelect';
 
 function NewNoteItem({ api, handleRemove, list_id, request_id }) {
-    
+
   const note_url = '/notes/'
   const [formErrors, setFormErrors] = useState({});
   const [input, handleInputChange] = useInputChange();
@@ -21,6 +21,7 @@ function NewNoteItem({ api, handleRemove, list_id, request_id }) {
         RequestID : request_id,
         Type: input.Type,
         Note: input.Note,
+        CreatorID: localStorage.get('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -64,14 +65,14 @@ function NewNoteItem({ api, handleRemove, list_id, request_id }) {
       </Card.Body>
       <Card.Footer>
       <Stack direction="horizontal" gap={2} className="NoteItemFooter">
-        <Button 
+        <Button
           variant="primary"
           size='sm'
           type="submit">
           Save New Note
         </Button>
-        <Button 
-          variant="danger" 
+        <Button
+          variant="danger"
           size='sm'
           onClick={() => handleRemove(list_id)}>
           Cancel

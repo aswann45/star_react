@@ -17,7 +17,12 @@ class ApiClient {
           ...(!options.headers && {'Content-Type': 'application/json'}),
           ...options.headers,
         },
-        body: (options.body ? JSON.stringify(options.body) : options.formData ? options.formData :  null),
+        body: (options.body ?
+          JSON.stringify(options.body) :
+          options.formData ? 
+            options.formData :
+            null
+          ),
         signal: (options.signal ? options.signal : null)
       });
     }
@@ -61,6 +66,38 @@ class ApiClient {
   async delete(url, query, options) {
     return this.request({method: 'DELETE', url, query, ...options});
   }
+
+  async login(options) {
+    const response = await this.request({
+        method: 'GET',
+        url: '/auth/login',
+        query: '',
+        ...options
+      })
+      if (!response.ok) {
+        return response.status === 401 ? 'fail' : 'error';
+      }
+      localStorage.setItem('currentUserID', response.body.ID)
+      return response;
+  }
+
+  async logout(options) {
+    const response = await this.request({
+      method: 'POST',
+      url: 'auth/logout',
+      query: '',
+      ...options
+    })
+    if (!response.ok) {
+      return response.status === 401 ? 'fail' : 'error';
+    }
+    localStorage.removeItem('currentUserID');
+  }
+
+  getCurrentUser() {
+    return localStorage.getItem('currentUserID') !== null;
+  }
+
 }
 
 export default ApiClient;

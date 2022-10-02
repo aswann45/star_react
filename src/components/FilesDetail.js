@@ -147,7 +147,8 @@ function FileCard({ file, setDeletedFile }) {
       setChanged({});
       const data = await api.put(`/files/${file.ID}`, '', {
         body: {
-          [key]: value
+          [key]: value,
+          EditorID: localStorage.get('currentUserID')
         }
       });
       if (!data.ok) {

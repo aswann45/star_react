@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import InputSelect from './form/InputSelect';
 
 function RequestAccount({ url }) {
-  
+
   const [object, setObject] = useState({});
   const [agencies, setAgencies] = useState();
   const [accounts, setAccounts] = useState();
@@ -22,25 +22,26 @@ function RequestAccount({ url }) {
   }, [api, url])
 
   const [formErrors, setFormErrors] = useState({});
-    
+
   const [subcommittee_id, setSubcommitteeID] = useState('');
   const [agency_id, setAgencyID] = useState('');
   const [account_id, setAccountID] = useState('');
   const [program_id, setProgramID] = useState('');
-  
+
   useEffect(() => {
     setSubcommitteeID(object.SubcommitteeID);
     setAgencyID(object.AgencyID ? object.AgencyID : '');
     setAccountID(object.AccountID ? object.AccountID : '');
     setProgramID(object.ProgramID ? object.ProgramID : '');
   }, [object])
-  
+
   const handleProgramChange = async (event) => {
       setProgramID(event.currentTarget.value);
       const data = await api.put(url, '', {
-        body: 
+        body:
         {
-          ProgramID: event.currentTarget.value
+          ProgramID: event.currentTarget.value,
+          EditorID: localStorage.get('currentUserID'),
         }
       });
       if (!data.ok) {
@@ -54,10 +55,11 @@ function RequestAccount({ url }) {
     setProgramID('');
     setAccountID(event.currentTarget.value);
     const data = await api.put(url, '', {
-      body: 
+      body:
       {
         AccountID: event.currentTarget.value,
-        ProgramID: null
+        ProgramID: null,
+        EditorID: localStorage.get('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -66,17 +68,18 @@ function RequestAccount({ url }) {
       setFormErrors({});
     }
   };
-  
+
   const handleAgencyChange = async (event) => {
     setAgencyID(event.currentTarget.value);
     setAccountID('');
     setProgramID('');
     const data = await api.put(url, '', {
-      body: 
+      body:
       {
         AgencyID: event.currentTarget.value,
         AccountID: null,
-        ProgramID: null
+        ProgramID: null,
+        EditorID: localStorage.get('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -131,8 +134,8 @@ function RequestAccount({ url }) {
             <>
               {agencies && agencies.map(agency => {
                 return (
-                  <option 
-                    key={agency.ID} 
+                  <option
+                    key={agency.ID}
                     value={agency.ID}>
                     {agency.Agency}
                   </option>);
@@ -150,8 +153,8 @@ function RequestAccount({ url }) {
             <>
               {accounts && accounts.map(account => {
                 return (
-                  <option 
-                    key={account.ID} 
+                  <option
+                    key={account.ID}
                     value={account.ID}>
                     {account.Account}
                   </option>);
@@ -169,8 +172,8 @@ function RequestAccount({ url }) {
             <>
               {programs && programs.map(program => {
                 return (
-                  <option 
-                    key={program.ID} 
+                  <option
+                    key={program.ID}
                     value={program.ID}>
                     {program.Program}
                   </option>);

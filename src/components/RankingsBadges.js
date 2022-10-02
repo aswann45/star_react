@@ -57,7 +57,8 @@ function RankingBadge({
     (async () => {
             const data = await api.put(put_url, null, {
         body: {
-          [field] : priority
+          [field] : priority,
+          EditorID: localStorage.get('currentUserID'),
         }
       });
       if (!data.ok) {

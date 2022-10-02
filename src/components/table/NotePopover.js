@@ -2,6 +2,7 @@ import { useState, useRef, forwardRef } from 'react';
 import useInputChange from '../../useInputChange';
 import { useApi} from '../../contexts/ApiProvider';
 import { FaStickyNote, FaFlag, FaRegFlag } from 'react-icons/fa'
+import { MdNoteAlt } from 'react-icons/md';
 
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button';
@@ -16,7 +17,7 @@ import InputSelect from '../form/InputSelect';
 
 
 function NoteForm({handleInputChange, formErrors, handleSubmit, setShow}) {
-  
+
   return (
     <>
       <InputField
@@ -27,14 +28,14 @@ function NoteForm({handleInputChange, formErrors, handleSubmit, setShow}) {
         error={formErrors.Note}
       />
       <Stack>
-        <Button 
+        <Button
           variant="primary"
           size='sm'
           type='submit'>
           Save New Note
         </Button>
-        <Button 
-          variant="danger" 
+        <Button
+          variant="danger"
           size='sm'
           onClick={() => setShow(false)}
           >
@@ -46,14 +47,14 @@ function NoteForm({handleInputChange, formErrors, handleSubmit, setShow}) {
 };
 
 const RegularNote = ({
-  requestID, 
-  input, 
-  handleInputChange, 
-  formErrors, 
-  setFormErrors, 
+  requestID,
+  input,
+  handleInputChange,
+  formErrors,
+  setFormErrors,
   setShow
 }) => {
-  
+
   const note_url = '/notes/'
   const api = useApi();
   const handleSubmit = async (event) => {
@@ -72,7 +73,7 @@ const RegularNote = ({
     }
     setShow(false);
   };
-  
+
   return (
   <Popover id='popover-basic' style={{zIndex: 97000}}>
     <Form onSubmit={handleSubmit}>
@@ -94,12 +95,12 @@ const RegularNote = ({
         </InputSelect>
       </Popover.Header>
       <Popover.Body>
-        <NoteForm 
-          handleInputChange={handleInputChange} 
-          formErrors={formErrors} 
+        <NoteForm
+          handleInputChange={handleInputChange}
+          formErrors={formErrors}
           handleSubmit={handleSubmit}
           setShow={setShow}
-        />    
+        />
       </Popover.Body>
     </Form>
   </Popover>
@@ -109,18 +110,18 @@ const RegularNote = ({
 
 
 const FlagNote = ({
-  requestID, 
-  input, 
-  handleInputChange, 
-  formErrors, 
-  setFormErrors, 
-  setShow, 
+  requestID,
+  input,
+  handleInputChange,
+  formErrors,
+  setFormErrors,
+  setShow,
   flagStatus,
   setFlagStatus,
   table,
   row
 }) => {
-  
+
   const note_url = '/notes/';
   const flag_url = `/requests/${requestID}`;
   const api = useApi();
@@ -129,7 +130,10 @@ const FlagNote = ({
     setFlagStatus(true);
     table.options.meta?.updateData(row, 'FlaggedStatus', true)
     const flagData = await api.put(flag_url, '', {
-      body: {FlaggedStatus: true}
+      body: {
+        FlaggedStatus: true,
+        EditorID: localStorage.get('currentUserID'),
+      }
     });
     const data = await api.post(note_url, '', {
       body: {
@@ -145,7 +149,7 @@ const FlagNote = ({
     }
     setShow(false);
   };
-  
+
   return (
   <Popover id='popover-basic' style={{zIndex: 97000}}>
     <Form onSubmit={handleSubmit}>
@@ -153,12 +157,12 @@ const FlagNote = ({
         New Flag Note
       </Popover.Header>
       <Popover.Body>
-        <NoteForm 
-          handleInputChange={handleInputChange} 
-          formErrors={formErrors} 
+        <NoteForm
+          handleInputChange={handleInputChange}
+          formErrors={formErrors}
           handleSubmit={handleSubmit}
           setShow={setShow}
-        />    
+        />
       </Popover.Body>
     </Form>
   </Popover>
@@ -176,58 +180,61 @@ function NotePopover ({ row, table, type, _requestID }) {
   const requestID = _requestID ? _requestID : row.original.ID;
   const flag_url = `/requests/${requestID}`;
   const [flagStatus, setFlagStatus] = useState(row.original.FlaggedStatus);
-  
+
   const handleClick = async () => {
     setFlagStatus(false);
     table.options.meta?.updateData(row, 'FlaggedStatus', false)
     const flagData = await api.put(flag_url, '', {
-      body: {FlaggedStatus: false}
+      body: {
+        FlaggedStatus: false,
+        EditorID: localStorage.get('currentUserID'),
+      }
     });
-  }  
-  
+  }
+
   const overlay = RegularNote({
-    requestID, 
-    input, 
-    handleInputChange, 
-    formErrors, 
-    setFormErrors, 
+    requestID,
+    input,
+    handleInputChange,
+    formErrors,
+    setFormErrors,
     setShow,
     flagStatus,
     setFlagStatus,
   })
-  
+
   const flagOverlay = FlagNote({
-    requestID, 
-    input, 
-    handleInputChange, 
-    formErrors, 
-    setFormErrors, 
-    setShow, 
+    requestID,
+    input,
+    handleInputChange,
+    formErrors,
+    setFormErrors,
+    setShow,
     setFlagStatus,
     table,
     row
   })
-  
+
   return (
   <>
     {type === 'flag' ?
-     
-        flagStatus === true ? 
+
+        flagStatus === true ?
         <span title='Unflag Item' className='NotePopover' onClick={handleClick}>
           <FaFlag style={{display: 'block', cursor: 'pointer'}}/>
         </span>
         :
         <OverlayTrigger show={show} trigger="click" placement="top" overlay={flagOverlay}>
-          <span title='Unflag Item' className='NotePopover' onClick={() => setShow(!show)}>
+          <span title='Flag Item' className='NotePopover' onClick={() => setShow(!show)}>
             <FaRegFlag style={{display: 'block', cursor: 'pointer'}}/>
           </span>
         </OverlayTrigger>
-        
+
 
      :
     <OverlayTrigger show={show} trigger="click" placement="top" overlay={overlay}>
       <span title='Add Note' className='NotePopover' onClick={() => setShow(!show)}>
-        <FaStickyNote style={{display: 'block', cursor: 'pointer'}}/>
+        <MdNoteAlt style={{display: 'block', cursor: 'pointer'}}/>
       </span>
     </OverlayTrigger>
     }

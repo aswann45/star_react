@@ -11,7 +11,7 @@ import InputSelect from './form/InputSelect';
 
 
 function NewLanguageItem({ api, handleRemove, list_id, request_id }) {
-    
+
   const language_url = '/language/'
   const [formErrors, setFormErrors] = useState({});
   const [input, handleInputChange] = useInputChange();
@@ -22,6 +22,7 @@ function NewLanguageItem({ api, handleRemove, list_id, request_id }) {
         HouseRequestID : request_id,
         BillReport: input.BillReport,
         Language: input.Language,
+        CreatorID: localStorage.get('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -60,13 +61,13 @@ function NewLanguageItem({ api, handleRemove, list_id, request_id }) {
       </Card.Body>
       <Card.Footer>
       <Stack direction="horizontal" gap={2} className="LanguageItemFooter">
-        <Button 
+        <Button
           variant="primary"
           type="submit">
           Save New Language
         </Button>
-        <Button 
-          variant="danger" 
+        <Button
+          variant="danger"
           onClick={() => handleRemove(list_id)}>
           Cancel
         </Button>

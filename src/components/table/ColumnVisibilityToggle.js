@@ -9,12 +9,12 @@ function ColumnVisibilityToggle({ tableInstance}) {
             type: 'switch',
             label: 'Toggle All',
             checked: tableInstance.getIsAllColumnsVisible(),
-            onChange: tableInstance.getToggleAllColumnsVisibility(), 
+            onChange: tableInstance.getToggleAllColumnsVisibility(),
           }}
         />*/}
       {tableInstance.getAllLeafColumns().map(column => {
         return (
-          <div key={column.id}>
+          <div style={{paddingLeft: '4px', paddingRight: '4px'}} key={column.id}>
             <Form.Check
               {...{
                 type: 'switch',
