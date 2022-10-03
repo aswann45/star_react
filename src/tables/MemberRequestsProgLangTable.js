@@ -23,7 +23,7 @@ function MemberRequestsProgLangTable () {
       <DataTable 
         columns={columns} 
         url='/requests/'
-        localStorageLocation='member_requests' 
+        localStorageLocation='member_requests_prog_lang' 
         getURL='/requests/prog_lang'
         allowGrouping={true}
       />

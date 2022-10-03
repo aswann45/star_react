@@ -1,8 +1,8 @@
 class ApiClient {
   constructor() {
-    this.base_url = '';
+    this.base_url = '/api';
   }
-  
+
   async request(options) {
     let query = new URLSearchParams(options.query || {}).toString();
     if (query !== '') {
@@ -17,7 +17,12 @@ class ApiClient {
           ...(!options.headers && {'Content-Type': 'application/json'}),
           ...options.headers,
         },
-        body: (options.body ? JSON.stringify(options.body) : options.formData ? options.formData :  null),
+        body: (options.body ?
+          JSON.stringify(options.body) :
+          options.formData ? 
+            options.formData :
+            null
+          ),
         signal: (options.signal ? options.signal : null)
       });
     }
@@ -32,7 +37,7 @@ class ApiClient {
         }; }
       }
     }
-    
+
     const responseHeaders = response && response['headers'];
     const contentType = responseHeaders && responseHeaders.get('content-type');
     if (contentType && contentType.indexOf('application/json') !== -1) {
@@ -40,7 +45,7 @@ class ApiClient {
         ok: response.ok,
         status: response.status,
         body: response.status !== 204 ?  await response.json() : null,
-      } 
+      }
     } else {
       return (response);
     }
@@ -61,6 +66,38 @@ class ApiClient {
   async delete(url, query, options) {
     return this.request({method: 'DELETE', url, query, ...options});
   }
+
+  async login(options) {
+    const response = await this.request({
+        method: 'GET',
+        url: '/auth/login',
+        query: '',
+        ...options
+      })
+      if (!response.ok) {
+        return response.status === 401 ? 'fail' : 'error';
+      }
+      localStorage.setItem('currentUserID', response.body.ID)
+      return response;
+  }
+
+  async logout(options) {
+    const response = await this.request({
+      method: 'POST',
+      url: 'auth/logout',
+      query: '',
+      ...options
+    })
+    if (!response.ok) {
+      return response.status === 401 ? 'fail' : 'error';
+    }
+    localStorage.removeItem('currentUserID');
+  }
+
+  getCurrentUser() {
+    return localStorage.getItem('currentUserID') !== null;
+  }
+
 }
 
 export default ApiClient;

@@ -16,11 +16,11 @@ import DetailSubHeader from './DetailSubHeader';
 let counter = 1;
 
 function NotesDetail({ title }) {
-  const [request_url, 
-    request_id, 
-    handleSubmit, 
-    handleBlur, 
-    handleInputChange, 
+  const [request_url,
+    request_id,
+    handleSubmit,
+    handleBlur,
+    handleInputChange,
     formErrors] = useOutletContext();
   const [notes, setNotes] = useState();
   const [newNotes, setNewNotes] = useState([]);
@@ -31,26 +31,22 @@ function NotesDetail({ title }) {
   const url = request_url + '/notes';
   const search = location.search;
   const params = useParams(':request_id');
-  
+
 
   function onAddButtonClick () {
     const newNote = {
       list_id: counter
     };
-    console.log(newNote);
     counter++;
     setNewNotes(newNotes => [...newNotes, newNote]);
-    console.log(newNotes);
   };
 
   function handleRemove(id) {
     //setNewNotes(newNotes.filter(item => item[key_id] === key_id));
-    console.log(id);
-    console.log(newNotes);
     const newArray = newNotes.filter((newNote) => newNote.list_id !== id);
     setNewNotes(newArray);
   };
-  
+
   useEffect(() => {
     (async () => {
       const response = await api.get(url, search);
@@ -65,17 +61,17 @@ function NotesDetail({ title }) {
       <Stack direction="horizontal">
         <DetailSubHeader title={title} />
         <Button size={"sm"}
-          onClick={() => onAddButtonClick(newNotes)} 
+          onClick={() => onAddButtonClick(newNotes)}
           className="ms-auto">
           Add New Note
         </Button>
       </Stack>
       <>
-        {newNotes.map(new_note => <NewNoteItem 
-          key={new_note.list_id} 
+        {newNotes.map(new_note => <NewNoteItem
+          key={new_note.list_id}
           list_id={new_note.list_id}
           request_id={request_id}
-          api={api} 
+          api={api}
           handleRemove={handleRemove} />)}
       </>
     <>
@@ -85,8 +81,8 @@ function NotesDetail({ title }) {
           <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           {
-          notes.map(note => <NoteItemForm key={note.ID} 
-            note={note} 
+          notes.map(note => <NoteItemForm key={note.ID}
+            note={note}
             api={api}
               />)
           }
@@ -94,7 +90,7 @@ function NotesDetail({ title }) {
           <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
           }
           </>
-       : 
+       :
           <Loader obj={notes} />
       }
     </>

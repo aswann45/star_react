@@ -35,9 +35,9 @@ function ProjectDetailForm() {
 
   return (
     <>
-      {detail ?  
+      {detail ?
         <Form onSubmit={handleSubmit}>
-    
+
           <InputField
             name="ProjectAmountRequested"
             label="$ Requested"
@@ -46,8 +46,9 @@ function ProjectDetailForm() {
             keyUpHandler={handleCurrencyFormat}
             fieldRef={amountRequested}
             helperText="Amount requested by the personal office. Appears in tables and reports."
-            blurHandler={handleBlur} 
-            error={formErrors.ProjectAmountRequested} />
+            blurHandler={handleBlur}
+            error={formErrors.ProjectAmountRequested}
+            readOnly />
           <InputField
             name="ChamberAmount"
             label="$ Funded (House/Senate)"
@@ -55,17 +56,9 @@ function ProjectDetailForm() {
             changeHandler={handleInputChange}
             keyUpHandler={handleCurrencyFormat}
             helperText="Amount funded in House or Senate bill. Appears in tables and reports."
-            blurHandler={handleBlur} 
-            error={formErrors.ChamberAmount} />
-          <InputField
-            name="ChamberInternalAmount"
-            label="Draft $ Funded (House/Senate)"
-            defaultValue={formatter.format(detail.ChamberInternalAmount)}
-            changeHandler={handleInputChange}
-            keyUpHandler={handleCurrencyFormat}
-            helperText="Nominal/draft amount to fund the CPF. Will NOT appear in tables or reports."
-            error={formErrors.ChamberInternalAmount}
-            blurHandler={handleBlur} />
+            blurHandler={handleBlur}
+            error={formErrors.ChamberAmount}
+            readOnly />
           <InputField
             name="FinalAmount"
             label="$ Funded (Conference)"
@@ -73,17 +66,9 @@ function ProjectDetailForm() {
             changeHandler={handleInputChange}
             keyUpHandler={handleCurrencyFormat}
             helperText="Amount funded in the Conference bill. Appears in tables and reports."
-            blurHandler={handleBlur} 
-            error={formErrors.ChamberAmount} />
-          <InputField
-            name="ConferenceInternalAmount"
-            label="Draft $ Funded (Conference)"
-            defaultValue={formatter.format(detail.ConferenceInternalAmount)}
-            changeHandler={handleInputChange}
-            keyUpHandler={handleCurrencyFormat}
-            helperText="Conference nominal/draft amount. Will NOT appear in tables or reports."
-            error={formErrors.ConferenceInternalAmount}
-            blurHandler={handleBlur} />
+            blurHandler={handleBlur}
+            error={formErrors.ChamberAmount}
+            />
           <InputField
             name="PresidentBudgetAmount"
             label="$ President's Budget Requested Amount"
@@ -100,8 +85,8 @@ function ProjectDetailForm() {
             changeHandler={handleInputChange}
             keyUpHandler={handleCurrencyFormat}
             helperText="Total cost to complete the project."
-            blurHandler={handleBlur} 
-            error={formErrors.TotalProjectCost} />         
+            blurHandler={handleBlur}
+            error={formErrors.TotalProjectCost} />
           <InputField
             name="PriorFYEnactedAmount"
             label="$ Funded (Prior FY Enacted)"
@@ -109,7 +94,7 @@ function ProjectDetailForm() {
             changeHandler={handleInputChange}
             keyUpHandler={handleCurrencyFormat}
             helperText="Funding provided for the project in the prior fiscal year's enacted bill (if applicable)."
-            blurHandler={handleBlur} 
+            blurHandler={handleBlur}
             error={formErrors.PriorFYEnactedAmount} />
           <InputField
             name="Explanation"
@@ -126,7 +111,7 @@ function ProjectDetailForm() {
             defaultValue={detail.ProjectLegalName}
             changeHandler={handleInputChange}
             helperText="Legal name/title of the project."
-            blurHandler={handleBlur} 
+            blurHandler={handleBlur}
             error={formErrors.ProjectLegalName} />
         </Form>
         :

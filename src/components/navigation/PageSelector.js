@@ -6,10 +6,7 @@ function PageSelector({ url, currentPage, lastPage, minPage, maxPage, pageLinks,
   const background = location.state.backgroundLocation;
   const navigate = useNavigate();
   const firstPage = 1;
-  
-  console.log(background)
-  console.log(keepBackground)
-  
+
   return (
     <>
       <div>

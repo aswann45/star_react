@@ -7,13 +7,13 @@ import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
 
 function CPFFundingColumns(
-  memberFilterOptions, 
-  agencyFilterOptions, 
-  accountFilterOptions, 
+  memberFilterOptions,
+  agencyFilterOptions,
+  accountFilterOptions,
   programFilterOptions
 ) {
   const columnHelper = createColumnHelper();
-    
+
   const columns = [
     columnHelper.display({
       id: 'actions',
@@ -27,44 +27,44 @@ function CPFFundingColumns(
           }}
           gap={2}
         >
-          <RowSelectCheckbox 
+          <RowSelectCheckbox
             checked={props.row.getIsSelected()}
             indeterminate={props.row.getIsSomeSelected()}
             onChange={props.row.getToggleSelectedHandler()}
           />
-          
-          <DetailExpandButton 
+
+          <DetailExpandButton
             endpoint={`/requests/${props.row?.original?.RequestID}`}
-            RequestID={props.row?.original?.RequestID} 
-            setIsDetail={props.table.options.meta?.setIsDetail} 
+            RequestID={props.row?.original?.RequestID}
+            setIsDetail={props.table.options.meta?.setIsDetail}
           />
-          
-          <NotePopover 
-            row={props.row} 
-            table={props.table} 
-            _requestID={props.row?.RequestID} 
-          />
-          
-          <NotePopover 
-            row={props.row} 
+
+          <NotePopover
+            row={props.row}
             table={props.table}
-            type='flag' 
-            _requestID={props.row?.RequestID} 
+            _requestID={props.row?.RequestID}
           />
-          
-          
+
+          <NotePopover
+            row={props.row}
+            table={props.table}
+            type='flag'
+            _requestID={props.row?.RequestID}
+          />
+
+
           <span className={'ms-auto'}>
-            <RowExpandButton row={props.row} table={props.table} /> 
+            <RowExpandButton row={props.row} table={props.table} />
           </span>
         </Stack>
       )
     }),
-    
-    columnHelper.accessor('ID', {
+
+    /*columnHelper.accessor('ID', {
       cell: info => info.getValue(),
       header: 'StarID',
       filterVariant: 'number',
-    }),  
+    }),*/
 
     columnHelper.accessor('SubmissionID', {
       header: 'Request ID',
@@ -98,7 +98,7 @@ function CPFFundingColumns(
       header: 'Subcommittee',
       filterVariant: 'multi-select',
       filterValues: [
-        'Ag', 
+        'Ag',
         'CJS',
         'Defense',
         'Energy and Water',
@@ -106,9 +106,7 @@ function CPFFundingColumns(
         'Homeland',
         'Interior',
         'Labor HHS',
-        'Leg Branch',
         'MilCon',
-        'SFOPS', 
         'THUD',
     ],
     }),
@@ -177,7 +175,7 @@ function CPFFundingColumns(
       ),
     }),
     columnHelper.accessor('ProjectAmountRequested', {
-      cell: info => { 
+      cell: info => {
         const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
         return amount
       },

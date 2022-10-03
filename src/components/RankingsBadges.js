@@ -8,8 +8,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Loader from './loaders/Loader';
 
 
-function RankingOptions({ 
-  options_count, request, field, priority, setPriority 
+function RankingOptions({
+  options_count, request, field, priority, setPriority
 }) {
   const current_number = priority
 
@@ -17,13 +17,13 @@ function RankingOptions({
     //const [compareNum, setCompareNum] = useState(current_number);
    for (let number = 1; number <= options_count; number++) {
      options.push(
-       <Dropdown.Item key={number} 
+       <Dropdown.Item key={number}
          active={
            number === current_number ? true : false
          }
          eventKey={number}
          onClick={() => {
-           setPriority(number); 
+           setPriority(number);
           }}
        >
          {number}
@@ -35,20 +35,20 @@ function RankingOptions({
   );
 };
 
-function RankingBadge({ 
-  type, request, options_count, variant, setPriority, 
+function RankingBadge({
+  type, request, options_count, variant, setPriority,
   priority, field, defaultValue
 }) {
   let put_url;
     switch(field) {
       case 'Top10Ranking':
-        put_url = '/member_requests/' + request.ID
+        put_url = '/requests/' + request.ID
         break;
       case 'ProjectPriority':
         put_url = '/project_details/' + request.ProjectID
         break;
       default:
-        put_url = '/member_requests/' + request.ID
+        put_url = '/requests/' + request.ID
   };
 
   const api = useApi();
@@ -57,7 +57,8 @@ function RankingBadge({
     (async () => {
             const data = await api.put(put_url, null, {
         body: {
-          [field] : priority
+          [field] : priority,
+          EditorID: localStorage.get('currentUserID'),
         }
       });
       if (!data.ok) {
@@ -69,10 +70,10 @@ function RankingBadge({
 
   return(
     <>
-      <DropdownButton title={`${type} #${priority}`} 
+      <DropdownButton title={`${type} #${priority}`}
         className="RankingBadge" size="sm"
         variant={variant}
-      > 
+      >
         <RankingOptions options_count={options_count}
           priority={priority}
           field={field}
@@ -91,7 +92,7 @@ function RankingsBadges({ url }) {
   const [priority, setPriority] = useState();
   const [top10Priority, setTop10Priority] = useState();
   const [projectPriority, setProjectPriority] = useState();
-  
+
   // API call to get request data
   const api = useApi();
   useEffect(() => {
@@ -104,13 +105,13 @@ function RankingsBadges({ url }) {
       setProjectPriority();
     })();
   }, [api, url]);
-  
+
   useEffect(() => {
     setTop10Priority(request.Top10Ranking);
     setPriority(request.PriorityRanking);
     setProjectPriority(request.ProjectPriority);
   }, [request]);
-  
+
   return (
     <>
     {(request && request.length !== 0) ?
@@ -119,7 +120,7 @@ function RankingsBadges({ url }) {
         {request.Top10 === true &&
         <>
           {top10Priority ?
-          <RankingBadge 
+          <RankingBadge
             type="Top 10"
             field="Top10Ranking"
             setPriority={setTop10Priority}
@@ -129,7 +130,7 @@ function RankingsBadges({ url }) {
             variant="warning"
             className="Top10Badge"
           />
-          : 
+          :
           <Loader />
           }
         </>
@@ -139,7 +140,7 @@ function RankingsBadges({ url }) {
         {request.RequestType === 'Project' &&
         <>
           {projectPriority ?
-          <RankingBadge 
+          <RankingBadge
             type="CPF"
             field="ProjectPriority"
             setPriority={setProjectPriority}
@@ -157,8 +158,8 @@ function RankingsBadges({ url }) {
       </>
       <>
       {priority ?
-      <RankingBadge 
-        type={request.Subcommittee} 
+      <RankingBadge
+        type={request.Subcommittee}
         field="PriorityRanking"
         setPriority={setPriority}
         priority={priority}

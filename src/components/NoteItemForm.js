@@ -8,8 +8,8 @@ import InputField from './form/InputField';
 
 
 function NoteItemForm({ note, api }) {
-    
-  const note_url = (note ? note._links.self : '')
+
+  const note_url = (note ? `/notes/${note.ID}` : '')
   const [formErrors, setFormErrors] = useState({});
   const [input, handleInputChange, changed, setChanged] = useInputChange();
   const handleBlur = async (event) => {
@@ -21,7 +21,8 @@ function NoteItemForm({ note, api }) {
       setChanged({});
       const data = await api.put(note_url, '', {
         body: {
-          [key]: value
+          [key]: value,
+          EditorID: localStorage.get('currentUserID')
         }
       });
       if (!data.ok) {
@@ -38,7 +39,7 @@ function NoteItemForm({ note, api }) {
         <Card.Title>
           <h5>
               {
-                (note.Type && note.Type !== '') ? 
+                (note.Type && note.Type !== '') ?
                   note.Type + " Note:"
                   : "Note:"
               }

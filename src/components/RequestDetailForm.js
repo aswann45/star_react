@@ -10,17 +10,17 @@ import DetailSubHeader from './DetailSubHeader';
 
 function RequestDetailForm({ title }) {
 
-  const [request_url, 
-        request_id, 
-        handleSubmit, 
-        handleBlur, 
-        handleInputChange, 
-        formErrors, 
-        setObj, 
+  const [request_url,
+        request_id,
+        handleSubmit,
+        handleBlur,
+        handleInputChange,
+        formErrors,
+        setObj,
         setLinks] = useOutletContext();
   const [object, setObject] = useState();
   const api = useApi();
-  
+
   const fetchData = useCallback(async () => {
     const response = await api.get(request_url);
     setObject(response.ok ? response.body : null);
@@ -39,11 +39,11 @@ function RequestDetailForm({ title }) {
 
   return (
     <>
-      {object === undefined ? 
+      {object === undefined ?
         <Spinner animation="border" />
         :
         <>
-          {object === null ? 
+          {object === null ?
             <p>Could not retrieve request details.</p>
             :
             <>
@@ -59,10 +59,10 @@ function RequestDetailForm({ title }) {
                       defaultValue={object.RequestTitle}
                       changeHandler={handleInputChange}
                       helperText="Request title from the personal office."
-                      blurHandler={handleBlur} 
+                      blurHandler={handleBlur}
                       error={formErrors.RequestTitle} />
                     <InputField
-                      name="RequestTitle"
+                      name="AnalystTitle"
                       label="Analyst/Stubline Title"
                       defaultValue={object.RequestTitle}
                       changeHandler={handleInputChange}

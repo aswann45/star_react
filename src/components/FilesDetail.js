@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
+import useInputChange from '../useInputChange';
 import { useParams, useLocation, useOutletContext } from 'react-router-dom';
 
 import Form from 'react-bootstrap/Form';
@@ -41,7 +42,7 @@ function FilesDetail({ title }) {
     });
     const formData = new FormData();
     formData.append('file', newFile);
-    const file_data = await api.post(response.body._links.save_file, '', {
+    const file_data = await api.post(`/files/${response.body.ID}/save_file`, '', {
       formData: formData,
       headers: {
         'enctype': 'multipart/form-data',
@@ -105,8 +106,8 @@ function FilesDetail({ title }) {
 
 function FileCard({ file, setDeletedFile }) {
   const api = useApi();
-  async function handleDownloadButtonClick (file_url) {
-    const response = await api.get(file_url);
+  async function handleDownloadButtonClick (file_id) {
+    const response = await api.get(`/files/${file_id}/download_file`);
     //const response = new Response(response_obj);
     if (!response.ok) {
       console.log('The reponse is not ok!')
@@ -126,14 +127,37 @@ function FileCard({ file, setDeletedFile }) {
     }
   }
 
-  async function handleRemoveButtonClick (file_url) {
-    const response = await api.delete(file_url);
+  async function handleRemoveButtonClick (file_id) {
+    const response = await api.delete(`/files/${file_id}`);
     if (!response.ok) {
       console.log('The response is not ok!')
     } else {
-      setDeletedFile(file_url)
+      setDeletedFile(`/files/${file_id}`)
     }
   }
+
+  const [formErrors, setFormErrors] = useState({});
+  const [input, handleInputChange, changed, setChanged] = useInputChange();
+  const handleBlur = async (event) => {
+    const key = event.target.id;
+    const value = input[key];
+    if (!changed[key]) {
+      ;
+    } else {
+      setChanged({});
+      const data = await api.put(`/files/${file.ID}`, '', {
+        body: {
+          [key]: value,
+          EditorID: localStorage.get('currentUserID')
+        }
+      });
+      if (!data.ok) {
+        setFormErrors(data.body.errors.json);
+      } else {
+        setFormErrors({});
+      }
+    }
+  };
 
   return(
     <Card className="FileCard">
@@ -143,14 +167,14 @@ function FileCard({ file, setDeletedFile }) {
           <Button
             className={'ms-auto'}
             size={'sm'}
-            onClick={() => handleDownloadButtonClick(file._links.download_file)}
+            onClick={() => handleDownloadButtonClick(file.ID)}
           >
             Download File
           </Button>
           <Button
             variant={'danger'}
             size={'sm'}
-            onClick={() => handleRemoveButtonClick(file._links.self)}
+            onClick={() => handleRemoveButtonClick(file.ID)}
           >
             Remove File
           </Button>
@@ -161,15 +185,23 @@ function FileCard({ file, setDeletedFile }) {
         <Alert variant={'danger'}>Missing file location!</Alert>
         }
         <InputField
-          name={file.ID}
+          name="FileNotes"
+          defaultValue={file.FileNotes}
           as_type="textarea"
           helperText="File notes"
+          blurHandler={handleBlur}
+          changeHandler={handleInputChange}
+          error={formErrors.Note}
         />
         <Form.Check
             className="RevisionSwitch"
             type="switch"
             id="NeedsRevision"
             label="Needs Revision"
+            defaultValue={file.NeedsRevision}
+            onBlur={handleBlur}
+            onChange={handleInputChange}
+            error={formErrors.Note}
           />
       </Card.Body>
       <Card.Footer>

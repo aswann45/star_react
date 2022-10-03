@@ -8,7 +8,7 @@ function Header({ handleClick }) {
   
   return (
     <Navbar bg="light" sticky="top" className="Header">
-      <Container>
+      <Container fluid>
         <Navbar.Brand>
           <div style={{fontSize: '30px', textAlign: 'center'}}>
             <span onClick={handleClick} style={{cursor: 'pointer'}}>

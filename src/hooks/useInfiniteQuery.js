@@ -26,14 +26,14 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   const [isFirstPage, setIsFirstPage] = useState();
   const [isFetchingNewQuery, setIsFetchingNewQuery] = useState();
   const [rowIsLoading, setRowIsLoading] = useState({})
-  
+
   const [isDetail, setIsDetail] = useState(false);
 
   // abort controller for non-refresh fetching
   const abortController = new AbortController();
   // abort controller for refresh fetches
   const refreshAbortController = new AbortController();
-  
+
   // construct search parameters from metadata states
   useEffect(() => {
     if (isDetail) {
@@ -47,11 +47,11 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       ...options.searchParams ?? null,
     });
   }, [
-    limit, 
-    nextPageToFetch, 
-    filters, 
-    order, 
-    options.searchParams, 
+    limit,
+    nextPageToFetch,
+    filters,
+    order,
+    options.searchParams,
     setSearchParams,
     isFetchingNewQuery,
     isDetail,
@@ -65,10 +65,10 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     setTotalPages(null);
     setData({pages: [], pageParams: []});
   }, [
-    //filters, 
+    //filters,
     order
   ])
-  
+
 // check if query has another page
   useEffect(() => {
     if (totalPages && lastPage === totalPages) {
@@ -103,7 +103,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     };
     setNextPageToFetch(fetchPage);
   }, [hasNextPage, pageArray, lastPage])
-  
+
   // effect to fetch Next Page
   useEffect(() => {
     if (isFetchingNextPage) {
@@ -134,44 +134,22 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   useEffect(() => {
     setPageArray(
       Array.from(
-        Array(totalPages).keys(), 
-        (n) => n !== 0 ? n + 1 : 1 
+        Array(totalPages).keys(),
+        (n) => n !== 0 ? n + 1 : 1
       )
     );
   }, [totalPages])
-  
+
   // update data state and make put request to api
   const updateData = async (row, columnID, value) => {
-    // wait half a second 
+    // wait half a second
     await new Promise(r => setTimeout(r, 500));
-    // get a shallow copy of the current array of pages with the
-    // updated object
-    /*const newPagesArray = (prevData) => prevData?.pages?.map(page => {
-      page.map(obj => {
-        if (obj.ID === row.id) {
-          // if the row ID matches the object ID, update the value
-          // and make the put request
-          obj[columnID] = value;
-          (async () => {
-            const objURL = `${baseURL}/${obj.ID}`
-            const response = await api.put(objURL, '', {
-              body: {
-                [columnID]: value,
-              }
-            })
-            if (!response.ok) {
-              console.log('There is a problem!!!', response)
-            };
-          })()
-        };
-        return obj;
-      });
-      return page;
-    });*/
+
     const objURL = `${baseURL}/${row.id}`
     const response = await api.put(objURL, '', {
       body: {
         [columnID]: value,
+        EditorID: localStorage.get('currentUserID')
       }
     });
 
@@ -186,15 +164,16 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     setData(prevData => ({
       pages: newPagesArray(prevData, response),
       pageParams: [...prevData.pageParams]
-    }));   
+    }));
   };
-  
+
   // lazily load child records from the api
   const fetchChildRecords = async (row) => {
     // set loading state (will render loading spinner)
     setRowIsLoading(prevRows => ({...prevRows, [row.id]: true}));
     // get the endpoint from the row's metadata
-    const childRequestsURL = row?.original?._links?.child_requests || null;
+    const childRequestsURL = row?.original?._links?.child_requests.replace('/api', '') || null;
+
     // make the request and return the promise
     const childRequests = async (row) => {
       if (childRequestsURL === null) {
@@ -206,7 +185,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         } else {
           console.log('Problem!', response)
           return null
-        } 
+        }
       }
     }
     // get a shallow copy of the pages array with the new children added
@@ -214,8 +193,8 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     const newPagesArray = (prevData, childRequestsArray) => prevData?.pages?.map(page => {
       page.map(obj => {
         if (obj.ID === row.id) {
-          // add the array of children to the parent object 
-          obj.subRows = childRequestsArray; 
+          // add the array of children to the parent object
+          obj.subRows = childRequestsArray;
           return obj
         } else {
           // just return the object if there are no children to add
@@ -224,11 +203,11 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       });
       return page;
     });
-    
-    
+
+
     // get the promise with the children array
     const newChildren = await childRequests(row);
-    // set the data state 
+    // set the data state
     setData(prevData => ({
       pages: newPagesArray(prevData, newChildren.data),
       pageParams: [...prevData.pageParams]
@@ -238,9 +217,9 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     // reset the row loading state
     setRowIsLoading(prevRows => ({...prevRows, [row.id]: false}));
   }
-  
-  
-  // fetch a page from the API  
+
+
+  // fetch a page from the API
   const fetchPage = async () => {
     if (searchParams.get('page') === null) {
       // drop out if we don't have a page to fetch
@@ -255,12 +234,12 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     if (pageAlreadyFetched(Number(searchParams.get('page')))) {
       setIsFetching(false);
       // if we've already fetched the page, drop out
-      return 
+      return
     } else if (lastPage && lastPage >= nextPageToFetch) {
       // check if the last page we got is the same as or comes after
       // the next page to fetch; set the fetching state to false and drop out
       setIsFetching(false);
-      return 
+      return
     }
     // wait for 1 second
     await new Promise(r => setTimeout(r, 1000));
@@ -303,8 +282,8 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     // return the api response status
     return response.ok;
   };
-  
-  // function to set fetching status state to 
+
+  // function to set fetching status state to
   // fetch the next page in a query
   const fetchNextPage = () => {
     if (isFetching) {
@@ -320,17 +299,20 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       setIsFetchingNextPage(true);
     }
   };
-  
-  
+
+
   const resetSearch = () => {
     setData({pages: [], pageParams: []});
     setLastPage(null);
-    setNextPageToFetch(1);  
+    setPageArray([]);
+    //setNextPageToFetch(1);
     setTotalItems(null);
+    setTotalPages(null);
     setIsFetching(false);
+    setSearchParams((oldParams) => ({...oldParams, page: 1}));
   }
-  
-  // function to set fetching status state to 
+
+  // function to set fetching status state to
   // fetch the first page for a new query
   const fetchNewQuery = () => {
     if (isFetching) {
@@ -346,61 +328,20 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       setLastPage();
       //setNextPageToFetch(1);
       //setSearchParams(params => ({...params, page: 1}))
-      
+
     //}
   };
-    
-  // force refresh all data pages
-  /*const refreshData = () => {
-    setData(prevData => ({
-      pages: [],
-      pageParams: [...prevData.pageParams],
-    }));
-    setTotalItems(null);
 
-    for (const param of data.pageParams) {
-      async function refresh(param) {
-        setIsFetching(true);
-        setIsFetchingPreviousPage(true);
-        const response = await api.get(
-          baseURL,
-          param,
-          {signal: abortController.signal},
-        );
-        if (response.ok) {
-          setData(prevData => ({
-            pages: [...prevData.pages, response.body.data],
-            pageParams: [...prevData.pageParams],
-          }));
-          setTotalItems(response.body._meta.total_items);
-          if (response.body._meta.total_pages !== totalPages) {
-            setTotalPages(response.body._meta.total_pages);
-          };
-
-          if (pageArray.indexOf(response.body._meta.page) > -1) {
-            pageArray.splice(pageArray.indexOf(response.body._meta.page), 1);
-          }
-          setLastPage(lastPage)
-          setNextPageToFetch(lastPage + 1);
-        }
-        setIsFetchingPreviousPage(false);
-        setIsFetching(false);
-        return true
-      }
-      refresh(param);
-    }
-  }*/
-  
   // replace a page in data state with a new page
   const splicePrevData = (prevData, newPage) => {
     const removed = prevData?.pages?.splice(
       Number(newPage.body._meta.page - 1), // get the page index from metadata
-      1, 
+      1,
       newPage.body.data
-    );    
+    );
     return prevData.pages;
   }
-  
+
   // refresh data state by page in pages array
   // loops through page params and makes a get call to the api
   // for each page's parameters
@@ -443,7 +384,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       }
     }
   }
-  
+
   // function to set state to refresh data for previous pages
   const refreshData = () => {
     if (isFetching) {
@@ -458,7 +399,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       setIsFetchingPreviousPage(true);
     }
   };
-  
+
   useEffect(() => {
     if (!isFetchingPreviousPage) {
       // if fetch state is false, drop out
@@ -468,110 +409,148 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
       return
     } else {
       // run the refresh function
-      backgroundRefreshData();        
+      backgroundRefreshData();
     }
     return () => {
       // cleanup by setting the fetch state back to false
       setIsFetchingPreviousPage(false)
     }
   }, [isFetchingPreviousPage, isFetching])
-  
-  
-  const groupRequests = async (requestIDs) => {    
-    
+
+
+  const groupRequests = async (requestIDs) => {
+
     let returnedParentID;
     const requestIDsInt = Array.from(
-      Object.keys(requestIDs).map((item) => parseInt(item) !== returnedParentID ? 
-                                                    parseInt(item) : 
+      Object.keys(requestIDs).map((item) => parseInt(item) !== returnedParentID ?
+                                                    parseInt(item) :
                                                     null))
-    
+
     setRowIsLoading(prevRows => ({...prevRows, ...requestIDs}));
-    
+
     const newPagesArray = (oldPagesArray, newData) => oldPagesArray?.pages.map((page) => {
       page[page.findIndex((row) => row.ID === returnedParentID)] = newData;
-      const newPage = page.filter((row) => 
-        !Array.from(Object.keys(requestIDs).map((item) => 
-          parseInt(item) !== returnedParentID ? 
-            parseInt(item) : 
+      const newPage = page.filter((row) =>
+        !Array.from(Object.keys(requestIDs).map((item) =>
+          parseInt(item) !== returnedParentID ?
+            parseInt(item) :
             null)
         ).includes(row.ID)
       );
       //console.log(page.some((row) => row.ID === returnedParentID));
-      //console.log(page[page.findIndex((row) => row.ID === returnedParentID)])// 
-      console.log(page)
+      //console.log(page[page.findIndex((row) => row.ID === returnedParentID)])//
+      //console.log(page)
       return newPage
     }) ?? [];
-    
-    console.log(data)
+
+    //console.log(data)
     const response = await api.post(
       `/requests/group`,
       '',
       {
         signal: abortController.signal,
-        body: {ids: requestIDs}
+        body: {
+          ids: requestIDs,
+          EditorID: localStorage.get('currentUserID'),
+        }
       }
     );
     if (response.ok) {
-      
+
       returnedParentID = response.body.ID;
-      console.log(returnedParentID)
-      
+      //console.log(returnedParentID)
+
       setData(prevData => ({
         pages: newPagesArray(prevData, response.body),
         pageParams: prevData.pageParams,
     }))
-      console.log(data)
+      //console.log(data)
       setRowIsLoading({});
     };
     //await new Promise(r => setTimeout(r, 5000));
     //return setIsFetching(false);
   }
-  
-  const removeProjects = async (projectIDs, stage) => {    
-         
-    const newPagesArray = (oldPagesArray) => oldPagesArray?.pages.map((page) => 
-           
-      page.filter((row) => 
+
+  const removeProjects = async (projectIDs, stage) => {
+
+    const newPagesArray = (oldPagesArray) => oldPagesArray?.pages.map((page) =>
+
+      page.filter((row) =>
         !projectIDs.includes(row.ID)
       )
-      //console.log(newPage)
-      //console.log(projectIDs)
-      //console.log(page.some((row) => row.ID === returnedParentID));
-      //console.log(page[page.findIndex((row) => row.ID === returnedParentID)])// 
-      //console.log(page)
-      
+
     ) ?? [];
-    
-    console.log(data)
+
+    //console.log(data)
     const response = await api.post(
       `/project_details/exclude`,
       '',
       {
         signal: abortController.signal,
-        body: {ids: projectIDs, stage: stage}
+        body: {
+          ids: projectIDs,
+          stage: stage,
+          EditorID: localStorage.get('currentUserID'),
+        }
       }
     );
     if (response.ok) {
-      console.log(response)
-      
+      //console.log(response)
+
       setData(prevData => ({
         pages: newPagesArray(prevData),
         pageParams: prevData.pageParams,
     }))
-      console.log(data)
+      //console.log(data)
     };
     //await new Promise(r => setTimeout(r, 5000));
     //return setIsFetching(false);
   }
 
+  const exportRows = async (requestIDs, exportURLPrefix) => {
+
+    setIsFetching(true)
+    const response = await api.post(
+      `${exportURLPrefix}export_rows`,
+      searchParams,
+      {
+        signal: abortController.signal,
+        body: {
+          ids: requestIDs ? requestIDs : null,
+          filters: searchParams.get('filters'),
+          order: searchParams.get('order'),
+        }
+      }
+    );
+    if (!response.ok) {
+      console.log('The reponse is not ok!')
+    } else {
+      const fileBlob = await response.blob();
+      const fileURL = URL.createObjectURL(fileBlob);
+      let tempLink = document.createElement('a');
+      let disposition = response.headers.get('content-disposition');
+      let fileName = (disposition && disposition.indexOf('attachment') !== -1) ?
+        disposition.split('filename=')[1] :
+        ''
+      tempLink.href = fileURL;
+      if (fileName !== '') {
+        tempLink.setAttribute('download', fileName);
+        tempLink.click();
+      } else {
+        window.open(fileURL);
+      }
+      setIsFetching(false);
+    }
+  }
+
   return [
-    data, 
-    //error, 
-    //totalPages, 
-    setLimit, 
-    setFilters, 
+    data,
+    //error,
+    //totalPages,
+    setLimit,
+    setFilters,
     setOrder,
-    totalItems, 
+    totalItems,
     setTotalItems,
     isFetchingNextPage,
     isFetchingPreviousPage,
@@ -583,7 +562,8 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     isFirstPage,
     lastPage,
     nextPageToFetch,
-    //pageArray,
+    pageArray,
+    totalPages,
     updateData,
     //backgroundRefreshData,
     //setIsFetchingPreviousPage,
@@ -593,6 +573,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     groupRequests,
     resetSearch,
     removeProjects,
+    exportRows,
   ];
 };
 

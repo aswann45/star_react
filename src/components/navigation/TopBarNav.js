@@ -10,7 +10,7 @@ function TopBarNav({ topBarNavLinks }) {
   return (
     <>
       <Navbar className='TopBarNav'>
-        <Container>
+        <Container fluid>
           <Nav className='me-auto' style={{margin: 0, padding: 0}}>
           {
             Object.entries(topBarNavLinks).map(([name, link]) => {

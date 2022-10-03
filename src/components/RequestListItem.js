@@ -1,14 +1,18 @@
 import Stack from 'react-bootstrap/Stack';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function RequestListItem({ request, showMember }) {
+
+  let location = useLocation();
+  const background = location.state.backgroundLocation
+
   return (
     <Stack direction="horizontal" gap={3} className="RequestListItem">
       <div>
         <h5>
-          <Link to={`/member_requests/${request.ID}`}>
+          <Link to={`/requests/${request.ID}`} state={{backgroundLocation: background}}>
             {request.SubmissionID}&nbsp;&mdash;&nbsp;
-            {(request.AnalystTitle && request.AnalystTitle !== '') ? 
+            {(request.AnalystTitle && request.AnalystTitle !== '') ?
                 request.AnalystTitle
                 : request.RequestTitle
             }

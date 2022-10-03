@@ -13,7 +13,9 @@ function Sidebar({ sidebar, background }) {
         :
         <>
           <Nav.Item>
-            <Nav.Link as={NavLink} to="/member_requests">Browse Member Requests</Nav.Link>
+            <Nav.Link as={NavLink} to="/member_requests">
+              Browse & Group Member Requests
+            </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link as={NavLink} to="/project_funding">Fund CPFs</Nav.Link>

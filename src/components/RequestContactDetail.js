@@ -33,7 +33,7 @@ function RequestContactDetail({ title }) {
     })();
   }, [url, api]);
 
-  
+
   const handleBlur = async (event) => {
     const key = event.target.id;
     const value = input[key];
@@ -43,7 +43,8 @@ function RequestContactDetail({ title }) {
       setChanged({});
       const data = await api.put(`/contacts/${contact.Email}`, '', {
         body: {
-          [key] : value
+          [key] : value,
+          EditorID: localStorage.get('currentUserID'),
         }
       });
       if (!data.ok) {
@@ -60,6 +61,7 @@ function RequestContactDetail({ title }) {
       body:
       {
         RequestID: request_id,
+        EditorID: localStorage.get('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -72,7 +74,7 @@ function RequestContactDetail({ title }) {
 
   const handleEditingButtonOnClick = (event) => {
     if (editing === false) {
-    setEditing(true);   
+    setEditing(true);
     } else if (editing === true) {
       setEditing(false);
     }
@@ -83,27 +85,27 @@ function RequestContactDetail({ title }) {
     <Stack gap={3} direction="horizontal">
       <DetailSubHeader title={title} />
     {(contacts && editing === false) &&
-      <RequestContactSelect 
-        contacts={contacts} 
-        handleContactSelect={handleContactSelect} 
+      <RequestContactSelect
+        contacts={contacts}
+        handleContactSelect={handleContactSelect}
         formErrors={formErrors}
       />
     }
     </Stack>
       {
         contact ?
-          <ContactCard 
-            contact={contact} 
+          <ContactCard
+            contact={contact}
             handleBlur={handleBlur}
             handleInputChange={handleInputChange}
             formErrors={formErrors}
             editing={editing}
             handleEditingButtonOnClick={handleEditingButtonOnClick}
-          />            
+          />
           :
           <Loader obj={contact} />
       }
-            
+
     </>
   );
 }
