@@ -65,7 +65,7 @@ function RequestModal() {
       const data = await api.put(put_url, null, {
         body: {
           [key]: value,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       });
       if (!data.ok) {

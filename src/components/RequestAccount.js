@@ -41,7 +41,7 @@ function RequestAccount({ url }) {
         body:
         {
           ProgramID: event.currentTarget.value,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       });
       if (!data.ok) {
@@ -59,7 +59,7 @@ function RequestAccount({ url }) {
       {
         AccountID: event.currentTarget.value,
         ProgramID: null,
-        EditorID: localStorage.get('currentUserID'),
+        EditorID: localStorage.getItem('currentUserID'),
       }
     });
     if (!data.ok) {
@@ -79,7 +79,7 @@ function RequestAccount({ url }) {
         AgencyID: event.currentTarget.value,
         AccountID: null,
         ProgramID: null,
-        EditorID: localStorage.get('currentUserID'),
+        EditorID: localStorage.getItem('currentUserID'),
       }
     });
     if (!data.ok) {
