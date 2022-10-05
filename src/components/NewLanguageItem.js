@@ -22,7 +22,7 @@ function NewLanguageItem({ api, handleRemove, list_id, request_id }) {
         HouseRequestID : request_id,
         BillReport: input.BillReport,
         Language: input.Language,
-        CreatorID: localStorage.get('currentUserID'),
+        CreatorID: localStorage.getItem('currentUserID'),
       }
     });
     if (!data.ok) {

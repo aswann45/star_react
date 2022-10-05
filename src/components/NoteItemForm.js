@@ -22,7 +22,7 @@ function NoteItemForm({ note, api }) {
       const data = await api.put(note_url, '', {
         body: {
           [key]: value,
-          EditorID: localStorage.get('currentUserID')
+          EditorID: localStorage.getItem('currentUserID')
         }
       });
       if (!data.ok) {

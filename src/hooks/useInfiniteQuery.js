@@ -149,7 +149,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     const response = await api.put(objURL, '', {
       body: {
         [columnID]: value,
-        EditorID: localStorage.get('currentUserID')
+        EditorID: localStorage.getItem('currentUserID')
       }
     });
 
@@ -451,7 +451,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         signal: abortController.signal,
         body: {
           ids: requestIDs,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       }
     );
@@ -490,7 +490,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         body: {
           ids: projectIDs,
           stage: stage,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       }
     );

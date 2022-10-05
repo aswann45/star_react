@@ -21,7 +21,7 @@ function NewNoteItem({ api, handleRemove, list_id, request_id }) {
         RequestID : request_id,
         Type: input.Type,
         Note: input.Note,
-        CreatorID: localStorage.get('currentUserID'),
+        CreatorID: localStorage.getItem('currentUserID'),
       }
     });
     if (!data.ok) {
