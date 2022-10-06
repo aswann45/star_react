@@ -62,7 +62,7 @@ function MemberRequestsCPFsColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -79,7 +79,7 @@ function MemberRequestsCPFsColumns(
 
     columnHelper.accessor('RequestTitle', {
       //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
+      cell: info => info.getValue(),
       header: 'Request Title',
       filterVariant: 'text',
     }),
@@ -221,17 +221,25 @@ function MemberRequestsCPFsColumns(
       header: 'Recipient EIN',
       filterVariant: 'text',
     }),
-    columnHelper.accessor('RequestChamber', {
-      //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
-      header: 'Origin Chamber',
+    columnHelper.accessor('ChamberDisposition', {
+      cell: info => info.getValue(),
+      header: 'Chamber Disposition',
       filterVariant: 'multi-select',
-      inputType: 'text',
       filterValues: [
-        'House',
-        'Senate',
-        //'Bicameral',
-      ],
+        'Included',
+        'Not Included',
+        'Open',
+      ]
+    }),
+    columnHelper.accessor('FinalDisposition', {
+      cell: info => info.getValue(),
+      header: 'Final Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
     }),
   ];
 

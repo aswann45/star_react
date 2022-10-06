@@ -5,6 +5,7 @@ import RowExpandButton from '../components/table/RowExpandButton';
 import EditableTableCell from '../components/table/EditableTableCell';
 import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
+import ProjectExcludeButton from '../components/table/ProjectExcludeButton';
 
 function CPFConferenceFundingColumns(
   memberFilterOptions,
@@ -39,6 +40,12 @@ function CPFConferenceFundingColumns(
             setIsDetail={props.table.options.meta?.setIsDetail}
           />
 
+          <ProjectExcludeButton
+            table={props.table}
+            row={props.row}
+            stage='conference'
+          />
+
           <NotePopover
             row={props.row}
             table={props.table}
@@ -67,7 +74,7 @@ function CPFConferenceFundingColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'Request ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -182,7 +189,10 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
     }),
     columnHelper.accessor('ChamberAmount', {
-      cell: info => info.getValue(),
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
       header: 'Chamber $ Amount',
       filterVariant: 'number',
       inputType: 'currency',
@@ -194,14 +204,20 @@ function CPFConferenceFundingColumns(
       inputType: 'currency',
     }),
     columnHelper.accessor('ChamberAllocationD', {
-      cell: info => info.getValue(),
-      header: 'House Dem Allocation',
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'Chamber Dem Allocation',
       filterVariant: 'number',
       inputType: 'currency',
     }),
     columnHelper.accessor('ChamberAllocationR', {
-      cell: info => info.getValue(),
-      header: 'House GOP Allocation',
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'Chamber GOP Allocation',
       filterVariant: 'number',
       inputType: 'currency',
     }),
@@ -217,15 +233,14 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('RequestChamber', {
+    columnHelper.accessor('ProjectChamber', {
       cell: info => info.getValue(),
       header: 'Origin Chamber',
       filterVariant: 'multi-select',
-      inputType: 'text',
       filterValues: [
         'House',
         'Senate',
-        //'Bicameral',
+        'House/Senate',
       ],
     }),
     columnHelper.accessor('members_names', {

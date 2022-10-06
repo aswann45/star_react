@@ -76,7 +76,7 @@ function CPFHouseFundingColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'Request ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'

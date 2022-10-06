@@ -62,7 +62,7 @@ function MemberRequestsColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -79,7 +79,7 @@ function MemberRequestsColumns(
 
     columnHelper.accessor('RequestTitle', {
       //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
+      cell: info => info.getValue(),
       header: 'Request Title',
       filterVariant: 'text',
     }),
@@ -138,7 +138,7 @@ function MemberRequestsColumns(
       header: 'Member',
       filterVariant: 'multi-select',
       filterValues: Array.from(
-        memberFilterOptions.map(member => member.NameList)
+          memberFilterOptions?.map(member => member.NameList)
       ),
     }),
     columnHelper.accessor('Party', {
@@ -191,7 +191,7 @@ function MemberRequestsColumns(
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
-          agencyFilterOptions.map(agency => agency.Agency)
+          agencyFilterOptions?.map(agency => agency.Agency)
         )
       ),
     }),
@@ -201,7 +201,7 @@ function MemberRequestsColumns(
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
-          accountFilterOptions.map(account => account.Account)
+          accountFilterOptions?.map(account => account.Account)
         )
       ),
     }),
@@ -211,7 +211,7 @@ function MemberRequestsColumns(
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
-          programFilterOptions.map(program => program.Program)
+          programFilterOptions?.map(program => program.Program)
         )
       ),
     }),
@@ -240,6 +240,26 @@ function MemberRequestsColumns(
       cell: info => info.getValue(),
       header: 'CPF Recipient EIN',
       filterVariant: 'text',
+    }),
+    columnHelper.accessor('ChamberDisposition', {
+      cell: info => info.getValue(),
+      header: 'Chamber Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
+    }),
+    columnHelper.accessor('FinalDisposition', {
+      cell: info => info.getValue(),
+      header: 'Final Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
     }),
   ];
 
