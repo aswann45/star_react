@@ -507,7 +507,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     //return setIsFetching(false);
   }
 
-  const exportRows = async (requestIDs, exportURLPrefix) => {
+  const exportRows = async (requestIDs, colList, exportURLPrefix) => {
 
     setIsFetching(true)
     const response = await api.post(
@@ -517,6 +517,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         signal: abortController.signal,
         body: {
           ids: requestIDs ? requestIDs : null,
+          cols: colList ? colList : null,
           filters: searchParams.get('filters'),
           order: searchParams.get('order'),
         }

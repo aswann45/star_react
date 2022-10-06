@@ -33,20 +33,38 @@ function TableToolBar({
   allowGrouping,
 }) {
 
-  const exportURLPrefix = tableInstance.options.meta?.exportURLPrefix
-
+  const exportURLPrefix = tableInstance.options.meta?.exportURLPrefix;
+  const cols = tableInstance.options.state?.columnVisibility;
+  //console.log('cols', cols)
+  const colVisKeys = Object.keys(
+    tableInstance.options.state?.columnVisibility
+  )
+  //console.log('colVisKeys', colVisKeys)
+  const colVis = colVisKeys.filter(key => cols[key] === false)
+  //.filter(
+    //key => key === false
+  //);
+  //console.log('colVis', colVis)
+  const colList = tableInstance.options.state?.columnOrder.filter(
+    (col) => !colVis.some((hiddenVal) => col === hiddenVal)
+  )
+  //console.log('colList', colList)
   const handleGroupingClick = () => {
     tableInstance.options.meta?.groupRequests(rowSelection);
     tableInstance.resetRowSelection(true);
   }
 
   const handleExportSelectedRowsClick = () => {
-    tableInstance.options.meta?.exportRows(rowSelection, exportURLPrefix);
+    tableInstance.options.meta?.exportRows(
+      rowSelection,
+      colList,
+      exportURLPrefix
+    );
     tableInstance.resetRowSelection(true);
   }
 
   const handleExportRowsClick = () => {
-    tableInstance.options.meta?.exportRows(null, exportURLPrefix);
+    tableInstance.options.meta?.exportRows(null, colList, exportURLPrefix);
     tableInstance.resetRowSelection(true);
   }
 

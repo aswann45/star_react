@@ -21,7 +21,7 @@ import useInfiniteQuery from '../../hooks/useInfiniteQuery';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
 function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }) {
-  // member request columns 
+  // member request columns
   // TODO: make the columns something to feed into the component
   //const columns = MemberRequestsColumns();
   // retrieve saved user configuration from local storage
@@ -63,7 +63,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   ] = useInfiniteQuery(url, 1, '', getURL);
 
   // Column visibility, pinning, and order state
-  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
+  const [columnVisibility, setColumnVisibility] = useState(
+    tableSettings.columnVisibility ?? {});
   const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
   const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey || column.id)
