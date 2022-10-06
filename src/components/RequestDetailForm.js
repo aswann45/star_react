@@ -60,7 +60,8 @@ function RequestDetailForm({ title }) {
                       changeHandler={handleInputChange}
                       helperText="Request title from the personal office."
                       blurHandler={handleBlur}
-                      error={formErrors.RequestTitle} />
+                      error={formErrors.RequestTitle}
+                      readOnly />
                     <InputField
                       name="AnalystTitle"
                       label="Analyst/Stubline Title"
