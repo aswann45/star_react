@@ -8,8 +8,8 @@ const useMemberFilterOptions = () => {
   useEffect(() => {
     const request_url = '/members'
     const fetchMembers = async ()  => {
-      const response = await api.get(request_url, 'limit=450');
-      setMembers(response.ok ? response.body.data : null);
+      const response = await api.get(request_url, 'limit=1000');
+      setMembers(response.ok ? response.body.data : []);
     };
     fetchMembers();
   }, [])
