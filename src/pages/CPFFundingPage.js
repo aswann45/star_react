@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useOutletContext } from 'react-router-dom';
 import TopBarNav from '../components/navigation/TopBarNav';
 
 import useMemberFilterOptions from '../hooks/useMemberFilterOptions';
@@ -12,18 +12,27 @@ function CPFFundingPage () {
   const agencyFilterOptions = useAgencyFilterOptions();
   const accountFilterOptions = useAccountFilterOptions();
   const programFilterOptions = useProgramFilterOptions();
-  
+
+  const [isDetail, setIsDetail] = useOutletContext();
+
   const topBarNavLinks = {
     'All CPF Funding':  '/project_funding',
     'House Funding': './house',
     'Conference Funding': './conference',
   }
-  
+
   return (
     <>
       <TopBarNav topBarNavLinks={topBarNavLinks} />
       <Outlet context={
-        [memberFilterOptions, agencyFilterOptions, accountFilterOptions, programFilterOptions]
+        [
+          memberFilterOptions,
+          agencyFilterOptions,
+          accountFilterOptions,
+          programFilterOptions,
+          isDetail,
+          setIsDetail
+        ]
       } />
     </>
   );

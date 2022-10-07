@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Outlet,  useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+  useOutletContext
+} from 'react-router-dom';
 import { useApi } from '../contexts/ApiProvider';
 import useInputChange from '../useInputChange';
 
@@ -13,18 +19,18 @@ import RequestType from './RequestType';
 import RequestAccount from './RequestAccount';
 import Loader from './loaders/Loader';
 
-function RequestModal() {
+function RequestModal({isDetail, setIsDetail}) {
   const { request_id } = useParams(':request_id');
   const request_url = `/requests/${request_id}`;
   const location = useLocation();
   const backgroundLocation = location.state.backgroundLocation;
-  //console.log(location.state)
   const navigate = useNavigate();
 
   const [show, setShow] = useState(true);
   const handleClose = () => {
     setShow(false);
     navigate(backgroundLocation);
+    setIsDetail(false);
   }
 
   // api call logic for get requests

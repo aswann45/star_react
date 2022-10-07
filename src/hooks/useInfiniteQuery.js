@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import { useSearchParams } from 'react-router-dom';
 
-const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
+const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL, isDetail) => {
   // api context and search parameter state
   const api = useApi();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +27,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   const [isFetchingNewQuery, setIsFetchingNewQuery] = useState();
   const [rowIsLoading, setRowIsLoading] = useState({})
 
-  const [isDetail, setIsDetail] = useState(false);
+  //const [isDetail, setIsDetail] = useState(false);
 
   // abort controller for non-refresh fetching
   const abortController = new AbortController();
@@ -570,11 +570,12 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     //setIsFetchingPreviousPage,
     fetchChildRecords,
     rowIsLoading,
-    setIsDetail,
+    //setIsDetail,
     groupRequests,
     resetSearch,
     removeProjects,
     exportRows,
+    //isDetail,
   ];
 };
 

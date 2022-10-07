@@ -14,21 +14,24 @@ import {
 } from '@tanstack/react-table';
 import Loader from '../loaders/Loader';
 import { useVirtualizer } from '@tanstack/react-virtual';
-//import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
 import useInfiniteQuery from '../../hooks/useInfiniteQuery';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
-function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }) {
-  // member request columns
-  // TODO: make the columns something to feed into the component
-  //const columns = MemberRequestsColumns();
+function DataTable({
+  columns,
+  url,
+  localStorageLocation,
+  getURL,
+  allowGrouping,
+  setIsDetail,
+  isDetail
+}) {
   // retrieve saved user configuration from local storage
   const [tableSettings, setTableSettings] = useLocalStorage(localStorageLocation, {})
 
   // URL and API request logic and state
-  //const url = '/member_requests/';
   const [
     data,
     //error,
@@ -55,7 +58,6 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     //setIsFetchingPreviousPage,
     fetchChildRecords,
     rowIsLoading,
-    setIsDetail,
     groupRequests,
     resetSearch,
     removeProjects,
@@ -258,12 +260,13 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     {/*<pre>isFetching: {JSON.stringify(isFetching)}</pre>
         <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
         <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
-<pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
+        <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
         <pre>lastPage: {JSON.stringify(lastPage)}</pre>
         <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
         <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
 
         <pre>totalItems: {JSON.stringify(totalItems)}</pre>
+        <pre>isDetail: {JSON.stringify(isDetail)}</pre>
         <pre>Data: {JSON.stringify(data, null, 2)}</pre>
         <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
         <pre>columnVisibility: {JSON.stringify(columnVisibility, null, 2)}</pre>
