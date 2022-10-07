@@ -9,7 +9,7 @@ const useAgencyFilterOptions = () => {
     const request_url = '/agency_accounts/agencies'
     const fetchAgencies = async ()  => {
       const response = await api.get(request_url);
-      setAgencies(response.ok ? response.body.data : null);
+      setAgencies(response.ok ? response.body.data : []);
     };
     fetchAgencies();
   }, [])
