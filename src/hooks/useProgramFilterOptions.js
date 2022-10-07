@@ -9,7 +9,7 @@ const useProgramFilterOptions = () => {
     const request_url = '/agency_accounts/programs'
     const fetchPrograms = async ()  => {
       const response = await api.get(request_url);
-      setPrograms(response.ok ? response.body.data : null);
+      setPrograms(response.ok ? response.body.data : []);
     };
     fetchPrograms();
   }, [])
