@@ -218,17 +218,6 @@ function CPFFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('RequestChamber', {
-      cell: info => info.getValue(),
-      header: 'Origin Chamber',
-      filterVariant: 'multi-select',
-      inputType: 'text',
-      filterValues: [
-        'House',
-        'Senate',
-        //'Bicameral',
-    ],
-    }),
     columnHelper.accessor('ProjectChamber', {
       cell: info => info.getValue(),
       header: 'Project Chamber',
@@ -237,7 +226,7 @@ function CPFFundingColumns(
       filterValues: [
         'House',
         'Senate',
-        //'Bicameral',
+        'House/Senate',
     ],
     }),
 
