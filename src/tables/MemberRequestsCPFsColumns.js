@@ -221,6 +221,16 @@ function MemberRequestsCPFsColumns(
       header: 'Recipient EIN',
       filterVariant: 'text',
     }),
+    columnHelper.accessor('ProjectCity', {
+      cell: info => info.getValue(),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: info => info.getValue(),
+      header: 'Project State',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('ChamberDisposition', {
       cell: info => info.getValue(),
       header: 'Chamber Disposition',
@@ -240,6 +250,16 @@ function MemberRequestsCPFsColumns(
         'Not Included',
         'Open',
       ]
+    }),
+    columnHelper.accessor('RequestChamber', {
+      cell: info => info.getValue(),
+      header: 'Origin Chamber',
+      filterVariant: 'multi-select',
+      inputType: 'text',
+      filterValues: [
+        'House',
+        'Senate',
+      ],
     }),
   ];
 

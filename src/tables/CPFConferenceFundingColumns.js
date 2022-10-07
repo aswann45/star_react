@@ -180,6 +180,31 @@ function CPFConferenceFundingColumns(
         )
       ),
     }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'Recipient',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: info => info.getValue(),
+      header: 'Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: info => info.getValue(),
+      header: 'Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectCity', {
+      cell: info => info.getValue(),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: info => info.getValue(),
+      header: 'Project State',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('ProjectAmountRequested', {
       cell: info => {
         const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
@@ -194,12 +219,6 @@ function CPFConferenceFundingColumns(
         return amount
       },
       header: 'Chamber $ Amount',
-      filterVariant: 'number',
-      inputType: 'currency',
-    }),
-    columnHelper.accessor('FinalAmount', {
-      cell: props => EditableTableCell(props),
-      header: 'Conference $ Amount',
       filterVariant: 'number',
       inputType: 'currency',
     }),
@@ -221,7 +240,13 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-        columnHelper.accessor('ConferenceAllocationHouse', {
+    columnHelper.accessor('FinalAmount', {
+      cell: props => EditableTableCell(props),
+      header: 'Conference $ Amount',
+      filterVariant: 'number',
+      inputType: 'currency',
+    }),
+    columnHelper.accessor('ConferenceAllocationHouse', {
       cell: props => EditableTableCell(props),
       header: 'Conference House Allocation',
       filterVariant: 'number',
@@ -233,6 +258,14 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
+    columnHelper.accessor('members_names', {
+      cell: info => info.getValue().join(', '),
+      header: 'House Requestors',
+    }),
+    columnHelper.accessor('senators_names', {
+      cell: info => info.getValue().join(', '),
+      header: 'Senate Requestors',
+    }),
     columnHelper.accessor('ProjectChamber', {
       cell: info => info.getValue(),
       header: 'Origin Chamber',
@@ -242,19 +275,6 @@ function CPFConferenceFundingColumns(
         'Senate',
         'House/Senate',
       ],
-    }),
-    columnHelper.accessor('members_names', {
-      cell: info => info.getValue().join(', '),
-      header: 'House Requestors',
-    }),
-    columnHelper.accessor('senators_names', {
-      cell: info => info.getValue().join(', '),
-      header: 'Senate Requestors',
-    }),
-    columnHelper.accessor('RecipientLegalName', {
-      cell: info => info.getValue(),
-      header: 'Recipient',
-      filterVariant: 'text',
     }),
   ];
 

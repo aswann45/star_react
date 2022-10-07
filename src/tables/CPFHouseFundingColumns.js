@@ -182,6 +182,31 @@ function CPFHouseFundingColumns(
         )
       ),
     }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'Recipient',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: info => info.getValue(),
+      header: 'Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: info => info.getValue(),
+      header: 'Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectCity', {
+      cell: info => info.getValue(),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: info => info.getValue(),
+      header: 'Project State',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('ProjectAmountRequested', {
       cell: info => {
         const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
@@ -212,11 +237,7 @@ function CPFHouseFundingColumns(
       cell: info => info.getValue().join(', '),
       header: 'House Requestors',
     }),
-    columnHelper.accessor('RecipientLegalName', {
-      cell: info => info.getValue(),
-      header: 'Recipient',
-      filterVariant: 'text',
-    }),
+
   ];
 
   return columns;
