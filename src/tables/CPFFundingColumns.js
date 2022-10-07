@@ -174,6 +174,31 @@ function CPFFundingColumns(
         )
       ),
     }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: info => info.getValue(),
+      header: 'Recipient',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: info => info.getValue(),
+      header: 'Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: info => info.getValue(),
+      header: 'Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectCity', {
+      cell: info => info.getValue(),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: info => info.getValue(),
+      header: 'Project State',
+      filterVariant: 'text',
+    }),
     columnHelper.accessor('ProjectAmountRequested', {
       cell: info => {
         const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
@@ -185,12 +210,6 @@ function CPFFundingColumns(
     columnHelper.accessor('ChamberAmount', {
       cell: props => EditableTableCell(props),
       header: 'Chamber $ Amount',
-      filterVariant: 'number',
-      inputType: 'currency',
-    }),
-    columnHelper.accessor('FinalAmount', {
-      cell: props => EditableTableCell(props),
-      header: 'Conference $ Amount',
       filterVariant: 'number',
       inputType: 'currency',
     }),
@@ -206,6 +225,12 @@ function CPFFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
+    columnHelper.accessor('FinalAmount', {
+      cell: props => EditableTableCell(props),
+      header: 'Conference $ Amount',
+      filterVariant: 'number',
+      inputType: 'currency',
+    }),
     columnHelper.accessor('ConferenceAllocationHouse', {
       cell: props => EditableTableCell(props),
       header: 'Conference House Allocation',
@@ -218,18 +243,6 @@ function CPFFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('ProjectChamber', {
-      cell: info => info.getValue(),
-      header: 'Project Chamber',
-      filterVariant: 'multi-select',
-      inputType: 'text',
-      filterValues: [
-        'House',
-        'Senate',
-        'House/Senate',
-    ],
-    }),
-
     columnHelper.accessor('ChamberDisposition', {
       cell: info => info.getValue(),
       header: 'Request Chamber Disposition',
@@ -258,13 +271,18 @@ function CPFFundingColumns(
       cell: info => info.getValue().join(', '),
       header: 'Senate Requestors',
     }),
-    columnHelper.accessor('RecipientLegalName', {
+    columnHelper.accessor('ProjectChamber', {
       cell: info => info.getValue(),
-      header: 'Recipient',
-      filterVariant: 'text',
+      header: 'Origin Chamber',
+      filterVariant: 'multi-select',
+      inputType: 'text',
+      filterValues: [
+        'House',
+        'Senate',
+        'House/Senate',
+      ],
     }),
   ];
-
   return columns;
 
 };

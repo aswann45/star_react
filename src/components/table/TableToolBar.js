@@ -141,7 +141,7 @@ function TableToolBar({
 
         </Dropdown.Toggle>
 
-        <Dropdown.Menu>
+        <Dropdown.Menu style={{width: '215px'}}>
           <ColumnVisibilityToggle tableInstance={tableInstance} />
         </Dropdown.Menu>
 
