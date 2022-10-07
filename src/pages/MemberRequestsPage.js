@@ -1,4 +1,5 @@
-import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet, useOutletContext } from 'react-router-dom';
 import TopBarNav from '../components/navigation/TopBarNav';
 
 import useMemberFilterOptions from '../hooks/useMemberFilterOptions';
@@ -7,23 +8,32 @@ import useAccountFilterOptions from '../hooks/useAccountFilterOptions';
 import useProgramFilterOptions from '../hooks/useProgramFilterOptions';
 
 
-function MemberRequestsPage () {  
+function MemberRequestsPage () {
   const memberFilterOptions = useMemberFilterOptions();
   const agencyFilterOptions = useAgencyFilterOptions();
   const accountFilterOptions = useAccountFilterOptions();
   const programFilterOptions = useProgramFilterOptions();
-  
+
+  const [isDetail, setIsDetail] = useOutletContext();
+
   const topBarNavLinks = {
     'All Member Requests':  '/member_requests',
     'Community Project Funding': '/member_requests/cpfs',
     'Program and Language': '/member_requests/prog_lang',
   }
-  
+
   return (
     <>
       <TopBarNav topBarNavLinks={topBarNavLinks} />
       <Outlet context={
-        [memberFilterOptions, agencyFilterOptions, accountFilterOptions, programFilterOptions]
+        [
+          memberFilterOptions,
+          agencyFilterOptions,
+          accountFilterOptions,
+          programFilterOptions,
+          isDetail,
+          setIsDetail
+        ]
       }/>
     </>
   );

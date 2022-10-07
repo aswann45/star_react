@@ -3,27 +3,31 @@ import DataTable from '../components/table/DataTable';
 import CPFFundingColumns from './CPFFundingColumns';
 
 function CPFFundingTable () {
-  
+
   const [
     memberFilterOptions,
-    agencyFilterOptions, 
-    accountFilterOptions, 
-    programFilterOptions
+    agencyFilterOptions,
+    accountFilterOptions,
+    programFilterOptions,
+    isDetail,
+    setIsDetail
   ] = useOutletContext();
-  
+
   const columns = CPFFundingColumns(
-    memberFilterOptions, 
-    agencyFilterOptions, 
-    accountFilterOptions, 
+    memberFilterOptions,
+    agencyFilterOptions,
+    accountFilterOptions,
     programFilterOptions
   );
-  
+
   return (
     <>
-      <DataTable 
-        columns={columns} 
+      <DataTable
+        columns={columns}
         url='/project_details/'
-        localStorageLocation='project_funding' 
+        localStorageLocation='project_funding'
+        setIsDetail={setIsDetail}
+        isDetail={isDetail}
       />
     </>
   );

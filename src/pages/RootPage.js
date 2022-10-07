@@ -8,7 +8,7 @@ import Header from '../components/navigation/Header';
 import Sidebar from '../components/navigation/Sidebar';
 import MiniDash from '../components/MiniDash';
 
-function RootPage() {
+function RootPage({isDetail, setIsDetail}) {
 
   const { login } = useUser();
   const loginResult = useCallback(() => login(), [login]);
@@ -27,7 +27,7 @@ function RootPage() {
       >
         <Sidebar />
       </Offcanvas>
-      <Outlet />
+      <Outlet context={[isDetail, setIsDetail]} />
     </>
   );
 }
