@@ -81,6 +81,7 @@ function MemberRequestsColumns(
       //cell: info => info.getValue(),
       cell: info => info.getValue(),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
@@ -188,6 +189,7 @@ function MemberRequestsColumns(
     columnHelper.accessor('Agency', {
       cell: info => info.getValue(),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -198,6 +200,7 @@ function MemberRequestsColumns(
     columnHelper.accessor('Account', {
       cell: info => info.getValue(),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -208,6 +211,7 @@ function MemberRequestsColumns(
     columnHelper.accessor('Program', {
       cell: info => info.getValue(),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -224,6 +228,7 @@ function MemberRequestsColumns(
     columnHelper.accessor('RecipientLegalName', {
       cell: info => info.getValue(),
       header: 'CPF Recipient',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('RecipientCity', {

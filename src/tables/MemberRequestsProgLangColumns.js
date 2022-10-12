@@ -81,6 +81,7 @@ function MemberRequestsProgLangColumns(
       //cell: info => info.getValue(),
       cell: info => info.getValue(),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
@@ -170,6 +171,7 @@ function MemberRequestsProgLangColumns(
     columnHelper.accessor('Agency', {
       cell: info => info.getValue(),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -180,6 +182,7 @@ function MemberRequestsProgLangColumns(
     columnHelper.accessor('Account', {
       cell: info => info.getValue(),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -190,6 +193,7 @@ function MemberRequestsProgLangColumns(
     columnHelper.accessor('Program', {
       cell: info => info.getValue(),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
