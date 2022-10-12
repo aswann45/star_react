@@ -92,11 +92,13 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('RequestTitle', {
       cell: info => info.getValue(),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
       cell: info => info.getValue(),
       header: 'Analyst Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('Subcommittee', {
@@ -153,6 +155,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('Agency', {
       cell: info => info.getValue(),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -163,6 +166,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('Account', {
       cell: info => info.getValue(),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -173,6 +177,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('Program', {
       cell: info => info.getValue(),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -183,6 +188,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('RecipientLegalName', {
       cell: info => info.getValue(),
       header: 'Recipient',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('RecipientCity', {
@@ -261,6 +267,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('members_names', {
       cell: info => info.getValue().join(', '),
       header: 'House Requestors',
+      size: 250,
     }),
     columnHelper.accessor('senators_names', {
       cell: info => info.getValue().join(', '),
@@ -269,6 +276,7 @@ function CPFConferenceFundingColumns(
     columnHelper.accessor('ProjectChamber', {
       cell: info => info.getValue(),
       header: 'Origin Chamber',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: [
         'House',
