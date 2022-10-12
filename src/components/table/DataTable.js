@@ -137,7 +137,7 @@ function DataTable({
       groupRequests: groupRequests,
       removeProjects: removeProjects,
       exportRows: exportRows,
-      exportURLPrefix: url,
+      exportURLPrefix: getURL ?? url,
     },
     getRowId,
     getSubRows: row => row.subRows,
@@ -169,9 +169,9 @@ function DataTable({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     //estimateSize: () => rows.length,
-    estimateSize: () => 42,
-    overscan: 30,
-    enableSmoothScroll: false,
+    estimateSize: () => 56,
+    overscan: 50,
+    enableSmoothScroll: true,
     paddingEnd: 800,
   });
 
