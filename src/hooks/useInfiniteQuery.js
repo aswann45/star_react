@@ -366,7 +366,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL, isDetail) =>
         async function refresh() {
           // get request params
           const response = await api.get(
-            baseURL,
+            getURL ? getURL : baseURL,
             param,
             // attach abort controller to request
             {signal: refreshAbortController.signal},
@@ -510,8 +510,24 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL, isDetail) =>
   const exportRows = async (requestIDs, colList, exportURLPrefix) => {
 
     setIsFetching(true)
+    //let exportURL = new URL('/export_rows', exportURLPrefix);
+
+
+
+    const URL_Join = (...args) =>
+      args
+        .join('/')
+        .replace(/[\/]+/g, '/')
+        .replace(/^(.+):\//, '$1://')
+        .replace(/^file:/, 'file:/')
+        .replace(/\/(\?|&|#[^!])/g, '$1')
+        .replace(/\?/g, '&')
+        .replace('&', '?');
+
+    let exportURL = URL_Join(exportURLPrefix, '/export_rows');
     const response = await api.post(
-      `${exportURLPrefix}export_rows`,
+      //`${exportURLPrefix}export_rows`,
+      exportURL,
       searchParams,
       {
         signal: abortController.signal,
