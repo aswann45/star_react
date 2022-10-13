@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import {
@@ -161,6 +161,7 @@ function DataTable({
     getExpandedRowModel: getExpandedRowModel(),
   });
 
+  const tableWidth = useMemo(() => tableInstance.getCenterTotalSize(), [tableInstance])
 
   // virtualized rows
   const tableContainerRef = useRef();
@@ -169,24 +170,40 @@ function DataTable({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     //estimateSize: () => rows.length,
-    estimateSize: () => 56,
-    overscan: 50,
+    estimateSize: () => 65,
+    overscan: 10,
     enableSmoothScroll: true,
+    //paddingEnd: 0,
     paddingEnd: 800,
   });
+  //console.log(tableContainerRef)
+
+  /*const tableHeight = useMemo(
+    () => (
+      tableContainerRef?.current?.scrollHeight !== undefined
+      ? tableContainerRef?.current?.scrollHeight
+      : 0
+    ),
+    [tableContainerRef?.current?.scrollHeight]
+  )*/
 
   const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
-  const [paddingTop, setPaddingTop] = useState(0)
+  /*const [paddingTop, setPaddingTop] = useState(0)
   const [paddingBottom, setPaddingBottom] = useState(0)
 
   useEffect(() => {
     setPaddingTop(virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0)
     setPaddingBottom(virtualRows.length > 0
-    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
     : 0)
-  }, [virtualRows, totalVirtualSize])
+  }, [virtualRows, totalVirtualSize])*/
 
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
+  const paddingBottom = virtualRows.length > 0
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
+    : 0
   // fetch more data when we get to the bottom of the loaded rows
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement) => {
@@ -198,7 +215,8 @@ function DataTable({
         //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
 
         if (
-          scrollHeight - scrollTop - clientHeight - paddingBottom < 300 &&
+          //scrollHeight - scrollTop - clientHeight - paddingBottom < 300 &&
+          scrollHeight - scrollTop - clientHeight < 500 &&
           !isFetching &&
           hasNextPage &&
           flatData.length > 0
@@ -213,7 +231,7 @@ function DataTable({
       isFetching,
       hasNextPage,
       flatData.length,
-      paddingBottom,
+      //paddingBottom,
     ]
   );
 
@@ -257,7 +275,26 @@ function DataTable({
   return (
     <Container fluid>
 
-    {/*<pre>isFetching: {JSON.stringify(isFetching)}</pre>
+
+{/*
+    <pre>isFetching: {JSON.stringify(isFetching)}</pre>
+
+    <>
+      <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
+      <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+      <pre>scrollHeight: {JSON.stringify(tableContainerRef?.current?.scrollHeight)}</pre>
+      <pre>clientHeight: {JSON.stringify(tableContainerRef?.current?.clientHeight)}</pre>
+      <pre>scrollTop: {JSON.stringify(tableContainerRef?.current?.scrollTop)}</pre>
+      <pre>calcHeight: {JSON.stringify(
+        tableContainerRef?.current?.scrollHeight -
+        tableContainerRef?.current?.clientHeight -
+        tableContainerRef?.current?.scrollTop
+      )}
+      </pre>
+      <pre>tableWidth: {JSON.stringify(tableInstance.getCenterTotalSize())}</pre>
+
+    </>
+
         <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
         <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
         <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
@@ -275,9 +312,9 @@ function DataTable({
         <pre>totalPages: {JSON.stringify(totalPages)}</pre>
 
 
-        <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
+        <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
         <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
-        <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+
         <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
         <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
         <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
@@ -323,6 +360,7 @@ function DataTable({
           className='DataTable'
           style={{
             width: tableInstance.getCenterTotalSize(),
+            //width: tableWidth
           }}
         >
           <TableHeader
@@ -340,7 +378,10 @@ function DataTable({
           >
             {paddingTop > 0 && (
               <tr>
-                <td style={{ height: `${paddingTop}px` }} />
+                <td style={{
+                  //height: `64px`
+                  height: `${paddingTop}px`
+                }} />
               </tr>
             )}
             {rows && virtualRows.map(virtualRow => {
@@ -352,7 +393,8 @@ function DataTable({
                 <tr
                   key={row.id}
                   style={{
-                    //height: "42px"
+                    //height: "64px",
+                    //position: 'fixed',
                     height: `${virtualRow.size}px`,
                     //transform: `translateY(${virtualRow.start}px)`,
                   }}
@@ -392,4 +434,4 @@ function DataTable({
   );
 }
 
-export default DataTable;
+export default memo(DataTable);
