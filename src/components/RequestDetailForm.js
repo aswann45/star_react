@@ -65,10 +65,10 @@ function RequestDetailForm({ title }) {
                     <InputField
                       name="AnalystTitle"
                       label="Analyst/Stubline Title"
-                      defaultValue={object.RequestTitle}
+                      defaultValue={object.AnalystTitle}
                       changeHandler={handleInputChange}
                       helperText="Appropriations staff-set title for reports and tables."
-                      error={formErrors.RequestTitle}
+                      error={formErrors.AnalystTitle}
                       blurHandler={handleBlur} />
                     <InputField
                       name="RequestSummary"
