@@ -6,7 +6,7 @@ const useMemberFilterOptions = () => {
   const api = useApi();
 
   useEffect(() => {
-    const request_url = '/members'
+    const request_url = '/members/'
     const fetchMembers = async ()  => {
       const response = await api.get(request_url);
       setMembers(response.ok ? response.body.data : []);
