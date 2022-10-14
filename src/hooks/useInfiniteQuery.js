@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import { useSearchParams } from 'react-router-dom';
 
-const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
+const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL, isDetail) => {
   // api context and search parameter state
   const api = useApi();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +27,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
   const [isFetchingNewQuery, setIsFetchingNewQuery] = useState();
   const [rowIsLoading, setRowIsLoading] = useState({})
 
-  const [isDetail, setIsDetail] = useState(false);
+  //const [isDetail, setIsDetail] = useState(false);
 
   // abort controller for non-refresh fetching
   const abortController = new AbortController();
@@ -149,7 +149,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     const response = await api.put(objURL, '', {
       body: {
         [columnID]: value,
-        EditorID: localStorage.get('currentUserID')
+        EditorID: localStorage.getItem('currentUserID')
       }
     });
 
@@ -366,7 +366,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         async function refresh() {
           // get request params
           const response = await api.get(
-            baseURL,
+            getURL ? getURL : baseURL,
             param,
             // attach abort controller to request
             {signal: refreshAbortController.signal},
@@ -451,7 +451,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         signal: abortController.signal,
         body: {
           ids: requestIDs,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       }
     );
@@ -490,7 +490,7 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
         body: {
           ids: projectIDs,
           stage: stage,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       }
     );
@@ -507,16 +507,33 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     //return setIsFetching(false);
   }
 
-  const exportRows = async (requestIDs, exportURLPrefix) => {
+  const exportRows = async (requestIDs, colList, exportURLPrefix) => {
 
     setIsFetching(true)
+    //let exportURL = new URL('/export_rows', exportURLPrefix);
+
+
+
+    const URL_Join = (...args) =>
+      args
+        .join('/')
+        .replace(/[\/]+/g, '/')
+        .replace(/^(.+):\//, '$1://')
+        .replace(/^file:/, 'file:/')
+        .replace(/\/(\?|&|#[^!])/g, '$1')
+        .replace(/\?/g, '&')
+        .replace('&', '?');
+
+    let exportURL = URL_Join(exportURLPrefix, '/export_rows');
     const response = await api.post(
-      `${exportURLPrefix}export_rows`,
+      //`${exportURLPrefix}export_rows`,
+      exportURL,
       searchParams,
       {
         signal: abortController.signal,
         body: {
           ids: requestIDs ? requestIDs : null,
+          cols: colList ? colList : null,
           filters: searchParams.get('filters'),
           order: searchParams.get('order'),
         }
@@ -569,11 +586,12 @@ const useInfiniteQuery = (baseURL, firstPageIndex, options, getURL) => {
     //setIsFetchingPreviousPage,
     fetchChildRecords,
     rowIsLoading,
-    setIsDetail,
+    //setIsDetail,
     groupRequests,
     resetSearch,
     removeProjects,
     exportRows,
+    //isDetail,
   ];
 };
 

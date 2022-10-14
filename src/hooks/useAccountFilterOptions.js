@@ -9,7 +9,7 @@ const useAccountFilterOptions = () => {
     const request_url = '/agency_accounts/accounts'
     const fetchAccounts = async ()  => {
       const response = await api.get(request_url);
-      setAccounts(response.ok ? response.body.data : null);
+      setAccounts(response.ok ? response.body.data : []);
     };
     fetchAccounts();
   }, [])

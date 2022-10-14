@@ -44,7 +44,7 @@ function RequestContactDetail({ title }) {
       const data = await api.put(`/contacts/${contact.Email}`, '', {
         body: {
           [key] : value,
-          EditorID: localStorage.get('currentUserID'),
+          EditorID: localStorage.getItem('currentUserID'),
         }
       });
       if (!data.ok) {
@@ -61,7 +61,7 @@ function RequestContactDetail({ title }) {
       body:
       {
         RequestID: request_id,
-        EditorID: localStorage.get('currentUserID'),
+        EditorID: localStorage.getItem('currentUserID'),
       }
     });
     if (!data.ok) {

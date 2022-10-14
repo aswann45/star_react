@@ -21,7 +21,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
       return value;
     }
   }, [])
-  
+
   //const v = getValue()
   //const initialValue = parsedInitialValue(v)
   const initialValue = useCallback(parsedInitialValue(getValue()), [getValue]);
@@ -32,12 +32,12 @@ function EditableTableCell ({ getValue, row, column, table }) {
   const [value, setValue] = useState(initialValue);
   //const [textBoxHeight, setTextBoxHeight] = useState(42)
 
-  
+
   const handleCurrencyFormat = (event) => {
     const parsed_value = parseInt(event.target.value.replace(/,/g, ''));
     const formatted_value = formatter.format(parsed_value);
     //console.warn(isNaN(parsed_value))
-    
+
     event.target.value = !isNaN(parsed_value) ? formatted_value : '';
     //console.log(event.target.value)
     setValue(event.target.value);
@@ -49,7 +49,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
     if (initialValue !== value) {
       table.options.meta?.updateData(row, column.id, value)
       //initialValue = value;
-    }; 
+    };
   };
 
   const onChange = (e) => {
@@ -61,9 +61,9 @@ function EditableTableCell ({ getValue, row, column, table }) {
   }, [initialValue])
 
   return (
-    
+
     <>
-    {column.columnDef.inputType === 'textarea' ? 
+    {column.columnDef.inputType === 'textarea' ?
       <Form.Control
         as={'textarea'}
         rows={1}
@@ -76,8 +76,8 @@ function EditableTableCell ({ getValue, row, column, table }) {
               }}
       />
       :
-        column.columnDef.inputType === 'multi-select' ? 
-          <Form.Select 
+        column.columnDef.inputType === 'multi-select' ?
+          <Form.Select
             size='sm'
             onChange={onChange}
             onBlur={onBlur}
@@ -90,7 +90,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
               <option value={null}>None</option>
           </Form.Select>
         :
-          column.columnDef.inputType === 'currency' ? 
+          column.columnDef.inputType === 'currency' ?
           <Form.Control
             value={value}
             onChange={handleCurrencyFormat}
@@ -103,7 +103,7 @@ function EditableTableCell ({ getValue, row, column, table }) {
                    textOverflow: 'ellipsis',
                   }}
           />
-            
+
             :
           <Form.Control
             value={value}

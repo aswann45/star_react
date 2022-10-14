@@ -5,6 +5,8 @@ import RowExpandButton from '../components/table/RowExpandButton';
 import EditableTableCell from '../components/table/EditableTableCell';
 import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
+import ProjectExcludeButton from '../components/table/ProjectExcludeButton';
+import ReadOnlyTableCell from '../components/table/ReadOnlyTableCell';
 
 function CPFConferenceFundingColumns(
   memberFilterOptions,
@@ -39,6 +41,12 @@ function CPFConferenceFundingColumns(
             setIsDetail={props.table.options.meta?.setIsDetail}
           />
 
+          <ProjectExcludeButton
+            table={props.table}
+            row={props.row}
+            stage='conference'
+          />
+
           <NotePopover
             row={props.row}
             table={props.table}
@@ -67,7 +75,7 @@ function CPFConferenceFundingColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'Request ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -83,17 +91,19 @@ function CPFConferenceFundingColumns(
     }),
 
     columnHelper.accessor('RequestTitle', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Analyst Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('Subcommittee', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Subcommittee',
       filterVariant: 'multi-select',
       filterValues: [
@@ -110,7 +120,7 @@ function CPFConferenceFundingColumns(
     ],
     }),
     columnHelper.accessor('Member', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member',
       filterVariant: 'multi-select',
       filterValues: Array.from(
@@ -118,13 +128,13 @@ function CPFConferenceFundingColumns(
       ),
     }),
     columnHelper.accessor('Party', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
     }),
     columnHelper.accessor('MemberState', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member State',
       filterVariant: 'multi-select',
       filterValues: [
@@ -144,8 +154,9 @@ function CPFConferenceFundingColumns(
       ),
     }),
     columnHelper.accessor('Agency', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -154,8 +165,9 @@ function CPFConferenceFundingColumns(
       ),
     }),
     columnHelper.accessor('Account', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -164,14 +176,41 @@ function CPFConferenceFundingColumns(
       ),
     }),
     columnHelper.accessor('Program', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
           programFilterOptions.map(program => program.Program)
         )
       ),
+    }),
+    columnHelper.accessor('RecipientLegalName', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Recipient',
+      size: 350,
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientCity', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Recipient City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('RecipientState', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Recipient State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectCity', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Project State',
+      filterVariant: 'text',
     }),
     columnHelper.accessor('ProjectAmountRequested', {
       cell: info => {
@@ -182,8 +221,29 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
     }),
     columnHelper.accessor('ChamberAmount', {
-      cell: info => info.getValue(),
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
       header: 'Chamber $ Amount',
+      filterVariant: 'number',
+      inputType: 'currency',
+    }),
+    columnHelper.accessor('ChamberAllocationD', {
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'Chamber Dem Allocation',
+      filterVariant: 'number',
+      inputType: 'currency',
+    }),
+    columnHelper.accessor('ChamberAllocationR', {
+      cell: info => {
+        const amount = new Intl.NumberFormat('en-US',).format(info.getValue());
+        return amount
+      },
+      header: 'Chamber GOP Allocation',
       filterVariant: 'number',
       inputType: 'currency',
     }),
@@ -193,19 +253,7 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('ChamberAllocationD', {
-      cell: info => info.getValue(),
-      header: 'House Dem Allocation',
-      filterVariant: 'number',
-      inputType: 'currency',
-    }),
-    columnHelper.accessor('ChamberAllocationR', {
-      cell: info => info.getValue(),
-      header: 'House GOP Allocation',
-      filterVariant: 'number',
-      inputType: 'currency',
-    }),
-        columnHelper.accessor('ConferenceAllocationHouse', {
+    columnHelper.accessor('ConferenceAllocationHouse', {
       cell: props => EditableTableCell(props),
       header: 'Conference House Allocation',
       filterVariant: 'number',
@@ -217,29 +265,26 @@ function CPFConferenceFundingColumns(
       filterVariant: 'number',
       inputType: 'currency',
     }),
-    columnHelper.accessor('RequestChamber', {
-      cell: info => info.getValue(),
+    columnHelper.accessor('members_names', {
+      cell: props => ReadOnlyTableCell(props, {join: ', '}),
+      //cell: info => info.getValue().join(', '),
+      header: 'House Requestors',
+      size: 250,
+    }),
+    columnHelper.accessor('senators_names', {
+      cell: props => ReadOnlyTableCell(props, {join: ', '}),
+      header: 'Senate Requestors',
+    }),
+    columnHelper.accessor('ProjectChamber', {
+      cell: props => ReadOnlyTableCell(props),
       header: 'Origin Chamber',
+      size: 250,
       filterVariant: 'multi-select',
-      inputType: 'text',
       filterValues: [
         'House',
         'Senate',
-        //'Bicameral',
+        'House/Senate',
       ],
-    }),
-    columnHelper.accessor('members_names', {
-      cell: info => info.getValue().join(', '),
-      header: 'House Requestors',
-    }),
-    columnHelper.accessor('senators_names', {
-      cell: info => info.getValue().join(', '),
-      header: 'Senate Requestors',
-    }),
-    columnHelper.accessor('RecipientLegalName', {
-      cell: info => info.getValue(),
-      header: 'Recipient',
-      filterVariant: 'text',
     }),
   ];
 

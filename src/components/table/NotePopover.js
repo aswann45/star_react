@@ -132,7 +132,7 @@ const FlagNote = ({
     const flagData = await api.put(flag_url, '', {
       body: {
         FlaggedStatus: true,
-        EditorID: localStorage.get('currentUserID'),
+        EditorID: localStorage.getItem('currentUserID'),
       }
     });
     const data = await api.post(note_url, '', {
@@ -187,7 +187,7 @@ function NotePopover ({ row, table, type, _requestID }) {
     const flagData = await api.put(flag_url, '', {
       body: {
         FlaggedStatus: false,
-        EditorID: localStorage.get('currentUserID'),
+        EditorID: localStorage.getItem('currentUserID'),
       }
     });
   }

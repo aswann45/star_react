@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import {
@@ -14,21 +14,24 @@ import {
 } from '@tanstack/react-table';
 import Loader from '../loaders/Loader';
 import { useVirtualizer } from '@tanstack/react-virtual';
-//import MemberRequestsColumns from './table_columns/MemberRequestsColumns';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolBar';
 import useInfiniteQuery from '../../hooks/useInfiniteQuery';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
-function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }) {
-  // member request columns 
-  // TODO: make the columns something to feed into the component
-  //const columns = MemberRequestsColumns();
+function DataTable({
+  columns,
+  url,
+  localStorageLocation,
+  getURL,
+  allowGrouping,
+  setIsDetail,
+  isDetail
+}) {
   // retrieve saved user configuration from local storage
   const [tableSettings, setTableSettings] = useLocalStorage(localStorageLocation, {})
 
   // URL and API request logic and state
-  //const url = '/member_requests/';
   const [
     data,
     //error,
@@ -55,7 +58,6 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     //setIsFetchingPreviousPage,
     fetchChildRecords,
     rowIsLoading,
-    setIsDetail,
     groupRequests,
     resetSearch,
     removeProjects,
@@ -63,7 +65,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   ] = useInfiniteQuery(url, 1, '', getURL);
 
   // Column visibility, pinning, and order state
-  const [columnVisibility, setColumnVisibility] = useState(tableSettings.columnVisibility ?? {});
+  const [columnVisibility, setColumnVisibility] = useState(
+    tableSettings.columnVisibility ?? {});
   const [columnPinning, setColumnPinning] = useState(tableSettings.columnPinning || {});
   const [columnOrder, setColumnOrder] = useState(tableSettings.columnOrder ||
     columns.map(column => column.accessorKey || column.id)
@@ -134,7 +137,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
       groupRequests: groupRequests,
       removeProjects: removeProjects,
       exportRows: exportRows,
-      exportURLPrefix: url,
+      exportURLPrefix: getURL ?? url,
     },
     getRowId,
     getSubRows: row => row.subRows,
@@ -158,6 +161,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     getExpandedRowModel: getExpandedRowModel(),
   });
 
+  const tableWidth = useMemo(() => tableInstance.getCenterTotalSize(), [tableInstance])
 
   // virtualized rows
   const tableContainerRef = useRef();
@@ -166,24 +170,40 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     //estimateSize: () => rows.length,
-    estimateSize: () => 42,
-    overscan: 30,
-    enableSmoothScroll: false,
+    estimateSize: () => 65,
+    overscan: 10,
+    enableSmoothScroll: true,
+    //paddingEnd: 0,
     paddingEnd: 800,
   });
+  //console.log(tableContainerRef)
+
+  /*const tableHeight = useMemo(
+    () => (
+      tableContainerRef?.current?.scrollHeight !== undefined
+      ? tableContainerRef?.current?.scrollHeight
+      : 0
+    ),
+    [tableContainerRef?.current?.scrollHeight]
+  )*/
 
   const totalVirtualSize = rowVirtualizer.getTotalSize();
   const virtualRows = rowVirtualizer.getVirtualItems();
-  const [paddingTop, setPaddingTop] = useState(0)
+  /*const [paddingTop, setPaddingTop] = useState(0)
   const [paddingBottom, setPaddingBottom] = useState(0)
 
   useEffect(() => {
     setPaddingTop(virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0)
     setPaddingBottom(virtualRows.length > 0
-    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end)
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
     : 0)
-  }, [virtualRows, totalVirtualSize])
+  }, [virtualRows, totalVirtualSize])*/
 
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0
+  const paddingBottom = virtualRows.length > 0
+    ? totalVirtualSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
+    : 0
   // fetch more data when we get to the bottom of the loaded rows
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement) => {
@@ -195,7 +215,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         //console.log('Calc Height:', (scrollHeight - scrollTop - clientHeight - paddingBottom))
 
         if (
-          scrollHeight - scrollTop - clientHeight - paddingBottom < 300 &&
+          //scrollHeight - scrollTop - clientHeight - paddingBottom < 300 &&
+          scrollHeight - scrollTop - clientHeight < 500 &&
           !isFetching &&
           hasNextPage &&
           flatData.length > 0
@@ -210,7 +231,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
       isFetching,
       hasNextPage,
       flatData.length,
-      paddingBottom,
+      //paddingBottom,
     ]
   );
 
@@ -254,15 +275,35 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   return (
     <Container fluid>
 
-    {/*<pre>isFetching: {JSON.stringify(isFetching)}</pre>
+
+{/*
+    <pre>isFetching: {JSON.stringify(isFetching)}</pre>
+
+    <>
+      <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
+      <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+      <pre>scrollHeight: {JSON.stringify(tableContainerRef?.current?.scrollHeight)}</pre>
+      <pre>clientHeight: {JSON.stringify(tableContainerRef?.current?.clientHeight)}</pre>
+      <pre>scrollTop: {JSON.stringify(tableContainerRef?.current?.scrollTop)}</pre>
+      <pre>calcHeight: {JSON.stringify(
+        tableContainerRef?.current?.scrollHeight -
+        tableContainerRef?.current?.clientHeight -
+        tableContainerRef?.current?.scrollTop
+      )}
+      </pre>
+      <pre>tableWidth: {JSON.stringify(tableInstance.getCenterTotalSize())}</pre>
+
+    </>
+
         <pre>isFetchingNextPage: {JSON.stringify(isFetchingNextPage)}</pre>
         <pre>isFetchingPreviousPage: {JSON.stringify(isFetchingPreviousPage)}</pre>
-<pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
+        <pre>hasNextPage: {JSON.stringify(hasNextPage)}</pre>
         <pre>lastPage: {JSON.stringify(lastPage)}</pre>
         <pre>nextPageToFetch: {JSON.stringify(nextPageToFetch)}</pre>
         <pre>isFirstPage: {JSON.stringify(isFirstPage)}</pre>
 
         <pre>totalItems: {JSON.stringify(totalItems)}</pre>
+        <pre>isDetail: {JSON.stringify(isDetail)}</pre>
         <pre>Data: {JSON.stringify(data, null, 2)}</pre>
         <pre>expanded: {JSON.stringify(expanded, null, 2)}</pre>
         <pre>columnVisibility: {JSON.stringify(columnVisibility, null, 2)}</pre>
@@ -271,9 +312,9 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
         <pre>totalPages: {JSON.stringify(totalPages)}</pre>
 
 
-        <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>}
+        <pre>totalVirtualSize: {JSON.stringify(totalVirtualSize)}</pre>
         <pre>paddingTop: {JSON.stringify(paddingTop)}</pre>
-        <pre>paddingBottom: {JSON.stringify(paddingBottom)}</pre>
+
         <pre>lastItem: {JSON.stringify(lastItem && lastItem.index)}</pre>
         <pre>virtualLength - 1: {JSON.stringify(virtualLength - 1)}</pre>
         <pre>data.pageParams: {JSON.stringify(data.pageParams)}</pre>
@@ -319,6 +360,7 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
           className='DataTable'
           style={{
             width: tableInstance.getCenterTotalSize(),
+            //width: tableWidth
           }}
         >
           <TableHeader
@@ -336,7 +378,10 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
           >
             {paddingTop > 0 && (
               <tr>
-                <td style={{ height: `${paddingTop}px` }} />
+                <td style={{
+                  //height: `64px`
+                  height: `${paddingTop}px`
+                }} />
               </tr>
             )}
             {rows && virtualRows.map(virtualRow => {
@@ -348,7 +393,8 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
                 <tr
                   key={row.id}
                   style={{
-                    //height: "42px"
+                    //height: "64px",
+                    //position: 'fixed',
                     height: `${virtualRow.size}px`,
                     //transform: `translateY(${virtualRow.start}px)`,
                   }}
@@ -388,4 +434,4 @@ function DataTable({ columns, url, localStorageLocation, getURL, allowGrouping }
   );
 }
 
-export default DataTable;
+export default memo(DataTable);

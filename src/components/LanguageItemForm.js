@@ -21,7 +21,7 @@ function LanguageItemForm({ language, api }) {
       const data = await api.put(language_url, '', {
         body: {
           [key]: value,
-          EditorID: localStorage.get('currentUserID')
+          EditorID: localStorage.getItem('currentUserID')
         }
       });
       if (!data.ok) {

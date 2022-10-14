@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import {
   Routes,
@@ -41,6 +42,7 @@ function App() {
   // modal background location logic
   let location = useLocation()
   let backgroundLocation = location?.state?.backgroundLocation
+  const [isDetail, setIsDetail] = useState(false);
 
   return (
     <Container fluid className="App">
@@ -48,9 +50,9 @@ function App() {
         <UserProvider>
           <DndProvider backend={HTML5Backend}>
             <Routes location={backgroundLocation || location}>
-              <Route path="/" element={<RootPage />}>
+              <Route path="/" element={<RootPage isDetail={isDetail} setIsDetail={setIsDetail} />}>
                 <Route index element={<LoginPage />} />
-                <Route path='requests/:request_id' element={<RequestModal />}>
+                <Route path='requests/:request_id' element={<RequestModal isDetail={isDetail} setIsDetail={setIsDetail}/>}>
                   <Route index element={<RequestDetailForm title="Request Details" />} />
                   <Route path="members_requests"
                     element={<RequestList title="Member's Other Requests" endpoint_suffix='/members_requests' />} />
@@ -90,7 +92,7 @@ function App() {
             </Routes>
             {backgroundLocation && (
               <Routes>
-                <Route path='requests/:request_id' element={<RequestModal />}>
+                <Route path='requests/:request_id' element={<RequestModal isDetail={isDetail} setIsDetail={setIsDetail} />}>
                   <Route index element={<RequestDetailForm title="Request Details" />} />
                   <Route path="members_requests"
                     element={<RequestList title="Member's Other Requests" endpoint_suffix='/members_requests' />} />

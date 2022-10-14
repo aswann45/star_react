@@ -1,30 +1,39 @@
-import { useMemo } from 'react'; 
+import { useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import DataTable from '../components/table/DataTable';
 import CPFHouseFundingColumns from './CPFHouseFundingColumns';
 
 function CPFHouseFundingTable () {
-  const [memberFilterOptions, agencyFilterOptions, accountFilterOptions, programFilterOptions] = useOutletContext();
-  
+  const [
+    memberFilterOptions,
+    agencyFilterOptions,
+    accountFilterOptions,
+    programFilterOptions,
+    isDetail,
+    setIsDetail
+  ] = useOutletContext();
+
   const columns = useMemo(() => CPFHouseFundingColumns(
-    memberFilterOptions, 
-    agencyFilterOptions, 
-    accountFilterOptions, 
+    memberFilterOptions,
+    agencyFilterOptions,
+    accountFilterOptions,
     programFilterOptions
   ), [
-    memberFilterOptions, 
-    agencyFilterOptions, 
-    accountFilterOptions, 
+    memberFilterOptions,
+    agencyFilterOptions,
+    accountFilterOptions,
     programFilterOptions
   ])
-  
+
   return (
     <>
-      <DataTable 
-        columns={columns} 
+      <DataTable
+        columns={columns}
         url='/project_details/'
-        localStorageLocation='house_project_funding' 
+        localStorageLocation='house_project_funding'
         getURL='/project_details/house'
+        setIsDetail={setIsDetail}
+        isDetail={isDetail}
       />
     </>
   );

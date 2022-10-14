@@ -6,6 +6,7 @@ import RowExpandButton from '../components/table/RowExpandButton';
 import EditableTableCell from '../components/table/EditableTableCell';
 import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
+import ReadOnlyTableCell from '../components/table/ReadOnlyTableCell';
 
 function MemberRequestsCPFsColumns(
   memberFilterOptions,
@@ -62,7 +63,7 @@ function MemberRequestsCPFsColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -79,8 +80,9 @@ function MemberRequestsCPFsColumns(
 
     columnHelper.accessor('RequestTitle', {
       //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
@@ -89,7 +91,7 @@ function MemberRequestsCPFsColumns(
       filterVariant: 'text',
     }),
     columnHelper.accessor('Subcommittee', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Subcommittee',
       filterVariant: 'multi-select',
       filterValues: [
@@ -114,7 +116,7 @@ function MemberRequestsCPFsColumns(
       filterVariant: 'number',
     }),
     columnHelper.accessor('Member', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member',
       filterVariant: 'multi-select',
       filterValues: Array.from(
@@ -122,13 +124,13 @@ function MemberRequestsCPFsColumns(
       ),
     }),
     columnHelper.accessor('Party', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
     }),
     columnHelper.accessor('MemberState', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member State',
       filterVariant: 'multi-select',
       filterValues: [
@@ -166,8 +168,9 @@ function MemberRequestsCPFsColumns(
       ),
     }),
     columnHelper.accessor('Agency', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -176,8 +179,9 @@ function MemberRequestsCPFsColumns(
       ),
     }),
     columnHelper.accessor('Account', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -186,8 +190,9 @@ function MemberRequestsCPFsColumns(
       ),
     }),
     columnHelper.accessor('Program', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -202,35 +207,63 @@ function MemberRequestsCPFsColumns(
       inputType: 'textarea',
     }),
     columnHelper.accessor('RecipientLegalName', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Recipient',
       filterVariant: 'text',
     }),
     columnHelper.accessor('RecipientCity', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Recipient City',
       filterVariant: 'text',
     }),
     columnHelper.accessor('RecipientState', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Recipient State',
       filterVariant: 'text',
     }),
     columnHelper.accessor('OrganizationEIN', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Recipient EIN',
       filterVariant: 'text',
     }),
+    columnHelper.accessor('ProjectCity', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Project City',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ProjectState', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Project State',
+      filterVariant: 'text',
+    }),
+    columnHelper.accessor('ChamberDisposition', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Chamber Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
+    }),
+    columnHelper.accessor('FinalDisposition', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Final Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
+    }),
     columnHelper.accessor('RequestChamber', {
-      //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Origin Chamber',
       filterVariant: 'multi-select',
       inputType: 'text',
       filterValues: [
         'House',
         'Senate',
-        //'Bicameral',
       ],
     }),
   ];

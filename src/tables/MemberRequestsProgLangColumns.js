@@ -6,6 +6,7 @@ import RowExpandButton from '../components/table/RowExpandButton';
 import EditableTableCell from '../components/table/EditableTableCell';
 import DetailExpandButton from '../components/table/DetailExpandButton';
 import NotePopover from '../components/table/NotePopover';
+import ReadOnlyTableCell from '../components/table/ReadOnlyTableCell';
 
 function MemberRequestsProgLangColumns(
   memberFilterOptions,
@@ -62,7 +63,7 @@ function MemberRequestsProgLangColumns(
 
     columnHelper.accessor('SubmissionID', {
       header: 'ID',
-      filterVariant: 'number',
+      filterVariant: 'text',
       cell: (props) => (
         <Stack
           direction='horizontal'
@@ -79,8 +80,9 @@ function MemberRequestsProgLangColumns(
 
     columnHelper.accessor('RequestTitle', {
       //cell: info => info.getValue(),
-      cell: props => EditableTableCell(props),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Request Title',
+      size: 350,
       filterVariant: 'text',
     }),
     columnHelper.accessor('AnalystTitle', {
@@ -89,7 +91,7 @@ function MemberRequestsProgLangColumns(
       filterVariant: 'text',
     }),
     columnHelper.accessor('Subcommittee', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Subcommittee',
       filterVariant: 'multi-select',
       filterValues: [
@@ -108,7 +110,7 @@ function MemberRequestsProgLangColumns(
     ],
     }),
     columnHelper.accessor('RequestType', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Type',
       filterVariant: 'multi-select',
       filterValues: [
@@ -125,7 +127,7 @@ function MemberRequestsProgLangColumns(
       filterVariant: 'number',
     }),
     columnHelper.accessor('Member', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member',
       filterVariant: 'multi-select',
       filterValues: Array.from(
@@ -133,13 +135,13 @@ function MemberRequestsProgLangColumns(
       ),
     }),
     columnHelper.accessor('Party', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member Party',
       filterVariant: 'multi-select',
       filterValues: ['D', 'R', 'I']
     }),
     columnHelper.accessor('MemberState', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Member State',
       filterVariant: 'multi-select',
       filterValues: [
@@ -168,8 +170,9 @@ function MemberRequestsProgLangColumns(
       ),
     }),
     columnHelper.accessor('Agency', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Agency',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -178,8 +181,9 @@ function MemberRequestsProgLangColumns(
       ),
     }),
     columnHelper.accessor('Account', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Account',
+      size: 350,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set (
@@ -188,8 +192,9 @@ function MemberRequestsProgLangColumns(
       ),
     }),
     columnHelper.accessor('Program', {
-      cell: info => info.getValue(),
+      cell: props => ReadOnlyTableCell(props),
       header: 'Program',
+      size: 250,
       filterVariant: 'multi-select',
       filterValues: Array.from(
         new Set(
@@ -202,6 +207,26 @@ function MemberRequestsProgLangColumns(
       header: 'Description',
       filterVariant: 'text',
       inputType: 'textarea',
+    }),
+    columnHelper.accessor('ChamberDisposition', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Chamber Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
+    }),
+    columnHelper.accessor('FinalDisposition', {
+      cell: props => ReadOnlyTableCell(props),
+      header: 'Final Disposition',
+      filterVariant: 'multi-select',
+      filterValues: [
+        'Included',
+        'Not Included',
+        'Open',
+      ]
     }),
   ];
 

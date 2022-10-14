@@ -113,6 +113,39 @@ function ProjectDetailForm() {
             helperText="Legal name/title of the project."
             blurHandler={handleBlur}
             error={formErrors.ProjectLegalName} />
+          <InputField
+            name="ProjectAddress"
+            label="Project Address"
+            defaultValue={detail.ProjectAddress}
+            changeHandler={handleInputChange}
+            helperText="Address where the project will take place."
+            blurHandler={handleBlur}
+            error={formErrors.ProjectAddress} />
+          <InputField
+            name="ProjectAddress2"
+            label="Project Address 2"
+            defaultValue={detail.ProjectAddress2}
+            changeHandler={handleInputChange}
+            helperText="Second address line, if applicable."
+            blurHandler={handleBlur}
+            error={formErrors.ProjectAddress2} />
+          <InputField
+            name="ProjectCity"
+            label="Project City"
+            defaultValue={detail.ProjectCity}
+            changeHandler={handleInputChange}
+            helperText="City where the project will take place."
+            blurHandler={handleBlur}
+            error={formErrors.ProjectCity} />
+          <InputField
+            name="ProjectState"
+            label="Project State"
+            defaultValue={detail.ProjectState}
+            changeHandler={handleInputChange}
+            helperText="State where the project will take place."
+            blurHandler={handleBlur}
+            error={formErrors.ProjectState} />
+
         </Form>
         :
         <Loader obj={detail} />
