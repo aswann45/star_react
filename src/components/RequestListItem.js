@@ -1,7 +1,6 @@
 import Stack from 'react-bootstrap/Stack';
 import { Link, useLocation } from 'react-router-dom';
 import { FaUnlink } from 'react-icons/fa'
-import { useApi } from '../contexts/ApiProvider';
 
 function RequestListItem({ request, showMember, isChild, handleUnlinkClick }) {
 
@@ -20,8 +19,7 @@ function RequestListItem({ request, showMember, isChild, handleUnlinkClick }) {
                 display: 'block', 
                 cursor: 'pointer'
               }}
-              onClick={() => handleUnlinkClick(request)}
-            />
+              onClick={() => handleUnlinkClick(request)} />
           </span>
           }
           </>
