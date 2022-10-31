@@ -11,6 +11,7 @@ import useInputChange from '../useInputChange';
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { FaUnlink, FaLink } from 'react-icons/fa'
 
 import Stack from 'react-bootstrap/Stack';
 import Body from './navigation/Body';
@@ -18,6 +19,64 @@ import RankingsBadges from './RankingsBadges';
 import RequestType from './RequestType';
 import RequestAccount from './RequestAccount';
 import Loader from './loaders/Loader';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+
+import Popover from 'react-bootstrap/Popover';
+import InputField from './form/InputField';
+import Form from 'react-bootstrap/Form';
+
+function LinkPopover({ url_prefix }) {
+  const api = useApi();
+  const [input, handleInputChange] = useInputChange();
+  const handleSubmit = async (event) =>  {
+    event.preventDefault();
+
+  }
+  const handleLinkAsParent = async () => {
+    const data = await api.post(`${url_prefix}/add_child/${input.LinkID}`)
+    if (!data.ok) {
+      console.log('Response not ok!!')
+    }
+  }
+  const handleLinkAsChild = async () => {
+    const data = await api.post(`${url_prefix}/set_parent/${input.LinkID}`)
+    if (!data.ok) {
+      console.log('Response not ok!!')
+    }
+  }
+  return (
+    <Popover>
+      <Form onSubmit={handleSubmit}>
+        <Popover.Header as='h5'>
+          Link Request To:
+        </Popover.Header>
+        <Popover.Body>
+          <InputField 
+            name='LinkID'
+            defaultValue={input.LinkID}
+            changeHandler={handleInputChange}
+          />
+          <Stack>
+            <Button
+              variant='primary'
+              size='sm'
+              type='submit'
+              onClick={() => handleLinkAsParent}>
+              Link as Parent
+            </Button>
+            <Button
+              variant='secondary'
+              size='sm'
+              type='submit'
+              onClick={() => handleLinkAsChild}>
+              Link as Child
+            </Button>
+          </Stack>
+        </Popover.Body>
+      </Form>
+    </Popover>
+  );
+}
 
 function RequestModal({isDetail, setIsDetail}) {
   const { request_id } = useParams(':request_id');
@@ -84,7 +143,15 @@ function RequestModal({isDetail, setIsDetail}) {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
-
+  
+  const handleUnlinkClick = async (object) => {
+    const response = await api.post(
+      `/requests/${object.ID}/remove_parent/${object.ParentID}`
+    )
+    if (!response.ok) {
+      console.log('Not ok!')
+    }
+  };
   // api call logic for updates
   const path = location.pathname;
   let ending = path.slice(path.lastIndexOf('/'));
@@ -104,6 +171,8 @@ function RequestModal({isDetail, setIsDetail}) {
     }
   };
 
+  const [showLinkOverlay, setShowLinkOverlay] = useState(false);
+  const linkOverlay = LinkPopover({request_url})
 
   return (
     <Modal
@@ -116,18 +185,55 @@ function RequestModal({isDetail, setIsDetail}) {
       <Modal.Header closeButton />
       <Modal.Body>
         <Body sidebar={linksDict} background={backgroundLocation}>
-          {(object && object.length !== 0) ?
-
-
+          {
+            (object && object.length !== 0) ?
               <Stack direction="vertical" className="DetailHeading">
                 <h1>
                   #{object.SubmissionID}
                   &nbsp;&mdash;&nbsp;
                   {object.RequestTitle}
+                  <>
+                  {
+                    object.ChildStatus === true ?
+                      <>
+                        <span>
+                          {`Child of Request #${object.parent_request.SubmissionID}`}
+                        </span>
+                        <span>
+                          <FaUnlink
+                            style={{
+                              display: 'block',
+                              cursor: 'pointer',
+                             }} 
+                            onClick={handleUnlinkClick(object)} />
+                        </span>
+                      </>
+                      : object.ParentStatus === false && 
+                        <OverlayTrigger
+                          show={showLinkOverlay}
+                          trigger='click'
+                          placement='top'
+                          overlay={linkOverlay}
+                        >
+                          <span>
+                            <FaLink 
+                              style={{
+                                display: 'block',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => setShowLinkOverlay(!showLinkOverlay)} />
+                          </span>
+                        </OverlayTrigger>
+                  }
+                  </>
                 </h1>
                 <h2>{object.Member}&nbsp;({object.Party})</h2>
                 <Stack direction="horizontal" gap={2}>
-                  <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
+                  <Stack 
+                    direction="vertical" 
+                    sm={6} 
+                    className="DetailHeadingLeft">
+                    
                     <RequestType request={object} />
                     <RankingsBadges
                       url={request_url}

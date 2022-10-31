@@ -7,7 +7,7 @@ import Loader from './loaders/Loader';
 import PaginationBar from './navigation/PaginationBar';
 import DetailSubHeader from './DetailSubHeader';
 
-function RequestList({ showMember, title, endpoint_suffix }) {
+function RequestList({ showMember, title, endpoint_suffix, isChild }) {
   const [requests, setRequests] = useState();
   const [pageMeta, setPageMeta] = useState();
   const [pageLinks, setPageLinks] = useState();
@@ -16,6 +16,15 @@ function RequestList({ showMember, title, endpoint_suffix }) {
   const [request_url, request_id] = useOutletContext();
   const url = request_url + endpoint_suffix;
   const search = location.search;
+  
+  const handleUnlinkClick = async (request) => {
+    const response = await api.post(
+      `/requests/${request.ParentID}/remove_child/${request.ID}`
+    )
+    if (!response.ok) {
+      console.log('Not ok!')
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -32,13 +41,28 @@ function RequestList({ showMember, title, endpoint_suffix }) {
       {(requests && requests.length !== 0) ?
         <>
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
+          <PaginationBar 
+            url={url} 
+            pageMeta={pageMeta} 
+            pageLinks={pageLinks} 
+            keepBackground={true} />
           }
           {
-          requests.map(request => <RequestListItem key={request.ID} request={request} showMember={showMember}/>)
+            requests.map(
+              request => <RequestListItem 
+                key={request.ID} 
+                request={request} 
+                showMember={showMember} 
+                isChild={isChild} 
+                handleUnlinkClick={handleUnlinkClick} />
+            )
           }
           {(pageMeta && pageLinks) &&
-          <PaginationBar url={url} pageMeta={pageMeta} pageLinks={pageLinks} keepBackground={true} />
+            <PaginationBar 
+              url={url} 
+              pageMeta={pageMeta} 
+              pageLinks={pageLinks} 
+              keepBackground={true} />
           }
           </>
        : 

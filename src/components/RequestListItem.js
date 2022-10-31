@@ -1,15 +1,30 @@
 import Stack from 'react-bootstrap/Stack';
 import { Link, useLocation } from 'react-router-dom';
+import { FaUnlink } from 'react-icons/fa'
+import { useApi } from '../contexts/ApiProvider';
 
-function RequestListItem({ request, showMember }) {
+function RequestListItem({ request, showMember, isChild, handleUnlinkClick }) {
 
   let location = useLocation();
   const background = location.state.backgroundLocation
-
+  
   return (
     <Stack direction="horizontal" gap={3} className="RequestListItem">
       <div>
         <h5>
+          <>
+          {isChild &&
+          <span>
+            <FaUnlink 
+              style={{
+                display: 'block', 
+                cursor: 'pointer'
+              }}
+              onClick={() => handleUnlinkClick(request)}
+            />
+          </span>
+          }
+          </>
           <Link to={`/requests/${request.ID}`} state={{backgroundLocation: background}}>
             {request.SubmissionID}&nbsp;&mdash;&nbsp;
             {(request.AnalystTitle && request.AnalystTitle !== '') ?
