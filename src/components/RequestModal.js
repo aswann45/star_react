@@ -194,7 +194,7 @@ function RequestModal({isDetail, setIsDetail}) {
                   {object.RequestTitle}
                   <>
                   {
-                    object.ChildStatus === true ?
+                    object.DuplicateStatus === 'Duplicate' ?
                       <>
                         <span>
                           {`Child of Request #${object.parent_request.SubmissionID}`}
@@ -208,7 +208,7 @@ function RequestModal({isDetail, setIsDetail}) {
                             onClick={handleUnlinkClick(object)} />
                         </span>
                       </>
-                      : object.ParentStatus === false && 
+                      : object.ParentStatus !== 'Parent' && 
                         <OverlayTrigger
                           show={showLinkOverlay}
                           trigger='click'

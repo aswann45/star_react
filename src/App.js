@@ -57,7 +57,7 @@ function App() {
                   <Route path="members_requests"
                     element={<RequestList title="Member's Other Requests" endpoint_suffix='/members_requests' />} />
                   <Route path="child_requests"
-                    element={<RequestList showMember title="Child Requests" endpoint_suffix='/children' />}/>
+                    element={<RequestList showMember title="Child Requests" endpoint_suffix='/children' isChild={true} />}/>
                   <Route path="project_details"
                     element={<ProjectDetailForm title='Project Details'/>} />
                   <Route path="recipient"
