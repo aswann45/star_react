@@ -356,7 +356,10 @@
 }
 
 .MiniDashPopover {
-  z-index: 99999
+  z-index: 99999;
+  width: auto;
+  max-width: none!important;
+
 }
 
 .modal-90w {

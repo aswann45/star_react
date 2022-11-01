@@ -19,12 +19,13 @@ function MiniDash({ requestURL }) {
 
   return (
     <div>
-      <Table>
+      <Table 
+        striped={true}
+        hover={true}
+        size={'sm'}
+      >
         <thead>
           <tr>
-            <th>
-              Subcommittee
-            </th>
             <th>
               Origination
             </th>
@@ -42,10 +43,12 @@ function MiniDash({ requestURL }) {
             </th>
           </tr>
         </thead>
-      {data.map(
-        data_item => <DashboardLine dataItem={data_item} key={data_item.index} />
-      )}
-    </Table>
+          {data.map(
+            dataGroup => <DashboardTable dataGroup={dataGroup} key={dataGroup[0]}/>
+          )}
+
+
+      </Table>
     </div>
   );
 };
@@ -54,8 +57,7 @@ function MiniDashPopover({ requestURL, headerText }) {
   return (
     <Popover 
       id='popover-basic' 
-      className='MiniDashPopover'
-      zIndex={999999}>
+      className='MiniDashPopover'>
       {headerText &&
       <Popover.Header>
         {headerText}
@@ -75,26 +77,52 @@ function DashboardLine({ dataItem }) {
   return (
     <tr>
       <td>
-        {dataItem.subcommittee}
+        {dataItem[0]}
       </td>
       <td>
-        {dataItem.project_chamber}
+        {dataItem[1]}
       </td>
       <td>
-        {dataItem.project_party}
+        {dataItem[2]}
       </td>
       <td>
-        {dataItem.number_projects}
+        {formatter.format(dataItem[3])}
       </td>
       <td>
-        {formatter.format(dataItem.chamber_amount)}
-      </td>
-      <td>
-        {formatter.format(dataItem.final_amount)}
+        {formatter.format(dataItem[4])}
       </td>
     </tr>
   );
 }
+
+function DashboardTable({ dataGroup }) {
+
+  return (
+    <>
+      <thead>
+      <tr>
+        <th style={{
+            marginTop: '5px',
+            paddingTop: '5px'
+          }}>
+          {dataGroup[0]}
+        </th>
+      </tr>
+      </thead>
+      <tbody style={{
+          marginBottom: '5px',
+          paddingBottom: '5px'
+        }}>
+      {dataGroup[1].map(
+        data_item => <DashboardLine 
+          dataItem={data_item} 
+          key={data_item[0].concat(data_item[1])} 
+        />
+      )}
+      </tbody>
+    </>
+  );
+};
 
 export default MiniDash;
 export { MiniDashPopover };
