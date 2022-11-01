@@ -131,7 +131,9 @@ function RankingsBadges({ url }) {
             className="Top10Badge"
           />
           :
-          <Loader />
+            top10Priority !== null ? 
+              <Loader />
+            : 'No data to display'
           }
         </>
         }
@@ -150,8 +152,9 @@ function RankingsBadges({ url }) {
             variant="info"
             className="CPFBadge"
           />
-          :
+          : projectPriority !== null ? 
           <Loader />
+          : <p>No data to display</p>
           }
         </>
         }
@@ -166,8 +169,9 @@ function RankingsBadges({ url }) {
         request={request}
         options_count={75}
         className="SubRankingBadge"/>
-        :
+        : priority != null ? 
         <Loader />
+        : <p>No data to display</p>
       }
       </>
     </Stack>
