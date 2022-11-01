@@ -25,7 +25,7 @@ import Popover from 'react-bootstrap/Popover';
 import InputField from './form/InputField';
 import Form from 'react-bootstrap/Form';
 
-function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj }) {
+function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj, setLinks }) {
   const api = useApi();
   const [input, handleInputChange] = useInputChange();
   const handleSubmit = async (event) =>  {
@@ -45,6 +45,7 @@ function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj }) {
     }
     setShowLinkOverlay(false)
     setObj(data.body)
+    setLinks(data.body._links)
   }
   const handleLinkAsChild = async () => {
     const data = await api.post(`${request_url}/set_parent`, '', {
@@ -57,6 +58,7 @@ function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj }) {
     }
     setShowLinkOverlay(false)
     setObj(data.body)
+    setLinks(data.body._links)
   }
   return (
     <Popover id='popover-basic' className='LinkPopover'>
@@ -199,7 +201,8 @@ function RequestModal({isDetail, setIsDetail}) {
     request_url, 
     setShowLinkOverlay, 
     isParent: object ? object.ParentStatus : false, 
-    setObj
+    setObj,
+    setLinks
   })
 
   return (
