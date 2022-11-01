@@ -25,52 +25,70 @@ import Popover from 'react-bootstrap/Popover';
 import InputField from './form/InputField';
 import Form from 'react-bootstrap/Form';
 
-function LinkPopover({ url_prefix }) {
+function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj }) {
   const api = useApi();
   const [input, handleInputChange] = useInputChange();
   const handleSubmit = async (event) =>  {
     event.preventDefault();
 
   }
+  const [formErrors, setFormErrors] = useState({});
+
   const handleLinkAsParent = async () => {
-    const data = await api.post(`${url_prefix}/add_child/${input.LinkID}`)
+    const data = await api.post(`${request_url}/add_child`, '', {
+      body: {
+        submission_id: input.LinkID
+      }
+    })
     if (!data.ok) {
       console.log('Response not ok!!')
     }
+    setShowLinkOverlay(false)
+    setObj(data.body)
   }
   const handleLinkAsChild = async () => {
-    const data = await api.post(`${url_prefix}/set_parent/${input.LinkID}`)
+    const data = await api.post(`${request_url}/set_parent`, '', {
+      body: {
+        'parent_id': input.LinkID
+      }
+    })
     if (!data.ok) {
       console.log('Response not ok!!')
     }
+    setShowLinkOverlay(false)
+    setObj(data.body)
   }
   return (
-    <Popover>
+    <Popover id='popover-basic' className='LinkPopover'>
       <Form onSubmit={handleSubmit}>
         <Popover.Header as='h5'>
           Link Request To:
         </Popover.Header>
         <Popover.Body>
+          <Stack>
           <InputField 
             name='LinkID'
-            defaultValue={input.LinkID}
+            defaultValue={''}
             changeHandler={handleInputChange}
-          />
-          <Stack>
+            error={formErrors.LinkID}
+            placeholder={'Request ID'}
+            />
             <Button
               variant='primary'
               size='sm'
-              type='submit'
-              onClick={() => handleLinkAsParent}>
+              type='buttom'
+              onClick={handleLinkAsParent}>
               Link as Parent
             </Button>
+            {!isParent &&
             <Button
               variant='secondary'
               size='sm'
-              type='submit'
-              onClick={() => handleLinkAsChild}>
+              type='button'
+              onClick={handleLinkAsChild}>
               Link as Child
             </Button>
+            }
           </Stack>
         </Popover.Body>
       </Form>
@@ -144,13 +162,18 @@ function RequestModal({isDetail, setIsDetail}) {
     event.preventDefault();
   };
   
-  const handleUnlinkClick = async (object) => {
+  const handleUnlinkClick = async () => {
     const response = await api.post(
-      `/requests/${object.ID}/remove_parent/${object.ParentID}`
+      `${request_url}/remove_parent`, '', {
+        body: {
+          parent_id: object.ParentID
+        }
+      }
     )
     if (!response.ok) {
       console.log('Not ok!')
     }
+    setObj(response.body)
   };
   // api call logic for updates
   const path = location.pathname;
@@ -172,7 +195,12 @@ function RequestModal({isDetail, setIsDetail}) {
   };
 
   const [showLinkOverlay, setShowLinkOverlay] = useState(false);
-  const linkOverlay = LinkPopover({request_url})
+  const linkOverlay = LinkPopover({
+    request_url, 
+    setShowLinkOverlay, 
+    isParent: object ? object.ParentStatus : false, 
+    setObj
+  })
 
   return (
     <Modal
@@ -180,7 +208,8 @@ function RequestModal({isDetail, setIsDetail}) {
       dialogClassName="modal-90w"
       onHide={handleClose}
       animation={false}
-      style={{zIndex: 95000}}>
+      style={{zIndex: 95000}}
+      enforceFocus={false}>
 
       <Modal.Header closeButton />
       <Modal.Body>
@@ -189,43 +218,50 @@ function RequestModal({isDetail, setIsDetail}) {
             (object && object.length !== 0) ?
               <Stack direction="vertical" className="DetailHeading">
                 <h1>
+                  <Stack direction='horizontal' gap={3}>
+                  <span>
                   #{object.SubmissionID}
                   &nbsp;&mdash;&nbsp;
                   {object.RequestTitle}
+                  </span>
                   <>
                   {
                     object.DuplicateStatus === 'Duplicate' ?
                       <>
+                        <div className='vr' />
                         <span>
-                          {`Child of Request #${object.parent_request.SubmissionID}`}
+                          {`Child of Request #${object.ParentSubmissionID}`}
                         </span>
-                        <span>
+                        <span className='LinkButton'>
                           <FaUnlink
                             style={{
                               display: 'block',
                               cursor: 'pointer',
+                              hover: ''
                              }} 
-                            onClick={handleUnlinkClick(object)} />
+                            onClick={handleUnlinkClick} />
                         </span>
                       </>
-                      : object.ParentStatus !== 'Parent' && 
+                      : 
                         <OverlayTrigger
                           show={showLinkOverlay}
                           trigger='click'
-                          placement='top'
+                          placement='bottom'
                           overlay={linkOverlay}
-                        >
-                          <span>
+                        > 
+                          <span className='LinkButton'> 
                             <FaLink 
                               style={{
                                 display: 'block',
                                 cursor: 'pointer',
                               }}
+                              title={'Link to another request'}
                               onClick={() => setShowLinkOverlay(!showLinkOverlay)} />
                           </span>
                         </OverlayTrigger>
                   }
                   </>
+                  </Stack>
                 </h1>
                 <h2>{object.Member}&nbsp;({object.Party})</h2>
                 <Stack direction="horizontal" gap={2}>

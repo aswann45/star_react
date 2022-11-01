@@ -11,10 +11,12 @@ function RequestListItem({ request, showMember, isChild, handleUnlinkClick }) {
     <Stack direction="horizontal" gap={3} className="RequestListItem">
       <div>
         <h5>
+          <Stack direction='horizontal' gap={3}>
           <>
           {isChild &&
           <span>
             <FaUnlink 
+              className='LinkButton'
               style={{
                 display: 'block', 
                 cursor: 'pointer'
@@ -36,6 +38,7 @@ function RequestListItem({ request, showMember, isChild, handleUnlinkClick }) {
                 {request.Member}&nbsp;({request.Party})
               </>
           }
+          </Stack>
         </h5>
         <p>
           {request.Agency !== '' && request.Agency}&nbsp;&mdash;&nbsp;

@@ -19,11 +19,17 @@ function RequestList({ showMember, title, endpoint_suffix, isChild }) {
   
   const handleUnlinkClick = async (request) => {
     const response = await api.post(
-      `/requests/${request.ParentID}/remove_child/${request.ID}`
+      `${request_url}/remove_child`, '', {
+        body: {
+          'child_id': request.ID
+        }
+      }
     )
     if (!response.ok) {
       console.log('Not ok!')
     }
+    const newRequestsArray = requests.filter((item) => item.ID !== request.ID)
+    setRequests(newRequestsArray)
   }
 
   useEffect(() => {
