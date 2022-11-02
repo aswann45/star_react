@@ -41,6 +41,9 @@ function MiniDash({ requestURL }) {
             <th>
               $ Conference
             </th>
+            <th>
+              $ Tracking
+            </th>
           </tr>
         </thead>
           {data.map(
@@ -90,6 +93,9 @@ function DashboardLine({ dataItem }) {
       </td>
       <td>
         {formatter.format(dataItem[4])}
+      </td>
+      <td>
+        {formatter.format(dataItem[5])}
       </td>
     </tr>
   );
