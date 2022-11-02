@@ -7,7 +7,9 @@ function handleKeyDown(event) {
 }
 
 function InputField(
-  { name, label, type, placeholder, error, fieldRef, defaultValue, changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows, horizontal, ...props }
+  { name, label, type, placeholder, error, fieldRef, defaultValue,
+    changeHandler, helperText, blurHandler, keyUpHandler, as_type, rows, 
+    horizontal, ...props }
 ) {
   return (
     <Form.Group controlId={name} className="InputField">

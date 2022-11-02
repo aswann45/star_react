@@ -346,6 +346,22 @@
   padding: 1px;
 }
 
+.LinkButton:hover {
+  background-color: grey;
+  padding: 1px;
+}
+
+.LinkPopover {
+  z-index: 96001;
+}
+
+.MiniDashPopover {
+  z-index: 99999;
+  width: auto;
+  max-width: none!important;
+
+}
+
 .modal-90w {
   width: 90%;
   max-width: none!important;

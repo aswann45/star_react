@@ -11,6 +11,7 @@ import useInputChange from '../useInputChange';
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { FaUnlink, FaLink } from 'react-icons/fa'
 
 import Stack from 'react-bootstrap/Stack';
 import Body from './navigation/Body';
@@ -18,6 +19,90 @@ import RankingsBadges from './RankingsBadges';
 import RequestType from './RequestType';
 import RequestAccount from './RequestAccount';
 import Loader from './loaders/Loader';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+
+import Popover from 'react-bootstrap/Popover';
+import InputField from './form/InputField';
+import Form from 'react-bootstrap/Form';
+
+function LinkPopover({
+    request_url,
+    setShowLinkOverlay,
+    isParent,
+    setObj,
+    setLinks,
+    submissionID }) {
+  const api = useApi();
+  const [input, handleInputChange] = useInputChange();
+  const handleSubmit = async (event) =>  {
+    event.preventDefault();
+
+  }
+  const [formErrors, setFormErrors] = useState({});
+
+  const handleLinkAsParent = async () => {
+    const data = await api.post(`${request_url}/add_child`, '', {
+      body: {
+        submission_id: input.LinkID
+      }
+    })
+    if (!data.ok) {
+      console.log('Response not ok!!')
+    }
+    setShowLinkOverlay(false)
+    setObj(data.body)
+    setLinks(data.body._links)
+  }
+  const handleLinkAsChild = async () => {
+    const data = await api.post(`${request_url}/set_parent`, '', {
+      body: {
+        'parent_id': input.LinkID
+      }
+    })
+    if (!data.ok) {
+      console.log('Response not ok!!')
+    }
+    setShowLinkOverlay(false)
+    setObj(data.body)
+    setLinks(data.body._links)
+  }
+  return (
+    <Popover id='popover-basic' className='LinkPopover'>
+      <Form onSubmit={handleSubmit}>
+        <Popover.Header as='h5'>
+          Link Request To:
+        </Popover.Header>
+        <Popover.Body>
+          <Stack>
+          <InputField
+            name='LinkID'
+            defaultValue={''}
+            changeHandler={handleInputChange}
+            error={formErrors.LinkID}
+            placeholder={'Request ID'}
+            />
+            <Button
+              variant='primary'
+              size='sm'
+              type='buttom'
+              onClick={handleLinkAsParent}>
+              Set "{submissionID}" as Parent
+            </Button>
+            {!isParent &&
+            <Button
+              variant='secondary'
+              size='sm'
+              type='button'
+              onClick={handleLinkAsChild}>
+              Set "{submissionID}" as Child
+            </Button>
+            }
+          </Stack>
+        </Popover.Body>
+      </Form>
+    </Popover>
+  );
+}
 
 function RequestModal({isDetail, setIsDetail}) {
   const { request_id } = useParams(':request_id');
@@ -85,6 +170,19 @@ function RequestModal({isDetail, setIsDetail}) {
     event.preventDefault();
   };
 
+  const handleUnlinkClick = async () => {
+    const response = await api.post(
+      `${request_url}/remove_parent`, '', {
+        body: {
+          parent_id: object.ParentID
+        }
+      }
+    )
+    if (!response.ok) {
+      console.log('Not ok!')
+    }
+    setObj(response.body)
+  };
   // api call logic for updates
   const path = location.pathname;
   let ending = path.slice(path.lastIndexOf('/'));
@@ -104,6 +202,15 @@ function RequestModal({isDetail, setIsDetail}) {
     }
   };
 
+  const [showLinkOverlay, setShowLinkOverlay] = useState(false);
+  const linkOverlay = LinkPopover({
+    request_url,
+    setShowLinkOverlay,
+    isParent: object ? object.ParentStatus : false,
+    setObj,
+    setLinks,
+    submissionID: object ? object.SubmissionID : ''
+  })
 
   return (
     <Modal
@@ -111,23 +218,68 @@ function RequestModal({isDetail, setIsDetail}) {
       dialogClassName="modal-90w"
       onHide={handleClose}
       animation={false}
-      style={{zIndex: 95000}}>
+      style={{zIndex: 95000}}
+      enforceFocus={false}>
 
       <Modal.Header closeButton />
       <Modal.Body>
         <Body sidebar={linksDict} background={backgroundLocation}>
-          {(object && object.length !== 0) ?
-
-
+          {
+            (object && object.length !== 0) ?
               <Stack direction="vertical" className="DetailHeading">
                 <h1>
+                  <Stack direction='horizontal' gap={3}>
+                  <span>
                   #{object.SubmissionID}
                   &nbsp;&mdash;&nbsp;
                   {object.RequestTitle}
+                  </span>
+                  <>
+                  {
+                    object.DuplicateStatus === 'Duplicate' ?
+                      <>
+                        <div className='vr' />
+                        <span>
+                          {`Child of Request #${object.ParentSubmissionID}`}
+                        </span>
+                        <span className='LinkButton'>
+                          <FaUnlink
+                            style={{
+                              display: 'block',
+                              cursor: 'pointer',
+                              hover: ''
+                             }}
+                            onClick={handleUnlinkClick} />
+                        </span>
+                      </>
+                      :
+                        <OverlayTrigger
+                          show={showLinkOverlay}
+                          trigger='click'
+                          placement='bottom'
+                          overlay={linkOverlay}
+                        >
+                          <span className='LinkButton'>
+                            <FaLink
+                              style={{
+                                display: 'block',
+                                cursor: 'pointer',
+                              }}
+                              title={'Link to another request'}
+                              onClick={() => setShowLinkOverlay(!showLinkOverlay)} />
+                          </span>
+                        </OverlayTrigger>
+                  }
+                  </>
+                  </Stack>
                 </h1>
                 <h2>{object.Member}&nbsp;({object.Party})</h2>
                 <Stack direction="horizontal" gap={2}>
-                  <Stack direction="vertical" sm={6} className="DetailHeadingLeft">
+                  <Stack
+                    direction="vertical"
+                    sm={6}
+                    className="DetailHeadingLeft">
+
                     <RequestType request={object} />
                     <RankingsBadges
                       url={request_url}

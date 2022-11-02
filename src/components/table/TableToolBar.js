@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Stack from 'react-bootstrap/Stack';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
@@ -20,6 +21,8 @@ import { VscTools } from 'react-icons/vsc'
 
 import ColumnVisibilityToggle from './ColumnVisibilityToggle';
 import LoaderSmall from '../loaders/LoaderSmall';
+import { MiniDashPopover } from '../MiniDash';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 function TableToolBar({
   tableInstance,
@@ -67,6 +70,12 @@ function TableToolBar({
     tableInstance.options.meta?.exportRows(null, colList, exportURLPrefix);
     tableInstance.resetRowSelection(true);
   }
+
+  const [showMiniDashOverlay, setShowMiniDashOverlay] = useState(false);
+  const miniDashOverlay = MiniDashPopover({
+    requestURL: '/dashboards/conference_toplines',
+    headerText: 'Conference Topline Summary'
+  })
 
   return (
     <Stack className="TableToolBar" direction='horizontal' gap={2}>
@@ -167,6 +176,16 @@ function TableToolBar({
       <Button onClick={() => tableInstance.resetColumnFilters(true)}>
         Clear All Filters
       </Button>
+
+      <OverlayTrigger 
+        show={showMiniDashOverlay}
+        trigger='click'
+        placement='bottom'
+        overlay={miniDashOverlay}>
+        <Button onClick={() => setShowMiniDashOverlay(!showMiniDashOverlay)}>
+          Summary Dashboard
+        </Button>
+      </OverlayTrigger>
 
         {/*(totalItems && fetchedItems) &&
         <span>Loaded {fetchedItems} of {totalItems}</span>
