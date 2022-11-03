@@ -25,7 +25,13 @@ import Popover from 'react-bootstrap/Popover';
 import InputField from './form/InputField';
 import Form from 'react-bootstrap/Form';
 
-function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj, setLinks }) {
+function LinkPopover({
+    request_url,
+    setShowLinkOverlay,
+    isParent,
+    setObj,
+    setLinks,
+    submissionID }) {
   const api = useApi();
   const [input, handleInputChange] = useInputChange();
   const handleSubmit = async (event) =>  {
@@ -68,7 +74,7 @@ function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj, setLin
         </Popover.Header>
         <Popover.Body>
           <Stack>
-          <InputField 
+          <InputField
             name='LinkID'
             defaultValue={''}
             changeHandler={handleInputChange}
@@ -80,7 +86,7 @@ function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj, setLin
               size='sm'
               type='buttom'
               onClick={handleLinkAsParent}>
-              Link as Parent
+              Set "{submissionID}" as Parent
             </Button>
             {!isParent &&
             <Button
@@ -88,7 +94,7 @@ function LinkPopover({ request_url, setShowLinkOverlay, isParent, setObj, setLin
               size='sm'
               type='button'
               onClick={handleLinkAsChild}>
-              Link as Child
+              Set "{submissionID}" as Child
             </Button>
             }
           </Stack>
@@ -163,7 +169,7 @@ function RequestModal({isDetail, setIsDetail}) {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
-  
+
   const handleUnlinkClick = async () => {
     const response = await api.post(
       `${request_url}/remove_parent`, '', {
@@ -198,11 +204,12 @@ function RequestModal({isDetail, setIsDetail}) {
 
   const [showLinkOverlay, setShowLinkOverlay] = useState(false);
   const linkOverlay = LinkPopover({
-    request_url, 
-    setShowLinkOverlay, 
-    isParent: object ? object.ParentStatus : false, 
+    request_url,
+    setShowLinkOverlay,
+    isParent: object ? object.ParentStatus : false,
     setObj,
-    setLinks
+    setLinks,
+    submissionID: object ? object.SubmissionID : ''
   })
 
   return (
@@ -241,19 +248,19 @@ function RequestModal({isDetail, setIsDetail}) {
                               display: 'block',
                               cursor: 'pointer',
                               hover: ''
-                             }} 
+                             }}
                             onClick={handleUnlinkClick} />
                         </span>
                       </>
-                      : 
+                      :
                         <OverlayTrigger
                           show={showLinkOverlay}
                           trigger='click'
                           placement='bottom'
                           overlay={linkOverlay}
-                        > 
-                          <span className='LinkButton'> 
-                            <FaLink 
+                        >
+                          <span className='LinkButton'>
+                            <FaLink
                               style={{
                                 display: 'block',
                                 cursor: 'pointer',
@@ -268,11 +275,11 @@ function RequestModal({isDetail, setIsDetail}) {
                 </h1>
                 <h2>{object.Member}&nbsp;({object.Party})</h2>
                 <Stack direction="horizontal" gap={2}>
-                  <Stack 
-                    direction="vertical" 
-                    sm={6} 
+                  <Stack
+                    direction="vertical"
+                    sm={6}
                     className="DetailHeadingLeft">
-                    
+
                     <RequestType request={object} />
                     <RankingsBadges
                       url={request_url}
