@@ -78,6 +78,23 @@ function MemberRequestsColumns(
       )
     }),
 
+    columnHelper.accessor('ParentSubmissionID', {
+      header: 'Parent ID',
+      filterVariant: 'text',
+      cell: (props) => (
+        <Stack
+          direction='horizontal'
+          style={{
+            paddingLeft: `${props.row.depth * 2}rem`,
+            paddingRight: '5px',
+          }}
+          gap={2}
+        >
+        {props.getValue()}
+        </Stack>
+      )
+    }),
+
     columnHelper.accessor('RequestTitle', {
       //cell: info => info.getValue(),
       cell: props => ReadOnlyTableCell(props),
