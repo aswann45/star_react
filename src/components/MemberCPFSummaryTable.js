@@ -77,7 +77,7 @@ function MemberCPFSummaryTable({ ...props }) {
       }
       </span>
     </Stack>
-    <div style={{overflow: 'scroll', height: '100%'}}>
+    <div>
       {
         projectsList && projectsList.map((table, index) => {
         return (
