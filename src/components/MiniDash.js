@@ -18,20 +18,11 @@ function MiniDash({ requestURL }) {
     fetchData();
   }, [fetchData])
 
-  //console.log(data)
-
   return (
     <div>
         {data.map(subcommitteeTables =>
-          /*<p>
-            Sub: {subcommitteeTables[0]}
-          </p>*/
-
-
-
             subcommitteeTables[1].map(
               (table, index) => {
-              {console.log('Table', table)}
               return (<SummaryTable
                 title={subcommitteeTables[0] + ' ' + table.title}
                 columns={table['columns']}
@@ -40,8 +31,6 @@ function MiniDash({ requestURL }) {
                 subtotalData={table.totals}
                 key={index} />)}
             )
-
-
         )
       }
       </div>
@@ -57,7 +46,7 @@ function MiniDashPopover({ requestURL, headerText }) {
       <Popover.Header>
         {headerText}
       </Popover.Header>
-      }
+        }
       <Popover.Body>
         <MiniDash requestURL={requestURL} />
       </Popover.Body>
@@ -65,101 +54,5 @@ function MiniDashPopover({ requestURL, headerText }) {
   )
 }
 
-function DashboardLine({ dataItem }) {
-
-  const formatter = new Intl.NumberFormat('en-US');
-
-  return (
-    <tr>
-      <td>
-        {dataItem[0]}
-      </td>
-      <td>
-        {dataItem[1]}
-      </td>
-      <td>
-        {dataItem[2]}
-      </td>
-      <td>
-        {formatter.format(dataItem[3])}
-      </td>
-      <td>
-        {formatter.format(dataItem[4])}
-      </td>
-      <td>
-        {formatter.format(dataItem[5])}
-      </td>
-    </tr>
-  );
-}
-
-function DashboardTable({ dataGroup }) {
-
-  return (
-    <>
-      <thead>
-      <tr>
-        <th style={{
-            marginTop: '5px',
-            paddingTop: '5px'
-          }}>
-          {dataGroup[0]}
-        </th>
-      </tr>
-      </thead>
-      <tbody style={{
-          marginBottom: '5px',
-          paddingBottom: '5px'
-        }}>
-      {dataGroup[1].map(
-        data_item => <DashboardLine
-          dataItem={data_item}
-          key={data_item[0].concat(data_item[1])}
-        />
-      )}
-      </tbody>
-    </>
-  );
-};
-
 export default MiniDash;
 export { MiniDashPopover };
-
-
-/*<SummaryTable columns={} formats={} data={} subtotalData={} />
-
-<div>
-  <Table
-    striped={true}
-    hover={true}
-    size={'sm'}
-  >
-    <thead>
-      <tr>
-        <th>
-          Origination
-        </th>
-        <th>
-          Party
-        </th>
-        <th>
-          # Projects
-        </th>
-        <th>
-          $ Chamber
-        </th>
-        <th>
-          $ Conference
-        </th>
-        <th>
-          $ Tracking
-        </th>
-      </tr>
-    </thead>
-      {data.map(
-        dataGroup => <DashboardTable dataGroup={dataGroup} key={dataGroup[0]}/>
-      )}
-
-
-  </Table>
-</div>*/
