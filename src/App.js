@@ -24,6 +24,9 @@ import CPFFundingTable from './tables/CPFFundingTable';
 import CPFHouseFundingTable from './tables/CPFHouseFundingTable';
 import CPFConferenceFundingTable from './tables/CPFConferenceFundingTable';
 
+import CPFSummaryTables from './pages/CPFSummaryTables';
+import MemberCPFSummaryTable from './components/MemberCPFSummaryTable';
+
 import UsersPage from './pages/UsersPage';
 import UserPage from './pages/UserPage';
 
@@ -83,6 +86,10 @@ function App() {
                   <Route index element={<CPFFundingTable />} />
                   <Route path="house" element={<CPFHouseFundingTable />} />
                   <Route path="conference" element={<CPFConferenceFundingTable />} />
+                </Route>
+
+                <Route path="cpf_summary_tables" element={<CPFSummaryTables />}>
+                  <Route index element={<MemberCPFSummaryTable />} />
                 </Route>
 
 

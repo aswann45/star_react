@@ -20,6 +20,11 @@ function Sidebar({ sidebar, background }) {
           <Nav.Item>
             <Nav.Link as={NavLink} to="/project_funding">Fund CPFs</Nav.Link>
           </Nav.Item>
+          <Nav.Item>
+            <Nav.Link as={NavLink} to={'/cpf_summary_tables'}>
+              CPF Summary Tables
+            </Nav.Link>
+          </Nav.Item>
         </>
       }
       </Navbar>
