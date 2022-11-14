@@ -1,5 +1,4 @@
 function SummaryTableHeader({ columns }) {
-  //console.log(columns)
   return (
     <>
       <thead className={'SummaryTableHeader'}>

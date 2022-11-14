@@ -1,5 +1,5 @@
 import StyledCell from './StyledCell';
-function SummaryTableFooter({ data, formats, subtotal }) {
+function SummaryTableFooter({ data, formats, subtotal, ...props }) {
 
   const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
@@ -9,7 +9,9 @@ function SummaryTableFooter({ data, formats, subtotal }) {
       {
         subtotal &&
         <tr>
-          <td style={{fontWeight: 'bold'}} colSpan={data.length}>{'Subtotal:'}</td>
+          <td style={{fontWeight: 'bold'}} colSpan={data.length}>
+            {props?.subtotalHeader ? props.subtotalHeader : 'Subtotal:'}
+          </td>
         </tr>
       }
         <tr>
@@ -17,7 +19,7 @@ function SummaryTableFooter({ data, formats, subtotal }) {
             zip(data, formats).map(
               (dataFormat, index) =>
                 <StyledCell data={dataFormat[0]} format={dataFormat[1]} key={index}/>
-              
+
             )
           }
         </tr>

@@ -370,3 +370,10 @@
 .modal-open {
   font-family: "Futura", 'Gill Sans MT', 'DINPro', 'Roboto', sans-serif;
 }
+
+.SummaryTable caption {
+  caption-side: top;
+  font-weight: bold;
+  font-variant: small-caps;
+  color: #000000;
+}
