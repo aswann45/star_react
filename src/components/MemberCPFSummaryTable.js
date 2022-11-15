@@ -6,6 +6,7 @@ import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container'
 import InputSelect from './form/InputSelect';
 import Form from 'react-bootstrap/Form';
+import LoaderSmall from './loaders/LoaderSmall';
 
 function MemberCPFSummaryTable({ ...props }) {
   const api = useApi();
@@ -24,13 +25,14 @@ function MemberCPFSummaryTable({ ...props }) {
   const fetchData = useCallback(async (url, setterFunction) => {
     const response = await api.get(url) ;
     setterFunction(response.ok ? response.body : null);
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchData(memberURL, setMember);
     fetchData(projectsURL, setProjectsList);
     fetchData(chamberURL, setChamberSummary);
     fetchData(conferenceURL, setConferenceSummary);
+    // eslint-disable-next-line
   }, [fetchData, memberID])
 
   return (
@@ -45,7 +47,8 @@ function MemberCPFSummaryTable({ ...props }) {
     <Stack direction={'horizontal'} gap={3}>
     <span>
       {
-        chamberSummary && chamberSummary.map((table, index) => {
+        chamberSummary ?
+        chamberSummary.map((table, index) => {
           return (
             <SummaryTable
               title={`${table.title} (Chamber):`}
@@ -56,13 +59,15 @@ function MemberCPFSummaryTable({ ...props }) {
               key={index}
               subtotalHeader={`Total ${table.title}:`} />
           );
-        })
+        }) :
+        <LoaderSmall obj={chamberSummary}  />
       }
       </span>
       <div className={'vr'} />
       <span className='align-self-start'>
       {
-        conferenceSummary && conferenceSummary.map((table, index) => {
+        conferenceSummary ?
+        conferenceSummary.map((table, index) => {
           return (
             <SummaryTable
               title={`${table.title} (Conference):`}
@@ -73,23 +78,28 @@ function MemberCPFSummaryTable({ ...props }) {
               key={index}
               subtotalHeader={`Total ${table.title}:`} />
           );
-        })
+        }) :
+        <LoaderSmall obj={conferenceSummary} />
       }
       </span>
     </Stack>
     <div>
       {
-        projectsList && projectsList.map((table, index) => {
-        return (
-          <SummaryTable
-            title={table.title}
-            columns={table.columns}
-            formats={table.column_formats}
-            data={table.data}
-            subtotalData={table.totals}
-            key={index} />
-        )
-      })}
+        projectsList ?
+        projectsList.map((table, index) => {
+          return (
+            <SummaryTable
+              title={table.title}
+              columns={table.columns}
+              formats={table.column_formats}
+              data={table.data}
+              subtotalData={table.totals}
+              key={index} />
+          )
+      }) :
+        <LoaderSmall obj={projectsList} />
+    }
+
     </div>
     </Container>
   );

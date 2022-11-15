@@ -2,8 +2,6 @@ import SummaryTableLine from './SummaryTableLine';
 
 function SummaryTableBody({ data, formats }) {
 
-  const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-
   return (
     <>
       <tbody>

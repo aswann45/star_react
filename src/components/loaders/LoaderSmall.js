@@ -1,7 +1,7 @@
 import Spinner from 'react-bootstrap/Spinner';
 import Container from 'react-bootstrap/Container';
 
-function LoaderSmall({ obj } ){
+function LoaderSmall({ obj, ...props }) {
 
   return(
     <>

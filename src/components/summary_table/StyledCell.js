@@ -1,6 +1,14 @@
 function StyledCell({ data, format }) {
 
-  const formatter = new Intl.NumberFormat('en-US');
+  const formatter = new Intl.NumberFormat(
+    'en-US', {
+      style: 'currency',
+      currency: 'USD',
+      signDisplay: 'auto',
+      maximumFractionDigits: 0,
+      currencySign: 'accounting'
+    }
+  );
 
   return (
     <>
@@ -11,7 +19,7 @@ function StyledCell({ data, format }) {
         </> :
         format === 'currency' ?
         <>
-            <td>{formatter.format(data)}</td>
+            <td>{formatter.format(data).replace('$0', '$ - ')}</td>
         </> :
         <>
           <td>{data}</td>
