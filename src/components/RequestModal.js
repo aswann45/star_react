@@ -43,7 +43,8 @@ function LinkPopover({
   const handleLinkAsParent = async () => {
     const data = await api.post(`${request_url}/add_child`, '', {
       body: {
-        submission_id: input.LinkID
+        submission_id: input.LinkID,
+        EditorID: localStorage.getItem('currentUserID'),
       }
     })
     if (!data.ok) {
@@ -56,7 +57,8 @@ function LinkPopover({
   const handleLinkAsChild = async () => {
     const data = await api.post(`${request_url}/set_parent`, '', {
       body: {
-        'parent_id': input.LinkID
+        'parent_id': input.LinkID,  
+        EditorID: localStorage.getItem('currentUserID'),
       }
     })
     if (!data.ok) {
@@ -174,7 +176,8 @@ function RequestModal({isDetail, setIsDetail}) {
     const response = await api.post(
       `${request_url}/remove_parent`, '', {
         body: {
-          parent_id: object.ParentID
+          parent_id: object.ParentID,
+          EditorID: localStorage.getItem('currentUserID'),
         }
       }
     )
