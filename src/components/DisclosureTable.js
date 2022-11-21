@@ -41,6 +41,7 @@ function DisclosureTable({ ...props }) {
 
   return (
     <Container fluid>
+      <Stack direction={'horizontal'} gap={2}>
     <SubcommitteeSelect
       setSubcommitteeID={setSubcommitteeID}
       subcommitteeOptions={subcommitteeOptions} />
@@ -51,6 +52,7 @@ function DisclosureTable({ ...props }) {
           <LoaderSmall /> :
           null
     }
+      </Stack>
     <div>
       { subcommitteeID ?
         projectsList ?
@@ -100,7 +102,6 @@ function DownloadTableButton({ subcommitteeID, setIsDownloading }) {
 
   return (
     <Button
-      className={'ms-auto'}
       size={'sm'}
       onClick={() => handleDownloadButtonClick(subcommitteeID)}>
       Download Excel Table
@@ -114,8 +115,9 @@ function SubcommitteeSelect({ setSubcommitteeID, subcommitteeOptions }) {
 
   return (
     <>
-      <Form>
-        <InputSelect name="SubcommitteeSelect"
+      <Form> 
+        <InputSelect 
+          name="SubcommitteeSelect"
           label="Select Select Subcommittee"
           changeHandler={handleSelect}>
           <>
