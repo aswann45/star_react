@@ -26,6 +26,7 @@ import CPFConferenceFundingTable from './tables/CPFConferenceFundingTable';
 
 import CPFSummaryTables from './pages/CPFSummaryTables';
 import MemberCPFSummaryTable from './components/MemberCPFSummaryTable';
+import DisclosureTable from './components/DisclosureTable';
 
 import UsersPage from './pages/UsersPage';
 import UserPage from './pages/UserPage';
@@ -90,6 +91,7 @@ function App() {
 
                 <Route path="cpf_summary_tables" element={<CPFSummaryTables />}>
                   <Route index element={<MemberCPFSummaryTable />} />
+                  <Route path="conference_disclosure_table" element={<DisclosureTable />} />
                 </Route>
 
 
