@@ -30,13 +30,18 @@ function CPFSummaryTables () {
       name: 'Homeland',
     },
     {
-      id: 16,
-      name: 'MilCon VA',
-    },
-    {
       id: 13,
       name: 'Labor HHS',
     },
+    {
+      id: 12,
+      name: 'Interior',
+    },
+    {
+      id: 16,
+      name: 'MilCon VA',
+    },
+    
     {
       id: 18,
       name: 'THUD',
