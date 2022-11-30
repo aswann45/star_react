@@ -7,6 +7,7 @@ import Container from 'react-bootstrap/Container'
 import InputSelect from './form/InputSelect';
 import Form from 'react-bootstrap/Form';
 import LoaderSmall from './loaders/LoaderSmall';
+import Button from 'react-bootstrap/Button';
 
 function MemberCPFSummaryTable({ ...props }) {
   const api = useApi();
@@ -16,6 +17,7 @@ function MemberCPFSummaryTable({ ...props }) {
   const [conferenceSummary, setConferenceSummary] = useState();
   const [memberID, setMemberID] = useState(2);
   const [memberOptions] = useOutletContext();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   let memberURL = `/members/${memberID}`;
   let projectsURL = `/dashboards/member_cpf_list/${memberID}`;
@@ -65,22 +67,30 @@ function MemberCPFSummaryTable({ ...props }) {
       </span>
       <div className={'vr'} />
       <span className='align-self-start'>
-      {
-        conferenceSummary ?
-        conferenceSummary.map((table, index) => {
-          return (
-            <SummaryTable
-              title={`${table.title} (Conference):`}
-              columns={table.columns}
-              formats={table.column_formats}
-              data={table.data}
-              subtotalData={table.totals}
-              key={index}
-              subtotalHeader={`Total ${table.title}:`} />
-          );
-        }) :
-        <LoaderSmall obj={conferenceSummary} />
-      }
+        {
+          conferenceSummary ?
+            isDownloading === false ?
+              <DownloadTableButton memberID={memberID} setIsDownloading={setIsDownloading} /> :
+              <LoaderSmall /> :
+            null
+        }
+        {
+          conferenceSummary ?
+          conferenceSummary.map((table, index) => {
+            return (
+              <SummaryTable
+                title={`${table.title} (Conference):`}
+                columns={table.columns}
+                formats={table.column_formats}
+                data={table.data}
+                subtotalData={table.totals}
+                key={index}
+                subtotalHeader={`Total ${table.title}:`} />
+            );
+          }) :
+          <LoaderSmall obj={conferenceSummary} />
+        }
+        
       </span>
     </Stack>
     <div>
@@ -102,6 +112,42 @@ function MemberCPFSummaryTable({ ...props }) {
 
     </div>
     </Container>
+  );
+};
+
+
+function DownloadTableButton({ memberID, setIsDownloading }) {
+  const api = useApi();
+  async function handleDownloadButtonClick (memberID) {
+    setIsDownloading(true)
+    const response = await api.get(`/reporting/member_conference_cpf_summary/${memberID}`);
+    //const response = new Response(response_obj);
+    if (!response.ok) {
+      console.log('The reponse is not ok!')
+    } else {
+      const fileBlob = await response.blob();
+      const fileURL = URL.createObjectURL(fileBlob);
+      let tempLink = document.createElement('a');
+      let disposition = response.headers.get('content-disposition');
+      let fileName = (disposition && disposition.indexOf('attachment') !== -1) ? disposition.split('filename=')[1] : ''
+      tempLink.href = fileURL;
+      if (fileName !== '') {
+        tempLink.setAttribute('download', fileName);
+        tempLink.click();
+        setIsDownloading(false);
+      } else {
+        window.open(fileURL);
+        setIsDownloading(false);
+      }
+    }
+  }
+
+  return (
+    <Button
+      size={'sm'}
+      onClick={() => handleDownloadButtonClick(memberID)}>
+      Download Excel Table
+    </Button>
   );
 };
 
