@@ -42,12 +42,13 @@ function FilesDetail({ title }) {
     });
     const formData = new FormData();
     formData.append('file', newFile);
-    const file_data = await api.post(`/files/${response.body.ID}/save_file`, '', {
-      formData: formData,
-      headers: {
-        'enctype': 'multipart/form-data',
-      }
-   });
+    const file_data = await api.post(
+      `/files/${response.body.ID}/save_file`, '', {
+        formData: formData,
+        headers: {
+          'enctype': 'multipart/form-data',
+        }
+    });
     if (!file_data.ok) {
       ;
     }
@@ -218,7 +219,13 @@ function FileCard({ file, setDeletedFile }) {
   );
 };
 
-function NewFileForm({ handleSubmit, handleFileTypeSelect, handleFileAdd, formErrors, newFile }) {
+function NewFileForm({ 
+  handleSubmit,
+  handleFileTypeSelect, 
+  handleFileAdd,
+  formErrors,
+  newFile
+}) {
 
   return (
     <Form onSubmit={handleSubmit} className="NewFileForm">

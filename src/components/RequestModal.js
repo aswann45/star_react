@@ -190,6 +190,7 @@ function RequestModal({isDetail, setIsDetail}) {
   const path = location.pathname;
   let ending = path.slice(path.lastIndexOf('/'));
   let put_url;
+  let memberID = object?.MemberID;
   if (object) {
     let project_id = object.ProjectID || null;
     let recipient_id = object.RecipientID || null;
@@ -204,6 +205,7 @@ function RequestModal({isDetail, setIsDetail}) {
         put_url = request_url;
     }
   };
+
 
   const [showLinkOverlay, setShowLinkOverlay] = useState(false);
   const linkOverlay = LinkPopover({
@@ -303,7 +305,8 @@ function RequestModal({isDetail, setIsDetail}) {
               handleInputChange,
               formErrors,
               setObj,
-              setLinks]
+              setLinks,
+              memberID]
             }/>
           </Body>
       </Modal.Body>
