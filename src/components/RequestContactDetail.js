@@ -1,6 +1,6 @@
 import { useApi } from '../contexts/ApiProvider';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import useInputChange from '../useInputChange';
 
 import Stack from 'react-bootstrap/Stack';
@@ -14,12 +14,14 @@ import ContactCard from './ContactCard';
 function RequestContactDetail({ title }) {
   const api = useApi();
   const params = useParams(':request_id');
-  //const url = location.pathname;
   const request_id = params.request_id;
-  const url = request_id && `/requests/${request_id}/contact`
+  const url = request_id && `/requests/${request_id}/contact`;
+  const [,,,,,,,, memberID] = useOutletContext();
+
   const [contact, setContact] = useState();
   const [contacts, setContacts] = useState();
   const [editing, setEditing] = useState(false);
+  const [addNew, setAddNew] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [input, handleInputChange, changed, setChanged] = useInputChange();
 
@@ -27,7 +29,7 @@ function RequestContactDetail({ title }) {
     (async () => {
       const response = await api.get(url);
       setContact(response.ok ? response.body : null);
-      const options_url = `/members/${response.body.MemberID}/contacts`;
+      const options_url = `/members/${memberID}/contacts`;
       const options_data = await api.get(options_url);
       setContacts(options_data.ok ? options_data.body.data : null)
     })();
@@ -57,13 +59,37 @@ function RequestContactDetail({ title }) {
   };
 
   const handleContactSelect = async (event) => {
-    const data = await api.put(`/contacts/${event.currentTarget.value}/set_request_contact`, '', {
-      body:
+    let data;
+    if (event.currentTarget.value === 'addNew') {
+      data = {
+        body : {
+          FirstName : '',
+          LastName : '',
+          Email : '',
+          Extension : '',
+          Title : '', 
+          MemberID : memberID,
+          Office : '',
+          Member : {
+            NameList : 'placeholder',
+            Party : 'placeholder',
+          },
+        },
+        ok : true
+      };
+      setEditing(true);
+      setAddNew(true);
+    } else {
+      data = await api.put(
+      `/contacts/${event.currentTarget.value}/set_request_contact`, 
+      '', 
       {
-        RequestID: request_id,
-        EditorID: localStorage.getItem('currentUserID'),
-      }
-    });
+        body:
+        {
+          RequestID: request_id,
+          EditorID: localStorage.getItem('currentUserID'),
+        }
+    })};
     if (!data.ok) {
       setFormErrors(data.body.error);
     } else {
@@ -74,9 +100,43 @@ function RequestContactDetail({ title }) {
 
   const handleEditingButtonOnClick = (event) => {
     if (editing === false) {
-    setEditing(true);
+      setEditing(true);
     } else if (editing === true) {
       setEditing(false);
+    }
+  }
+
+  const [newInput, handleNewInputChange] = useInputChange();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const data = await api.post('/contacts/', '', {
+      body: {
+        MemberID: memberID,
+        Email: newInput.Email,
+        FirstName: newInput.FirstName,
+        LastName: newInput.LastName,
+        Extension: newInput.Extension,
+        Title: newInput.Title,
+        Office: newInput.Office,
+      }
+    })
+
+    if (data.ok) {
+      const assignedData = await api.put(
+        `/contacts/${data.body.Email}/set_request_contact`,
+        '',
+        {
+          body: {
+            RequestID: request_id,
+            EditorID: localStorage.getItem('currentUserID'),
+          }
+        }
+      )
+      if (!assignedData.ok) {
+        ;
+      } else {
+        setContact(assignedData.body);
+      }
     }
   }
 
@@ -94,6 +154,7 @@ function RequestContactDetail({ title }) {
     </Stack>
       {
         contact ?
+          contact.MemberID ?
           <ContactCard
             contact={contact}
             handleBlur={handleBlur}
@@ -101,7 +162,12 @@ function RequestContactDetail({ title }) {
             formErrors={formErrors}
             editing={editing}
             handleEditingButtonOnClick={handleEditingButtonOnClick}
+            addNew={addNew}
+            handleNewInputChange={handleNewInputChange}
+            handleSubmit={handleSubmit}
           />
+          : 
+          <p>No contact assigned to this request.</p>
           :
           <Loader obj={contact} />
       }

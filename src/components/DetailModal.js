@@ -22,7 +22,6 @@ function DetailModal() {
     setShow(false);
     setIsDetail(false);
   };
-  
 
   //console.log('Endpoint', endpoint)
   
@@ -105,7 +104,6 @@ function DetailModal() {
         put_url = endpoint;
     }
   };
-  
   // 
   
   return (
@@ -145,7 +143,17 @@ function DetailModal() {
              :
 
             <Loader obj={object}/>} 
-            <Outlet context={[endpoint, ID, handleSubmit, handleBlur, handleInputChange, formErrors, setObj, setLinks]}/>  
+            <Outlet context={[
+              endpoint, 
+              ID, 
+              handleSubmit,
+              handleBlur, 
+              handleInputChange, 
+              formErrors, 
+              setObj, 
+              setLinks, 
+              'test'
+            ]}/>  
           </Body>
         </Modal.Body>
 

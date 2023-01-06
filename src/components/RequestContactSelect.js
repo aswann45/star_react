@@ -15,8 +15,13 @@ function RequestContactSelect({ contacts, handleContactSelect, formErrors }){
         <option hidden>Reassign to...</option>
         {
           contacts && 
-            contacts.map(contact => <option key={contact.Email} value={contact.Email}>{contact.LastName},&nbsp;{contact.FirstName}</option>)
+            contacts.map(
+              contact => <option key={contact.Email} value={contact.Email}>
+                {contact.LastName},&nbsp;{contact.FirstName}
+              </option>
+            )
         }
+        <option value='addNew'>Create new office contact...</option>
       </InputSelect>
     </Form>
   );
